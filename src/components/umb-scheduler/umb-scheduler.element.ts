@@ -1,5 +1,5 @@
-import { LitElement, html, css, property } from 'lit-element';
-import { openWcLogo } from './open-wc-logo.js';
+import { LitElement, html, css } from 'lit';
+import { property } from 'lit/decorators.js';
 
 export class UmbScheduler extends LitElement {
   @property({ type: String }) title = 'My app';
@@ -50,10 +50,11 @@ export class UmbScheduler extends LitElement {
   render() {
     return html`
       <main>
-        <div class="logo">${openWcLogo}</div>
         <h1>${this.title}</h1>
 
-        <p>Edit <code>src/UmbScheduler.ts</code> and save to reload.</p>
+        <p>
+          Edit <code>src/UmbScheduler.ts</code> and save to reload. omomomom
+        </p>
         <a
           class="app-link"
           href="https://open-wc.org/guides/developing-components/code-examples"

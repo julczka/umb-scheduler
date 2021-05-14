@@ -1,12 +1,16 @@
 export type Id = String;
-
-export interface Content {
+export interface Publication {
   id: Id;
-  pageTitle: String;
-  icon: String;
-  variants: Variant[];
+  start: Date | null;
+  end: Date | null;
 }
 
+export interface Version {
+  id: Id;
+  name: String;
+  author?: string;
+  publications: Publication[];
+}
 export interface Variant {
   id: Id;
   name?: String;
@@ -16,15 +20,9 @@ export interface Variant {
   publications: Publication[];
 }
 
-export interface Version {
+export interface Content {
   id: Id;
-  name: String;
-  author?: string;
-  publications: Publication[];
-}
-
-export interface Publication {
-  id: Id;
-  start: Date | null;
-  end: Date | null;
+  pageTitle: String;
+  icon: String;
+  variants: Variant[];
 }

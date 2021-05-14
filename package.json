@@ -26,7 +26,9 @@
     "test:watch": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wtr --watch\"",
     "build": "rimraf dist && tsc && rollup -c rollup.config.js",
     "start:build": "npm run build && web-dev-server --root-dir dist --app-index index.html --open --compatibility none",
-    "start": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wds\""
+    "start": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wds\"",
+    "clean": "npm run clean:ts",
+    "clean:ts": "del-cli --force ./out-tsc"
   },
   "name": "umb-scheduler",
   "version": "0.0.0",
@@ -34,8 +36,7 @@
   "author": "umb-scheduler",
   "license": "MIT",
   "dependencies": {
-    "lit-html": "^1.4.0",
-    "lit-element": "^2.5.0"
+    "lit": "^2.0.0-rc.2"
   },
   "eslintConfig": {
     "parser": "@typescript-eslint/parser",
