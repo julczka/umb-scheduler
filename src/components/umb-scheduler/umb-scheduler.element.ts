@@ -49,31 +49,8 @@ export class UmbScheduler extends LitElement {
 
   render() {
     return html`
-      <main>
-        <h1>${this.title}</h1>
-
-        <p>
-          Edit <code>src/UmbScheduler.ts</code> and save to reload. omomomom
-        </p>
-        <a
-          class="app-link"
-          href="https://open-wc.org/guides/developing-components/code-examples"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Code examples
-        </a>
-      </main>
-
-      <p class="app-footer">
-        🚽 Made with love by
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://github.com/open-wc"
-          >open-wc</a
-        >.
-      </p>
+      <div>hello</div>
+      <umb-calendar></umb-calendar>
     `;
   }
 }
