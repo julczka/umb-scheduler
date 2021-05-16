@@ -118,6 +118,16 @@ export class UmbCalendarElement extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.defineScales();
+    window.addEventListener('resize', () => {
+      this.calculateTicks(this.getBoundingClientRect().width / this.tickWidth);
+    });
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('resize', () => {
+      this.calculateTicks(this.getBoundingClientRect().width / this.tickWidth);
+    });
   }
 
   firstUpdated() {
