@@ -133,9 +133,21 @@ export class UmbCalendarElement extends LitElement {
     this.zoomOut();
   }
 
+  protected next() {
+    this.startDate = addDays(this.startDate, 7);
+    this.endDate = addDays(this.endDate, 7);
+  }
+
+  protected prev() {
+    this.startDate = addDays(this.startDate, -7);
+    this.endDate = addDays(this.endDate, -7);
+  }
+
   render() {
     return html` <button @click=${this.zoomIn}>ZOOM IN</button>
       <button @click=${this.zoomOut}>ZOOM OUT</button>
+      <button @click=${this.prev}>PREV</button>
+      <button @click=${this.next}>NEXT</button>
       <br />
       ${this.startDate.toLocaleString()}
       <br />
