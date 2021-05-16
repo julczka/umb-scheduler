@@ -18,15 +18,20 @@ export class UmbVariantBlockElement extends LitElement {
         background-color: yellow;
         height: 100%;
         position: relative;
+        font-size: 0.7rem;
+        /* resize: horizontal;
+        overflow: auto; */
+        /* transition: width 300ms ease-out;
+        transition: left 300ms ease-out; */
       }
     `,
   ];
 
   @property({ type: Object, attribute: false })
-  publishDate: Date | null = new Date('2021-05-17');
+  publishDate: Date | null = new Date('2021-05-17, 00:00');
 
   @property({ type: Object, attribute: false })
-  unpublishDate: Date | null = new Date('2021-06-22');
+  unpublishDate: Date | null = new Date('2021-06-22, 00:00');
 
   static invertDate(
     scale: ScaleTime<number, number, never>,
@@ -50,7 +55,8 @@ export class UmbVariantBlockElement extends LitElement {
           this.scale,
           this.publishDate.valueOf()
         );
-      return Math.ceil(width);
+      console.log(width);
+      return width;
     }
     return 0;
   }
@@ -65,7 +71,8 @@ export class UmbVariantBlockElement extends LitElement {
         this.scale,
         this.publishDate.valueOf()
       );
-      return Math.ceil(transform);
+      console.log(transform);
+      return transform;
     }
     return 0;
   }
@@ -100,15 +107,29 @@ export class UmbVariantBlockElement extends LitElement {
     return { width: `${this.width}%`, left: `${this.transform}%` };
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  private changeStartDate(e: Event) {
+    const input = e.target as HTMLInputElement;
+    console.log(input.value);
+    this.publishDate = new Date(input.value);
+  }
+
+  private changeEndDate(e: Event) {
+    const input = e.target as HTMLInputElement;
+    this.unpublishDate = new Date(input.value);
+  }
+
   render() {
     // eslint-disable-next-line lit-a11y/click-events-have-key-events
-    return html`<div
-      id="content-bar"
-      style=${styleMap(this.dynamicStyles())}
-      @click=${this.calculateWidth}
-    >
-      ${this.publishDate?.toDateString()} <br />
-      ${this.unpublishDate?.toDateString()}
+    return html`<div id="content-bar" style=${styleMap(this.dynamicStyles())}>
+      <div>
+        ${this.publishDate?.toLocaleString()} <br />
+        ${this.unpublishDate?.toLocaleString()} in date<input
+          type="datetime-local"
+          @input=${this.changeStartDate}
+        />
+        out date<input type="datetime-local" @input=${this.changeEndDate} />
+      </div>
     </div>`;
   }
 }
