@@ -9,6 +9,12 @@ import {
   scaleTime,
 } from 'd3-scale';
 import { repeat } from 'lit/directives/repeat.js';
+import {
+  addDays,
+  addHours,
+  checkIfEqualDates,
+  checkIfTheSameDay,
+} from '../../utils/utils.js';
 
 export class UmbCalendarElement extends LitElement {
   static styles = [
@@ -27,18 +33,6 @@ export class UmbCalendarElement extends LitElement {
       }
     `,
   ];
-
-  public static addDays(date: Date, days: number): Date {
-    const result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-  }
-
-  public static addHours(date: Date, hours: number): Date {
-    const result = new Date(date);
-    result.setHours(result.getHours() + hours);
-    return result;
-  }
 
   protected static createScale(
     domain: Iterable<Date | NumberValue>,
@@ -93,29 +87,21 @@ export class UmbCalendarElement extends LitElement {
     if (this.scale !== null) this.ticks = this.scale.ticks(number);
   }
 
-  public static checkIfTheSameDay(startDate: Date, endDate: Date) {
-    if (endDate < startDate)
-      throw new Error('you cannot end before you start!');
-    const deltaDates = endDate.valueOf() - startDate.valueOf();
-    const DAY_IN_MILISECONDS = 24 * 60 * 60 * 1000;
-    if (deltaDates < DAY_IN_MILISECONDS) return true;
-    return false;
-  }
-
   public zoomIn() {
     if (this.endDate < this.startDate) return;
-    if (UmbCalendarElement.checkIfTheSameDay(this.startDate, this.endDate)) {
+    if (checkIfTheSameDay(this.startDate, this.endDate)) {
       console.log('same day!');
-      this.startDate = UmbCalendarElement.addHours(this.startDate, 1);
-      this.endDate = UmbCalendarElement.addHours(this.endDate, -1);
+      if (checkIfEqualDates(this.startDate, this.endDate)) return;
+      this.startDate = addHours(this.startDate, 1);
+      this.endDate = addHours(this.endDate, -1);
     }
-    this.startDate = UmbCalendarElement.addDays(this.startDate, 1);
-    this.endDate = UmbCalendarElement.addDays(this.endDate, -1);
+    this.startDate = addDays(this.startDate, 1);
+    this.endDate = addDays(this.endDate, -1);
   }
 
   public zoomOut() {
-    this.startDate = UmbCalendarElement.addDays(this.startDate, -1);
-    this.endDate = UmbCalendarElement.addDays(this.endDate, 1);
+    this.startDate = addDays(this.startDate, -1);
+    this.endDate = addDays(this.endDate, 1);
   }
 
   willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
@@ -127,9 +113,6 @@ export class UmbCalendarElement extends LitElement {
       this.defineScales();
       this.calculateTicks(this.getBoundingClientRect().width / this.tickWidth);
     }
-
-    // if (changedProperties.has('scale') && this.scale !== null) {
-    // }
   }
 
   connectedCallback() {
@@ -171,7 +154,3 @@ export class UmbCalendarElement extends LitElement {
       </div>`;
   }
 }
-
-// ${this.ticks.map(
-//   tick => html`<div class="tick">${tick.toLocaleDateString()}</div>`
-// )}
