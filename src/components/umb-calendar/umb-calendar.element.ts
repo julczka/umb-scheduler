@@ -1,20 +1,20 @@
 /* eslint-disable no-console */
 import { property, state } from 'lit/decorators.js';
 import { html, css, LitElement } from 'lit';
-import { NumberValue, ScaleTime, scaleTime } from 'd3-scale';
-
+import {
+  NumberValue,
+  ScaleLinear,
+  scaleLinear,
+  ScaleTime,
+  scaleTime,
+} from 'd3-scale';
 import { repeat } from 'lit/directives/repeat.js';
-// year - 12
-// quater - 13
-// month - number of days in month 28-31
-// week - 14
-// day - 24
 
 export class UmbCalendarElement extends LitElement {
   static styles = [
     css`
       #tickContainer {
-        width: 100vw;
+        width: 90vw;
         display: flex;
         position: relative;
       }
@@ -35,10 +35,17 @@ export class UmbCalendarElement extends LitElement {
   }
 
   protected static createScale(
-    dates: Iterable<Date | NumberValue>,
+    domain: Iterable<Date | NumberValue>,
     range: Iterable<number>
   ) {
-    return scaleTime().domain(dates).nice().rangeRound(range).clamp(true);
+    return scaleTime().domain(domain).nice().rangeRound(range).clamp(true);
+  }
+
+  protected static createReverseScale(
+    domain: Iterable<number>,
+    range: Iterable<number>
+  ) {
+    return scaleLinear().domain(domain).rangeRound(range).clamp(true);
   }
 
   @property({ type: Object, attribute: false })
@@ -60,15 +67,21 @@ export class UmbCalendarElement extends LitElement {
   protected scale: ScaleTime<number, number, never> | null = null;
 
   @state()
+  protected scaleInverted: ScaleLinear<number, number, never> | null = null;
+
+  @state()
   protected ticks: Date[] = [];
 
-  public defineScale() {
+  public defineScales() {
     this.scale = UmbCalendarElement.createScale(this.domain, this.range);
+    this.scaleInverted = UmbCalendarElement.createReverseScale(this.range, [
+      this.startDate.valueOf(),
+      this.endDate.valueOf(),
+    ]);
   }
 
   protected calculateTicks(number: number) {
     if (this.scale !== null) this.ticks = this.scale.ticks(number);
-    console.log(this.ticks.length);
   }
 
   public zoomIn() {
@@ -89,7 +102,7 @@ export class UmbCalendarElement extends LitElement {
       changedProperties.has('endDate')
     ) {
       this.domain = [this.startDate, this.endDate];
-      this.defineScale();
+      this.defineScales();
       this.calculateTicks(this.getBoundingClientRect().width / 120);
     }
 
@@ -99,11 +112,10 @@ export class UmbCalendarElement extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.defineScale();
+    this.defineScales();
   }
 
   firstUpdated() {
-    console.log(this.getBoundingClientRect().width);
     this.calculateTicks(this.getBoundingClientRect().width / 120);
   }
 
@@ -121,6 +133,10 @@ export class UmbCalendarElement extends LitElement {
           tick => tick.valueOf(),
           tick => html`<div class="tick">${tick.toLocaleString()}</div>`
         )}
+        <umb-variant-block
+          id="content-bar"
+          .scale=${this.scaleInverted}
+        ></umb-variant-block>
       </div>`;
   }
 }
