@@ -34,6 +34,12 @@ export class UmbCalendarElement extends LitElement {
     return result;
   }
 
+  public static addHours(date: Date, hours: number): Date {
+    const result = new Date(date);
+    result.setHours(result.getHours() + hours);
+    return result;
+  }
+
   protected static createScale(
     domain: Iterable<Date | NumberValue>,
     range: Iterable<number>
@@ -54,6 +60,9 @@ export class UmbCalendarElement extends LitElement {
   @property({ type: Object, attribute: false })
   endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
 
+  @property({ type: Number })
+  tickWidth = 70;
+
   @state()
   protected domain: Iterable<Date | NumberValue> = [
     this.startDate,
@@ -61,7 +70,7 @@ export class UmbCalendarElement extends LitElement {
   ];
 
   @state()
-  protected range: Iterable<number> = [1, 100];
+  protected range: Iterable<number> = [0, 100];
 
   @state()
   protected scale: ScaleTime<number, number, never> | null = null;
@@ -84,14 +93,27 @@ export class UmbCalendarElement extends LitElement {
     if (this.scale !== null) this.ticks = this.scale.ticks(number);
   }
 
+  public static checkIfTheSameDay(startDate: Date, endDate: Date) {
+    if (endDate < startDate)
+      throw new Error('you cannot end before you start!');
+    const deltaDates = endDate.valueOf() - startDate.valueOf();
+    const DAY_IN_MILISECONDS = 24 * 60 * 60 * 1000;
+    if (deltaDates < DAY_IN_MILISECONDS) return true;
+    return false;
+  }
+
   public zoomIn() {
-    if (this.endDate <= this.startDate) return;
+    if (this.endDate < this.startDate) return;
+    if (UmbCalendarElement.checkIfTheSameDay(this.startDate, this.endDate)) {
+      console.log('same day!');
+      this.startDate = UmbCalendarElement.addHours(this.startDate, 1);
+      this.endDate = UmbCalendarElement.addHours(this.endDate, -1);
+    }
     this.startDate = UmbCalendarElement.addDays(this.startDate, 1);
     this.endDate = UmbCalendarElement.addDays(this.endDate, -1);
   }
 
   public zoomOut() {
-    // if (this.endDate <= this.startDate) return;
     this.startDate = UmbCalendarElement.addDays(this.startDate, -1);
     this.endDate = UmbCalendarElement.addDays(this.endDate, 1);
   }
@@ -103,7 +125,7 @@ export class UmbCalendarElement extends LitElement {
     ) {
       this.domain = [this.startDate, this.endDate];
       this.defineScales();
-      this.calculateTicks(this.getBoundingClientRect().width / 120);
+      this.calculateTicks(this.getBoundingClientRect().width / this.tickWidth);
     }
 
     // if (changedProperties.has('scale') && this.scale !== null) {
@@ -116,18 +138,27 @@ export class UmbCalendarElement extends LitElement {
   }
 
   firstUpdated() {
-    this.calculateTicks(this.getBoundingClientRect().width / 120);
+    this.calculateTicks(this.getBoundingClientRect().width / this.tickWidth);
+  }
+
+  protected zoomOnWheel(e: WheelEvent) {
+    e.preventDefault();
+    if (e.deltaY > 0) {
+      this.zoomIn();
+      return;
+    }
+    this.zoomOut();
   }
 
   render() {
     return html` <button @click=${this.zoomIn}>ZOOM IN</button>
       <button @click=${this.zoomOut}>ZOOM OUT</button>
       <br />
-      ${this.startDate.toLocaleDateString()}
+      ${this.startDate.toLocaleString()}
       <br />
-      ${this.endDate.toLocaleDateString()}
+      ${this.endDate.toLocaleString()}
 
-      <div id="tickContainer">
+      <div id="tickContainer" @wheel=${this.zoomOnWheel}>
         ${repeat(
           this.ticks,
           tick => tick.valueOf(),
