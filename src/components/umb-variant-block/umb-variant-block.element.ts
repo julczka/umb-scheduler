@@ -2,6 +2,7 @@ import { property, state } from 'lit/decorators.js';
 import { ScaleTime } from 'd3-scale';
 import { html, css, LitElement } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 export class UmbVariantBlockElement extends LitElement {
   static styles = [
@@ -124,11 +125,18 @@ export class UmbVariantBlockElement extends LitElement {
     return html`<div id="content-bar" style=${styleMap(this.dynamicStyles())}>
       <div>
         ${this.publishDate?.toLocaleString()} <br />
-        ${this.unpublishDate?.toLocaleString()} in date<input
+        ${this.unpublishDate?.toLocaleString()} in date
+        <input
           type="datetime-local"
           @input=${this.changeStartDate}
+          .value=${this.publishDate?.toISOString()}
+          max=${ifDefined(this.unpublishDate?.toISOString())}
         />
-        out date<input type="datetime-local" @input=${this.changeEndDate} />
+        out date<input
+          type="datetime-local"
+          @input=${this.changeEndDate}
+          min=${ifDefined(this.publishDate?.toISOString())}
+        />
       </div>
     </div>`;
   }
