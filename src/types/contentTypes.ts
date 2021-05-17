@@ -3,13 +3,13 @@ export interface Publication {
   id: Id;
   start: Date | null;
   end: Date | null;
+  versionId: Id;
 }
 
 export interface Version {
   id: Id;
   name: String;
   author?: string;
-  publications: Publication[];
 }
 export interface Variant {
   id: Id;
