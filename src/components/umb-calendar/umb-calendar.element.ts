@@ -15,6 +15,12 @@ import {
 } from '../../utils/utils.js';
 import { store } from '../../redux/store.js';
 import { SchedulerState } from '../../types/appTypes.js';
+import {
+  shiftScaleDays,
+  zoomInDays,
+  zoomInHours,
+  zoomOutDays,
+} from '../../redux/actions.js';
 
 type Vector = 1 | -1;
 export class UmbCalendarElement extends connect(store)(LitElement) {
@@ -92,18 +98,15 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       if (checkIfTheSameDay(this.startDate, this.endDate)) {
         console.log('same day!');
         if (checkIfEqualDates(this.startDate, this.endDate)) return;
-        this.startDate = addHours(this.startDate, 1);
-        this.endDate = addHours(this.endDate, -1);
+        store.dispatch(zoomInHours());
       }
-      this.startDate = addDays(this.startDate, 1);
-      this.endDate = addDays(this.endDate, -1);
+      store.dispatch(zoomInDays());
     }
   }
 
   public zoomOut() {
     if (this.startDate && this.endDate) {
-      this.startDate = addDays(this.startDate, -1);
-      this.endDate = addDays(this.endDate, 1);
+      store.dispatch(zoomOutDays());
     }
   }
 
@@ -185,37 +188,38 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       }
 
       case 'WEEK': {
-        this.shiftScaleDays(vector * 1);
+        store.dispatch(shiftScaleDays(vector * 1));
+        // this.shiftScaleDays(vector * 1);
         break;
       }
 
       case 'TWO_WEEKS': {
-        this.shiftScaleDays(vector * 3);
+        store.dispatch(shiftScaleDays(vector * 3));
         break;
       }
 
       case 'MONTH': {
-        this.shiftScaleDays(vector * 7);
+        store.dispatch(shiftScaleDays(vector * 7));
         break;
       }
 
       case 'QUATER': {
-        this.shiftScaleDays(vector * 14);
+        store.dispatch(shiftScaleDays(vector * 14));
         break;
       }
 
       case 'HALF_YEAR': {
-        this.shiftScaleDays(vector * 30);
+        store.dispatch(shiftScaleDays(vector * 30));
         break;
       }
 
       case 'YEAR': {
-        this.shiftScaleDays(vector * 90);
+        store.dispatch(shiftScaleDays(vector * 90));
         break;
       }
 
       default: {
-        this.shiftScaleDays(vector * 7);
+        store.dispatch(shiftScaleDays(vector * 7));
         break;
       }
     }
