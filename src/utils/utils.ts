@@ -1,3 +1,8 @@
+// eslint-disable-next-line import/extensions
+import { NumberValue, scaleLinear, scaleTime } from 'd3-scale';
+// eslint-disable-next-line import/extensions
+import type { ScaleRange } from '../types/appTypes';
+
 export const addDays = (date: Date, days: number): Date => {
   const result = new Date(date);
   result.setDate(result.getDate() + days);
@@ -20,19 +25,6 @@ export const MILISECONDS = {
   HALF_YEAR: 6 * 5 * 7 * 24 * 60 * 60 * 1000,
   YEAR: 12 * 5 * 7 * 24 * 60 * 60 * 1000,
 };
-
-export interface Miliseconds {
-  HOUR: number;
-  DAY: number;
-  WEEK: number;
-  TWO_WEEKS: number;
-  MONTH: number;
-  QUATER: number;
-  HALF_YEAR: number;
-  YEAR: number;
-}
-
-export type ScaleRange = keyof Miliseconds;
 
 export const deltaDates = (dateA: Date, dateB: Date) =>
   dateA.valueOf() - dateB.valueOf();
@@ -64,3 +56,13 @@ export const checkIfEqualDates = (startDate: Date, endDate: Date) => {
   if (endDate.valueOf() === startDate.valueOf()) return true;
   return false;
 };
+
+export const createScale = (
+  domain: Iterable<Date | NumberValue>,
+  range: Iterable<number>
+) => scaleTime().domain(domain).nice().rangeRound(range).clamp(true);
+
+export const createReverseScale = (
+  domain: Iterable<number>,
+  range: Iterable<number>
+) => scaleLinear().domain(domain).rangeRound(range).clamp(true);

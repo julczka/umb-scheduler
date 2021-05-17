@@ -1,24 +1,23 @@
 /* eslint-disable no-console */
-import { property, state } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import { html, css, LitElement } from 'lit';
-import {
-  NumberValue,
-  ScaleLinear,
-  scaleLinear,
-  ScaleTime,
-  scaleTime,
-} from 'd3-scale';
+import { NumberValue, ScaleLinear, ScaleTime } from 'd3-scale';
 import { repeat } from 'lit/directives/repeat.js';
+import { connect } from 'pwa-helpers';
 import {
   addDays,
   addHours,
   checkIfEqualDates,
   checkIfTheSameDay,
+  createReverseScale,
+  createScale,
   deltaDatesRange,
 } from '../../utils/utils.js';
+import { store } from '../../redux/store.js';
+import { SchedulerState } from '../../types/appTypes.js';
 
 type Vector = 1 | -1;
-export class UmbCalendarElement extends LitElement {
+export class UmbCalendarElement extends connect(store)(LitElement) {
   static styles = [
     css`
       #tickContainer {
@@ -36,58 +35,51 @@ export class UmbCalendarElement extends LitElement {
     `,
   ];
 
-  protected static createScale(
-    domain: Iterable<Date | NumberValue>,
-    range: Iterable<number>
-  ) {
-    return scaleTime().domain(domain).nice().rangeRound(range).clamp(true);
-  }
-
-  protected static createReverseScale(
-    domain: Iterable<number>,
-    range: Iterable<number>
-  ) {
-    return scaleLinear().domain(domain).rangeRound(range).clamp(true);
+  stateChanged(state: SchedulerState) {
+    this.startDate = state.startDate;
+    this.endDate = state.endDate;
   }
 
   @property({ type: Object, attribute: false })
-  startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  startDate: Date | null = null;
 
   @property({ type: Object, attribute: false })
-  endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+  endDate: Date | null = null;
 
   @property({ type: Number })
   tickWidth = 70;
 
-  @state()
+  @property()
   protected domain: Iterable<Date | NumberValue> = [
-    this.startDate,
-    this.endDate,
+    this.startDate ? this.startDate : 0,
+    this.endDate ? this.endDate : 0,
   ];
 
-  @state()
+  @property()
   protected range: Iterable<number> = [0, 100];
 
-  @state()
+  @property()
   protected scale: ScaleTime<number, number, never> | null = null;
 
-  @state()
+  @property()
   protected scaleInverted: ScaleLinear<number, number, never> | null = null;
 
-  @state()
+  @property()
   protected ticks: Date[] = [];
 
-  @state()
+  @property()
   protected scaleRange = '';
 
   protected defineScales() {
-    this.scale = UmbCalendarElement.createScale(this.domain, this.range);
-    this.scaleInverted = UmbCalendarElement.createReverseScale(this.range, [
-      this.startDate.valueOf(),
-      this.endDate.valueOf(),
-    ]);
-    this.scaleRange = deltaDatesRange(this.startDate, this.endDate);
-    console.log(this.scaleRange);
+    if (this.startDate && this.endDate) {
+      this.scale = createScale(this.domain, this.range);
+      this.scaleInverted = createReverseScale(this.range, [
+        this.startDate.valueOf(),
+        this.endDate.valueOf(),
+      ]);
+      this.scaleRange = deltaDatesRange(this.startDate, this.endDate);
+      console.log(this.scaleRange);
+    }
   }
 
   protected calculateTicks(number: number) {
@@ -95,20 +87,24 @@ export class UmbCalendarElement extends LitElement {
   }
 
   public zoomIn() {
-    if (this.endDate < this.startDate) return;
-    if (checkIfTheSameDay(this.startDate, this.endDate)) {
-      console.log('same day!');
-      if (checkIfEqualDates(this.startDate, this.endDate)) return;
-      this.startDate = addHours(this.startDate, 1);
-      this.endDate = addHours(this.endDate, -1);
+    if (this.startDate && this.endDate) {
+      if (this.endDate < this.startDate) return;
+      if (checkIfTheSameDay(this.startDate, this.endDate)) {
+        console.log('same day!');
+        if (checkIfEqualDates(this.startDate, this.endDate)) return;
+        this.startDate = addHours(this.startDate, 1);
+        this.endDate = addHours(this.endDate, -1);
+      }
+      this.startDate = addDays(this.startDate, 1);
+      this.endDate = addDays(this.endDate, -1);
     }
-    this.startDate = addDays(this.startDate, 1);
-    this.endDate = addDays(this.endDate, -1);
   }
 
   public zoomOut() {
-    this.startDate = addDays(this.startDate, -1);
-    this.endDate = addDays(this.endDate, 1);
+    if (this.startDate && this.endDate) {
+      this.startDate = addDays(this.startDate, -1);
+      this.endDate = addDays(this.endDate, 1);
+    }
   }
 
   willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
@@ -116,7 +112,9 @@ export class UmbCalendarElement extends LitElement {
       changedProperties.has('startDate') ||
       changedProperties.has('endDate')
     ) {
-      this.domain = [this.startDate, this.endDate];
+      if (this.startDate && this.endDate) {
+        this.domain = [this.startDate, this.endDate];
+      }
       this.defineScales();
       this.calculateTicks(this.getBoundingClientRect().width / this.tickWidth);
     }
@@ -161,13 +159,17 @@ export class UmbCalendarElement extends LitElement {
   }
 
   protected shiftScaleHours(hours: number): void {
-    this.startDate = addHours(this.startDate, hours);
-    this.endDate = addHours(this.endDate, hours);
+    if (this.startDate && this.endDate) {
+      this.startDate = addHours(this.startDate, hours);
+      this.endDate = addHours(this.endDate, hours);
+    }
   }
 
   protected shiftScaleDays(days: number): void {
-    this.startDate = addDays(this.startDate, days);
-    this.endDate = addDays(this.endDate, days);
+    if (this.startDate && this.endDate) {
+      this.startDate = addDays(this.startDate, days);
+      this.endDate = addDays(this.endDate, days);
+    }
   }
 
   protected shiftScale(vector: Vector) {
@@ -233,9 +235,9 @@ export class UmbCalendarElement extends LitElement {
       <button @click=${this.prev}>PREV</button>
       <button @click=${this.next}>NEXT</button>
       <br />
-      ${this.startDate.toLocaleString()}
+      ${this.startDate ? this.startDate.toLocaleString() : ''}
       <br />
-      ${this.endDate.toLocaleString()}
+      ${this.endDate ? this.endDate.toLocaleString() : ''}
 
       <div id="tickContainer" @wheel=${this.handleWheelEvent}>
         ${repeat(
