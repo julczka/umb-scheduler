@@ -129,7 +129,6 @@ export class UmbVariantBlockElement extends LitElement {
         <input
           type="datetime-local"
           @input=${this.changeStartDate}
-          .value=${this.publishDate?.toISOString()}
           max=${ifDefined(this.unpublishDate?.toISOString())}
         />
         out date<input

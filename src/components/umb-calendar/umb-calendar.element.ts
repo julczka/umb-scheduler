@@ -141,13 +141,23 @@ export class UmbCalendarElement extends LitElement {
     this.calculateTicks(this.getBoundingClientRect().width / this.tickWidth);
   }
 
-  protected zoomOnWheel(e: WheelEvent) {
+  protected handleWheelEvent(e: WheelEvent) {
     e.preventDefault();
-    if (e.deltaY > 0) {
-      this.zoomIn();
-      return;
+    console.log(e);
+    if (e.deltaX === 0) {
+      if (e.deltaY > 0) {
+        this.zoomIn();
+        return;
+      }
+      this.zoomOut();
     }
-    this.zoomOut();
+    if (e.deltaY === 0) {
+      if (e.deltaX > 0) {
+        this.next();
+        return;
+      }
+      this.prev();
+    }
   }
 
   protected shiftScaleHours(hours: number): void {
@@ -227,7 +237,7 @@ export class UmbCalendarElement extends LitElement {
       <br />
       ${this.endDate.toLocaleString()}
 
-      <div id="tickContainer" @wheel=${this.zoomOnWheel}>
+      <div id="tickContainer" @wheel=${this.handleWheelEvent}>
         ${repeat(
           this.ticks,
           tick => tick.valueOf(),
