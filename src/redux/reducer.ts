@@ -6,6 +6,7 @@ import {
   addHours,
   createReverseScale,
   createScale,
+  deltaDatesRange,
 } from '../utils/utils.js';
 import {
   ZOOM_OUT_HOURS,
@@ -115,4 +116,10 @@ export const scaleSelector = createSelector(
 export const reversedScaleSelector = createSelector(
   [getRange, reverseScaleRange],
   (range, domain) => createReverseScale(range, domain)
+);
+
+export const scaleRangeSelector = createSelector(
+  getStartDate,
+  getEndDate,
+  (startDate, endDate) => deltaDatesRange(startDate, endDate)
 );

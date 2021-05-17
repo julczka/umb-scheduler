@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { property } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
 import { html, css, LitElement } from 'lit';
 import { ScaleLinear, ScaleTime } from 'd3-scale';
 import { repeat } from 'lit/directives/repeat.js';
@@ -14,7 +14,11 @@ import {
   zoomInHours,
   zoomOutDays,
 } from '../../redux/actions.js';
-import { reversedScaleSelector, scaleSelector } from '../../redux/reducer.js';
+import {
+  reversedScaleSelector,
+  scaleRangeSelector,
+  scaleSelector,
+} from '../../redux/reducer.js';
 
 type Vector = 1 | -1;
 export class UmbCalendarElement extends connect(store)(LitElement) {
@@ -40,49 +44,29 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     this.endDate = schedulerState.endDate;
     this.scale = scaleSelector(schedulerState);
     this.scaleInverted = reversedScaleSelector(schedulerState);
+    this.scaleRange = scaleRangeSelector(schedulerState);
   }
 
-  @property({ type: Object, attribute: false })
-  startDate: Date | null = null;
+  @state()
+  protected startDate: Date | null = null;
 
-  @property({ type: Object, attribute: false })
-  endDate: Date | null = null;
+  @state()
+  protected endDate: Date | null = null;
 
   @property({ type: Number })
   tickWidth = 70;
 
-  // @property()
-  // protected domain: Iterable<Date | NumberValue> = [
-  //   this.startDate ? this.startDate : 0,
-  //   this.endDate ? this.endDate : 0,
-  // ];
-
-  // @property()
-  // protected range: Iterable<number> = [0, 100];
-
-  @property()
+  @state()
   protected scale: ScaleTime<number, number, never> | null = null;
 
-  @property()
+  @state()
   protected scaleInverted: ScaleLinear<number, number, never> | null = null;
 
-  @property()
+  @state()
   protected ticks: Date[] = [];
 
-  @property()
+  @state()
   protected scaleRange = '';
-
-  // protected defineScales() {
-  //   if (this.startDate && this.endDate) {
-  //     this.scale = createScale(this.domain, this.range);
-  //     this.scaleInverted = createReverseScale(this.range, [
-  //       this.startDate.valueOf(),
-  //       this.endDate.valueOf(),
-  //     ]);
-  //     this.scaleRange = deltaDatesRange(this.startDate, this.endDate);
-  //     console.log(this.scaleRange);
-  //   }
-  // }
 
   protected calculateTicks(number: number) {
     if (this.scale !== null) this.ticks = this.scale.ticks(number);
@@ -111,17 +95,12 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       changedProperties.has('startDate') ||
       changedProperties.has('endDate')
     ) {
-      // if (this.startDate && this.endDate) {
-      //   this.domain = [this.startDate, this.endDate];
-      // }
-      // this.defineScales();
       this.calculateTicks(this.getBoundingClientRect().width / this.tickWidth);
     }
   }
 
   connectedCallback() {
     super.connectedCallback();
-    // this.defineScales();
     window.addEventListener('resize', () => {
       this.calculateTicks(this.getBoundingClientRect().width / this.tickWidth);
     });
@@ -157,20 +136,6 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     }
   }
 
-  // protected shiftScaleHours(hours: number): void {
-  //   if (this.startDate && this.endDate) {
-  //     this.startDate = addHours(this.startDate, hours);
-  //     this.endDate = addHours(this.endDate, hours);
-  //   }
-  // }
-
-  // protected shiftScaleDays(days: number): void {
-  //   if (this.startDate && this.endDate) {
-  //     this.startDate = addDays(this.startDate, days);
-  //     this.endDate = addDays(this.endDate, days);
-  //   }
-  // }
-
   protected shiftScale(vector: Vector) {
     switch (this.scaleRange) {
       case 'HOUR': {
@@ -185,7 +150,6 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
 
       case 'WEEK': {
         store.dispatch(shiftScaleDays(vector * 1));
-        // this.shiftScaleDays(vector * 1);
         break;
       }
 
