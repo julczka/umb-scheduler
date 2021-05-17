@@ -38,7 +38,11 @@
   "license": "MIT",
   "dependencies": {
     "d3-scale": "^3.3.0",
-    "lit": "^2.0.0-rc.2"
+    "lit": "^2.0.0-rc.2",
+    "nanoid": "^3.1.23",
+    "pwa-helpers": "^0.9.1",
+    "redux": "^4.1.0",
+    "reselect": "^4.0.0"
   },
   "eslintConfig": {
     "parser": "@typescript-eslint/parser",
