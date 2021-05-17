@@ -1,6 +1,12 @@
 import { AnyAction } from 'redux';
+import { createSelector } from 'reselect';
 import { SchedulerState } from '../SchedulerState.js';
-import { addDays, addHours } from '../utils/utils.js';
+import {
+  addDays,
+  addHours,
+  createReverseScale,
+  createScale,
+} from '../utils/utils.js';
 import {
   ZOOM_OUT_HOURS,
   ZOOM_IN_HOURS,
@@ -81,3 +87,32 @@ export const reducer = (state = INITIAL_STATE, action: AnyAction) => {
       return state;
   }
 };
+
+const getStartDate = (state: SchedulerState) => state.startDate;
+const getEndDate = (state: SchedulerState) => state.endDate;
+const getRange = (state: SchedulerState) => state.range;
+
+const getStartDateValue = (state: SchedulerState) => state.startDate.valueOf();
+const getEndDateValue = (state: SchedulerState) => state.endDate.valueOf();
+
+export const timeScaleDomain = createSelector(
+  getStartDate,
+  getEndDate,
+  (startDate, endDate) => [startDate, endDate]
+);
+
+export const reverseScaleRange = createSelector(
+  getStartDateValue,
+  getEndDateValue,
+  (startDateValue, endDateValue) => [startDateValue, endDateValue]
+);
+
+export const scaleSelector = createSelector(
+  [getRange, timeScaleDomain],
+  (range, domain) => createScale(domain, range)
+);
+
+export const reversedScaleSelector = createSelector(
+  [getRange, reverseScaleRange],
+  (range, domain) => createReverseScale(range, domain)
+);
