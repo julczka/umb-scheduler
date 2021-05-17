@@ -14,8 +14,10 @@ import {
   addHours,
   checkIfEqualDates,
   checkIfTheSameDay,
+  deltaDatesRange,
 } from '../../utils/utils.js';
 
+type Vector = 1 | -1;
 export class UmbCalendarElement extends LitElement {
   static styles = [
     css`
@@ -75,12 +77,17 @@ export class UmbCalendarElement extends LitElement {
   @state()
   protected ticks: Date[] = [];
 
-  public defineScales() {
+  @state()
+  protected scaleRange = '';
+
+  protected defineScales() {
     this.scale = UmbCalendarElement.createScale(this.domain, this.range);
     this.scaleInverted = UmbCalendarElement.createReverseScale(this.range, [
       this.startDate.valueOf(),
       this.endDate.valueOf(),
     ]);
+    this.scaleRange = deltaDatesRange(this.startDate, this.endDate);
+    console.log(this.scaleRange);
   }
 
   protected calculateTicks(number: number) {
@@ -143,14 +150,71 @@ export class UmbCalendarElement extends LitElement {
     this.zoomOut();
   }
 
+  protected shiftScaleHours(hours: number): void {
+    this.startDate = addHours(this.startDate, hours);
+    this.endDate = addHours(this.endDate, hours);
+  }
+
+  protected shiftScaleDays(days: number): void {
+    this.startDate = addDays(this.startDate, days);
+    this.endDate = addDays(this.endDate, days);
+  }
+
+  protected shiftScale(vector: Vector) {
+    switch (this.scaleRange) {
+      case 'HOUR': {
+        this.shiftScaleHours(vector * 1);
+        break;
+      }
+
+      case 'DAY': {
+        this.shiftScaleHours(vector * 12);
+        break;
+      }
+
+      case 'WEEK': {
+        this.shiftScaleDays(vector * 1);
+        break;
+      }
+
+      case 'TWO_WEEKS': {
+        this.shiftScaleDays(vector * 3);
+        break;
+      }
+
+      case 'MONTH': {
+        this.shiftScaleDays(vector * 7);
+        break;
+      }
+
+      case 'QUATER': {
+        this.shiftScaleDays(vector * 14);
+        break;
+      }
+
+      case 'HALF_YEAR': {
+        this.shiftScaleDays(vector * 30);
+        break;
+      }
+
+      case 'YEAR': {
+        this.shiftScaleDays(vector * 90);
+        break;
+      }
+
+      default: {
+        this.shiftScaleDays(vector * 7);
+        break;
+      }
+    }
+  }
+
   protected next() {
-    this.startDate = addDays(this.startDate, 7);
-    this.endDate = addDays(this.endDate, 7);
+    this.shiftScale(1);
   }
 
   protected prev() {
-    this.startDate = addDays(this.startDate, -7);
-    this.endDate = addDays(this.endDate, -7);
+    this.shiftScale(-1);
   }
 
   render() {

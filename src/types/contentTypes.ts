@@ -20,7 +20,7 @@ export interface Variant {
   publications: Publication[];
 }
 
-export interface Content {
+export interface Page {
   id: Id;
   pageTitle: String;
   icon: String;
