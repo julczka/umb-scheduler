@@ -15,6 +15,7 @@ import {
   ZOOM_IN_DAYS,
   SHIFT_SCALE_DAYS,
   SHIFT_SCALE_HOURS,
+  CREATE_PUBLICATION,
 } from './actions.js';
 import { Page, pageInitialState } from '../Page';
 import { Variant1, Variant2 } from '../Variant';
@@ -107,8 +108,19 @@ export const reducer = (state = INITIAL_STATE, action: AnyAction) => {
         ...state,
         scheduler: {
           ...state.scheduler,
-          startDate: addDays(state.scheduler.startDate, action.hours),
-          endDate: addDays(state.scheduler.endDate, action.hours),
+          startDate: addHours(state.scheduler.startDate, action.hours),
+          endDate: addHours(state.scheduler.endDate, action.hours),
+        },
+      };
+    }
+
+    case CREATE_PUBLICATION: {
+      console.log(action);
+      return {
+        ...state,
+        page: {
+          ...state.page,
+          publications: [...state.page.publications, action.publication],
         },
       };
     }
@@ -121,6 +133,17 @@ export const reducer = (state = INITIAL_STATE, action: AnyAction) => {
 const getStartDate = (state: AppState) => state.scheduler.startDate;
 const getEndDate = (state: AppState) => state.scheduler.endDate;
 const getRange = (state: AppState) => state.scheduler.range;
+
+export const getVariantbyId = (state: AppState, variantId: string) =>
+  state.page.variants.find(variant => variant.id === variantId);
+export const getVersionbyId = (
+  state: AppState,
+  variantId: string,
+  versionId: string,
+) =>
+  state.page.variants
+    .find(variant => variant.id === variantId)
+    ?.versions.find(version => version.id === versionId);
 
 const getStartDateValue = (state: AppState) =>
   state.scheduler.startDate.valueOf();

@@ -8,6 +8,7 @@ import { connect } from 'pwa-helpers';
 import { checkIfEqualDates, checkIfTheSameDay } from '../../utils/utils.js';
 import { store } from '../../redux/store.js';
 import {
+  createPublication,
   shiftScaleDays,
   shiftScaleHours,
   zoomInDays,
@@ -20,6 +21,8 @@ import {
   scaleRangeSelector,
   scaleSelector,
 } from '../../redux/reducer.js';
+import { Publication } from '../../types/contentTypes.js';
+import { UmbTickElement } from '../umb-tick/umb-tick.element.js';
 
 type Vector = 1 | -1;
 export class UmbCalendarElement extends connect(store)(LitElement) {
@@ -32,13 +35,22 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       }
 
       .tick {
-        flex: 1;
-        font-size: 9px;
-        height: 30vh;
-        border: 1px solid red;
       }
     `,
   ];
+
+  // eslint-disable-next-line class-methods-use-this
+  protected createPublication(e: Event) {
+    const tick = e.target as UmbTickElement;
+    const newPublication: Publication = {
+      start: tick.date,
+      end: null,
+      variantId: 'id',
+      versionId: 'id',
+      id: 'dsjh',
+    };
+    store.dispatch(createPublication(newPublication));
+  }
 
   stateChanged(schedulerState: AppState) {
     this.startDate = schedulerState.scheduler.startDate;
@@ -46,10 +58,14 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     this.scale = scaleSelector(schedulerState);
     this.scaleInverted = reversedScaleSelector(schedulerState);
     this.scaleRange = scaleRangeSelector(schedulerState);
+    this.publications = schedulerState.page.publications;
   }
 
   @state()
   protected startDate: Date | null = null;
+
+  @state()
+  protected publications: Publication[] = [];
 
   @state()
   protected endDate: Date | null = null;
@@ -208,12 +224,19 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         ${repeat(
           this.ticks,
           tick => tick.valueOf(),
-          tick => html`<div class="tick">${tick.toLocaleString()}</div>`,
+          tick =>
+            html`<umb-tick
+              @click=${this.createPublication}
+              .date=${tick}
+            ></umb-tick>`,
         )}
-        <umb-variant-block
-          id="content-bar"
-          .scale=${this.scaleInverted}
-        ></umb-variant-block>
+        ${this.publications.map(
+          publication => html`<umb-variant-block
+            .publishDate=${publication.start}
+            .unpublishDate=${publication.end}
+            .scale=${this.scaleInverted}
+          ></umb-variant-block>`,
+        )}
       </div>`;
   }
 }

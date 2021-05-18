@@ -4,6 +4,7 @@ export interface Publication {
   start: Date | null;
   end: Date | null;
   versionId: Id;
+  variantId: Id;
 }
 
 export interface Version {
@@ -17,7 +18,6 @@ export interface Variant {
   language: String;
   mandatory: Boolean;
   versions: Version[];
-  publications?: Publication[];
 }
 
 export interface Page {
@@ -25,4 +25,5 @@ export interface Page {
   pageTitle: String;
   icon: String;
   variants: Variant[];
+  publications?: Publication[];
 }

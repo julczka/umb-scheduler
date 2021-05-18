@@ -1,9 +1,12 @@
+import { Publication } from '../types/contentTypes';
+
 export const ZOOM_IN_HOURS = 'ZOOM_IN_HOURS';
 export const ZOOM_OUT_HOURS = 'ZOOM_OUT_HOURS';
 export const ZOOM_IN_DAYS = 'ZOOM_IN_DAYS';
 export const ZOOM_OUT_DAYS = 'ZOOM_OUT_DAYS';
 export const SHIFT_SCALE_DAYS = 'SHIFT_SCALE_DAYS';
 export const SHIFT_SCALE_HOURS = 'SHIFT_SCALE_HOURS';
+export const CREATE_PUBLICATION = 'CREATE_PUBLICATION';
 
 export const zoomInHours = () => ({
   type: ZOOM_IN_HOURS,
@@ -29,4 +32,9 @@ export const shiftScaleDays = (days: number) => ({
 export const shiftScaleHours = (hours: number) => ({
   type: SHIFT_SCALE_HOURS,
   hours,
+});
+
+export const createPublication = (publication: Publication) => ({
+  type: CREATE_PUBLICATION,
+  publication,
 });

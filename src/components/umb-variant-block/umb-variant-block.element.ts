@@ -29,14 +29,14 @@ export class UmbVariantBlockElement extends LitElement {
   ];
 
   @property({ type: Object, attribute: false })
-  publishDate: Date | null = new Date('2021-05-17, 00:00');
+  publishDate: Date | null = null;
 
   @property({ type: Object, attribute: false })
-  unpublishDate: Date | null = new Date('2021-06-22, 00:00');
+  unpublishDate: Date | null = null;
 
   static invertDate(
     scale: ScaleTime<number, number, never>,
-    date: number
+    date: number,
   ): number {
     return scale.invert(date) as any;
   }
@@ -50,27 +50,39 @@ export class UmbVariantBlockElement extends LitElement {
       const width =
         UmbVariantBlockElement.invertDate(
           this.scale,
-          this.unpublishDate.valueOf()
+          this.unpublishDate.valueOf(),
         ) -
         UmbVariantBlockElement.invertDate(
           this.scale,
-          this.publishDate.valueOf()
+          this.publishDate.valueOf(),
         );
       console.log(width);
       return width;
     }
+
+    if (
+      this.scale !== null &&
+      this.unpublishDate === null &&
+      this.publishDate !== null
+    ) {
+      const width =
+        100 -
+        UmbVariantBlockElement.invertDate(
+          this.scale,
+          this.publishDate.valueOf(),
+        );
+      console.log(width);
+      return width;
+    }
+
     return 0;
   }
 
   private calculateTransform() {
-    if (
-      this.scale !== null &&
-      this.unpublishDate !== null &&
-      this.publishDate !== null
-    ) {
+    if (this.scale !== null && this.publishDate !== null) {
       const transform = UmbVariantBlockElement.invertDate(
         this.scale,
-        this.publishDate.valueOf()
+        this.publishDate.valueOf(),
       );
       console.log(transform);
       return transform;
@@ -80,6 +92,11 @@ export class UmbVariantBlockElement extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
+    this.width = this.calculateWidth();
+    this.transform = this.calculateTransform();
+  }
+
+  firstUpdated() {
     this.width = this.calculateWidth();
     this.transform = this.calculateTransform();
   }
