@@ -16,6 +16,7 @@ import {
   SHIFT_SCALE_DAYS,
   SHIFT_SCALE_HOURS,
   CREATE_PUBLICATION,
+  UPDATE_PUBLICATION,
 } from './actions.js';
 import { Page, pageInitialState } from '../Page';
 import { Variant1, Variant2 } from '../Variant';
@@ -115,12 +116,27 @@ export const reducer = (state = INITIAL_STATE, action: AnyAction) => {
     }
 
     case CREATE_PUBLICATION: {
-      console.log(action);
+      console.log(action.type);
       return {
         ...state,
         page: {
           ...state.page,
           publications: [...state.page.publications, action.publication],
+        },
+      };
+    }
+
+    case UPDATE_PUBLICATION: {
+      console.log(action.type);
+      return {
+        ...state,
+        page: {
+          ...state.page,
+          publications: state.page.publications.map(publication =>
+            publication.id === action.publicationId
+              ? action.publication
+              : publication,
+          ),
         },
       };
     }
@@ -136,6 +152,7 @@ const getRange = (state: AppState) => state.scheduler.range;
 
 export const getVariantbyId = (state: AppState, variantId: string) =>
   state.page.variants.find(variant => variant.id === variantId);
+
 export const getVersionbyId = (
   state: AppState,
   variantId: string,
@@ -147,7 +164,14 @@ export const getVersionbyId = (
 
 const getStartDateValue = (state: AppState) =>
   state.scheduler.startDate.valueOf();
+
 const getEndDateValue = (state: AppState) => state.scheduler.endDate.valueOf();
+
+export const getVariants = (state: AppState) => state.page.variants;
+
+export const getVariantsSelector = createSelector([getVariants], variants => [
+  ...variants,
+]);
 
 export const timeScaleDomain = createSelector(
   getStartDate,
@@ -176,16 +200,3 @@ export const scaleRangeSelector = createSelector(
   getEndDate,
   (startDate, endDate) => deltaDatesRange(startDate, endDate),
 );
-
-// class Whatever {
-//   getStartDate (state: AppState) { return state.scheduler.startDate};
-//   getEndDate (state: AppState) {return state.scheduler.endDate};
-
-// get scaleSth() {
-//   return createSelector(
-//     this.getStartDate,
-//     this.getEndDate,
-//     (startDate, endDate) => deltaDatesRange(startDate, endDate),
-// }
-
-// }

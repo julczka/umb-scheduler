@@ -2,21 +2,21 @@ import type { Id, Version } from './types/contentTypes';
 import { generateId } from './utils/utils';
 
 export class Variant implements Variant {
-  id: String;
+  id: string;
 
-  name: String;
+  name: string;
 
-  language: String;
+  language: string;
 
-  mandatory: Boolean;
+  mandatory: boolean;
 
   versions: Version[];
 
   constructor(
     id: Id,
-    name: String,
-    language: String,
-    mandatory: Boolean,
+    name: string,
+    language: string,
+    mandatory: boolean,
     versions: Version[],
   ) {
     this.id = id;
@@ -34,17 +34,17 @@ const versionA: Version = {
 
 const versionB: Version = {
   id: generateId(),
-  name: 'Version A',
+  name: 'Version B',
 };
 
 const versionC: Version = {
   id: generateId(),
-  name: 'Version A',
+  name: 'Version C',
 };
 
 const versionD: Version = {
   id: generateId(),
-  name: 'Version A',
+  name: 'Version D',
 };
 
 export const Variant1: Variant = {

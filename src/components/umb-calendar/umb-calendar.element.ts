@@ -25,7 +25,7 @@ import {
   scaleRangeSelector,
   scaleSelector,
 } from '../../redux/reducer.js';
-import { Publication } from '../../types/contentTypes.js';
+import { Publication, Variant } from '../../types/contentTypes.js';
 import { UmbTickElement } from '../umb-tick/umb-tick.element.js';
 
 type Vector = 1 | -1;
@@ -60,10 +60,14 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     this.scaleInverted = reversedScaleSelector(schedulerState);
     this.scaleRange = scaleRangeSelector(schedulerState);
     this.publications = schedulerState.page.publications;
+    this.variants = schedulerState.page.variants;
   }
 
   @state()
   protected startDate: Date | null = null;
+
+  @state()
+  protected variants: Variant[] = [];
 
   @state()
   protected publications: Publication[] = [];
@@ -117,8 +121,14 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     }
   }
 
+  constructor() {
+    super();
+    this.addEventListener('close-popup', this.closePopUp);
+  }
+
   connectedCallback() {
     super.connectedCallback();
+
     window.addEventListener('resize', () => {
       this.calculateTicks(this.getBoundingClientRect().width / this.tickWidth);
     });
@@ -137,7 +147,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
 
   protected handleWheelEvent(e: WheelEvent) {
     e.preventDefault();
-    console.log(e);
+
     if (e.deltaX === 0) {
       if (e.deltaY > 0) {
         this.zoomIn();
@@ -211,8 +221,24 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     this.shiftScale(-1);
   }
 
+  @state()
+  hasPopup: boolean = false;
+
+  // eslint-disable-next-line class-methods-use-this
+  public openPopUp() {
+    this.hasPopup = true;
+  }
+
+  public closePopUp() {
+    this.hasPopup = false;
+  }
+
   render() {
-    return html` <button @click=${this.zoomIn}>ZOOM IN</button>
+    return html`${this.hasPopup
+        ? html`<umb-publication-popup
+            .variants=${this.variants}
+          ></umb-publication-popup>`
+        : ''} <button @click=${this.zoomIn}>ZOOM IN</button>
       <button @click=${this.zoomOut}>ZOOM OUT</button>
       <button @click=${this.prev}>PREV</button>
       <button @click=${this.next}>NEXT</button>
@@ -226,18 +252,20 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
           this.ticks,
           tick => tick.valueOf(),
           tick =>
-            html`<umb-tick
-              @click=${this.createPublication}
-              .date=${tick}
-            ></umb-tick>`,
+            html`<umb-tick @click=${this.openPopUp} .date=${tick}></umb-tick>`,
         )}
-        ${this.publications.map(
+        ${repeat(
+          this.publications,
+          publication => publication.id,
           publication => html`<umb-publication
-            .publishDate=${publication.start}
-            .unpublishDate=${publication.end}
+            .id=${publication.id}
             .scale=${this.scaleInverted}
           ></umb-publication>`,
         )}
       </div>`;
   }
 }
+
+// .publishDate=${publication.start}
+//             .unpublishDate=${publication.end}
+//             .publication=${publication}

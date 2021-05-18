@@ -1,4 +1,4 @@
-export type Id = String;
+export type Id = string;
 export interface Publication {
   id: Id;
   start: Date | null;
@@ -9,21 +9,21 @@ export interface Publication {
 
 export interface Version {
   id: Id;
-  name: String;
+  name: string;
   author?: string;
 }
 export interface Variant {
   id: Id;
-  name?: String;
-  language: String;
-  mandatory: Boolean;
+  name?: string;
+  language: string;
+  mandatory: boolean;
   versions: Version[];
 }
 
 export interface Page {
   id: Id;
-  pageTitle: String;
-  icon: String;
+  pageTitle: string;
+  icon: string;
   variants: Variant[];
   publications?: Publication[];
 }

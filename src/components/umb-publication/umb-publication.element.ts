@@ -1,9 +1,15 @@
 import { property, state } from 'lit/decorators.js';
 import { ScaleTime } from 'd3-scale';
 import { html, css, LitElement } from 'lit';
+import { connect } from 'pwa-helpers';
 import { styleMap } from 'lit/directives/style-map.js';
+import { Publication, Variant, Version } from '../../types/contentTypes';
+import { store } from '../../redux/store';
+import { AppState } from '../../redux/reducer';
 
-export class UmbPublicationElement extends LitElement {
+// TODO validate: Option and Variant must be chosen before dates!
+
+export class UmbPublicationElement extends connect(store)(LitElement) {
   static styles = [
     css`
       :host {
@@ -27,11 +33,35 @@ export class UmbPublicationElement extends LitElement {
     `,
   ];
 
-  @property({ type: Object, attribute: false })
-  publishDate: Date | null = null;
+  stateChanged(appState: AppState) {
+    const pub = appState.page.publications.find(
+      p => p.id === this.id,
+    ) as Publication;
+    this.startDate = pub.start;
+    this.endDate = pub.end;
+    this.variant = appState.page.variants.find(
+      v => v.id === pub.variantId,
+    ) as Variant;
+    this.version = appState.page.variants
+      .find(v => v.id === pub.variantId)
+      ?.versions.find(v => v.id === pub.versionId) as Version;
+    this.requestUpdate();
+  }
 
-  @property({ type: Object, attribute: false })
-  unpublishDate: Date | null = null;
+  @property()
+  id = '';
+
+  @state()
+  startDate: Date | null = null;
+
+  @state()
+  endDate: Date | null = null;
+
+  @state()
+  variant: Variant | null = null;
+
+  @state()
+  version: Version | null = null;
 
   static invertDate(
     scale: ScaleTime<number, number, never>,
@@ -43,33 +73,24 @@ export class UmbPublicationElement extends LitElement {
   private calculateWidth(): number {
     if (
       this.scale !== null &&
-      this.unpublishDate !== null &&
-      this.publishDate !== null
+      this.startDate !== null &&
+      this.endDate !== null
     ) {
       const width =
-        UmbPublicationElement.invertDate(
-          this.scale,
-          this.unpublishDate.valueOf(),
-        ) -
-        UmbPublicationElement.invertDate(
-          this.scale,
-          this.publishDate.valueOf(),
-        );
+        UmbPublicationElement.invertDate(this.scale, this.endDate.valueOf()) -
+        UmbPublicationElement.invertDate(this.scale, this.startDate.valueOf());
       console.log(width);
       return width;
     }
 
     if (
       this.scale !== null &&
-      this.unpublishDate === null &&
-      this.publishDate !== null
+      this.endDate === null &&
+      this.startDate !== null
     ) {
       const width =
         100 -
-        UmbPublicationElement.invertDate(
-          this.scale,
-          this.publishDate.valueOf(),
-        );
+        UmbPublicationElement.invertDate(this.scale, this.startDate.valueOf());
       console.log(width);
       return width;
     }
@@ -78,10 +99,10 @@ export class UmbPublicationElement extends LitElement {
   }
 
   private calculateTransform() {
-    if (this.scale !== null && this.publishDate !== null) {
+    if (this.scale !== null && this.startDate !== null) {
       const transform = UmbPublicationElement.invertDate(
         this.scale,
-        this.publishDate.valueOf(),
+        this.startDate.valueOf(),
       );
       console.log(transform);
       return transform;
@@ -102,8 +123,8 @@ export class UmbPublicationElement extends LitElement {
 
   willUpdate(changedProperties: Map<string, any>) {
     if (
-      changedProperties.has('publishDate') ||
-      changedProperties.has('unpublishDate') ||
+      changedProperties.has('startDate') ||
+      changedProperties.has('endDate') ||
       changedProperties.has('scale')
     ) {
       this.width = this.calculateWidth();
@@ -130,8 +151,8 @@ export class UmbPublicationElement extends LitElement {
     // eslint-disable-next-line lit-a11y/click-events-have-key-events
     return html`<div id="content-bar" style=${styleMap(this.dynamicStyles())}>
       <div>
-        ${this.publishDate?.toLocaleString()} <br />
-        ${this.unpublishDate?.toLocaleString()} in date
+        ${this.variant?.name} ${this.startDate?.toLocaleString()} <br />
+        ${this.endDate?.toLocaleString()} in date
       </div>
     </div>`;
   }

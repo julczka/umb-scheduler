@@ -1,18 +1,68 @@
+/* eslint-disable lit-a11y/no-invalid-change-handler */
 import { css, html, LitElement } from 'lit';
-import { property } from 'lit/decorators';
-import { ifDefined } from 'lit/directives/if-defined';
+import { property, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { connect } from 'pwa-helpers';
+import { createPublication, updatePublication } from '../../redux/actions.js';
+import { AppState, getVariantsSelector } from '../../redux/reducer.js';
+import { store } from '../../redux/store.js';
+import { Publication, Variant, Version } from '../../types/contentTypes';
+import { generateId } from '../../utils/utils.js';
 
-export class UmbPublicationPopupElement extends LitElement {
+// TODO validate: Option and Variant must be chosen before dates!
+
+export class UmbPublicationPopupElement extends connect(store)(LitElement) {
   static styles = [
     css`
       :host {
         position: absolute;
         background: white;
-        height: 300px;
-        padding: 3em;
+        height: 200px;
+        padding: 1em;
+        z-index: 100;
+        bottom: 0;
       }
     `,
   ];
+
+  connectedCallback() {
+    super.connectedCallback();
+  }
+
+  stateChanged(schedulerState: AppState) {
+    this.variants = getVariantsSelector(schedulerState);
+  }
+
+  @state()
+  variants: Variant[] = [];
+
+  @property({ type: Object, attribute: false })
+  variant: Variant | null = null;
+
+  @state()
+  versions: Version[] = [];
+
+  @property({ type: Object, attribute: false })
+  version: Version | null = null;
+
+  willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
+    if (changedProperties.has('variants') && this.variant !== null) {
+      this.versions = this.variants[
+        this.variants.indexOf(this.variant)
+      ].versions;
+    }
+
+    if (changedProperties.has('variant') && this.variant !== null) {
+      this.versions = this.variants[
+        this.variants.indexOf(this.variant)
+      ].versions;
+      this.publication.variantId = this.variant.id;
+    }
+
+    if (changedProperties.has('varsion') && this.version !== null) {
+      this.publication.versionId = this.version.id;
+    }
+  }
 
   @property({ type: Object, attribute: false })
   publishDate: Date | null = null;
@@ -20,29 +70,86 @@ export class UmbPublicationPopupElement extends LitElement {
   @property({ type: Object, attribute: false })
   unpublishDate: Date | null = null;
 
+  private initId = generateId();
+
+  @state()
+  publication: Publication = {
+    id: '',
+    start: null,
+    end: null,
+    variantId: '',
+    versionId: '',
+  };
+
   private changeStartDate(e: Event) {
     const input = e.target as HTMLInputElement;
-    console.log(input.value);
-    this.publishDate = new Date(input.value);
+    this.publication.start = new Date(input.value);
+    this.updateOrCreatePublication();
   }
 
   private changeEndDate(e: Event) {
     const input = e.target as HTMLInputElement;
-    this.unpublishDate = new Date(input.value);
+    this.publication.end = new Date(input.value);
+    this.updateOrCreatePublication();
+  }
+
+  private updateOrCreatePublication() {
+    console.log(this.publication.id);
+    if (this.publication.id === '') {
+      this.publication.id = this.initId;
+      store.dispatch(createPublication(this.publication));
+      console.log(this.publication.id);
+    }
+
+    store.dispatch(updatePublication(this.publication.id, this.publication));
+  }
+
+  private setVariant(e: Event) {
+    const target = e.target as HTMLInputElement;
+    this.variant = this.variants.find(el => el.id === target.value) as Variant;
+  }
+
+  private setVersion(e: Event) {
+    const target = e.target as HTMLInputElement;
+    this.version = this.versions.find(el => el.id === target.value) as Version;
+    this.publication.versionId = this.version.id;
   }
 
   render() {
-    return html`in date<input
+    return html` <select @change=${this.setVariant}>
+        <option value="">--Please choose an option--</option>
+        ${this.variants.map(
+          variant => html`<option value=${variant.id}>${variant.name}</option>`,
+        )}
+      </select>
+      <select @change=${this.setVersion}>
+        <option value="">--Please choose an option--</option>
+        ${this.versions.map(
+          variant => html`<option value=${variant.id}>${variant.name}</option>`,
+        )}
+      </select>
+      in date<input
         type="datetime-local"
-        .value=${this.publishDate ? this.publishDate.toISOString() : ''}
+        .value=${this.publishDate
+          ? this.publishDate.toISOString().slice(0, 19)
+          : ''}
         @input=${this.changeStartDate}
         max=${ifDefined(this.unpublishDate?.toISOString())}
       />
       out date<input
         type="datetime-local"
-        .value=${this.unpublishDate ? this.unpublishDate.toISOString() : ''}
+        .value=${this.unpublishDate
+          ? this.unpublishDate.toISOString().slice(0, 19)
+          : ''}
         @input=${this.changeEndDate}
         min=${ifDefined(this.publishDate?.toISOString())}
-      />`;
+      /><button
+        @click=${() =>
+          this.dispatchEvent(
+            new CustomEvent('close-popup', { bubbles: true, composed: true }),
+          )}
+      >
+        close
+      </button>`;
   }
 }
