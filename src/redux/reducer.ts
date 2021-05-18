@@ -16,6 +16,8 @@ import {
   SHIFT_SCALE_DAYS,
   SHIFT_SCALE_HOURS,
 } from './actions.js';
+import { Page, pageInitialState } from '../Page';
+import { Variant1, Variant2 } from '../Variant';
 
 const currentMonthStartDate = new Date(
   new Date().getFullYear(),
@@ -28,59 +30,86 @@ const currentMonthendDate = new Date(
   0,
 );
 
-const INITIAL_STATE = new SchedulerState(
-  currentMonthStartDate,
-  currentMonthendDate,
-  [0, 100],
-);
+export interface AppState {
+  scheduler: SchedulerState;
+  page: Page;
+}
+
+pageInitialState.variants = [Variant1, Variant2];
+
+const INITIAL_STATE = {
+  scheduler: new SchedulerState(currentMonthStartDate, currentMonthendDate, [
+    0,
+    100,
+  ]),
+  page: pageInitialState,
+};
 
 export const reducer = (state = INITIAL_STATE, action: AnyAction) => {
   switch (action.type) {
     case ZOOM_IN_HOURS: {
       return {
         ...state,
-        startDate: addHours(state.startDate, 1),
-        endDate: addHours(state.endDate, -1),
+        scheduler: {
+          ...state.scheduler,
+          startDate: addHours(state.scheduler.startDate, 1),
+          endDate: addHours(state.scheduler.endDate, -1),
+        },
       };
     }
 
     case ZOOM_OUT_HOURS: {
       return {
         ...state,
-        startDate: addHours(state.startDate, -1),
-        endDate: addHours(state.endDate, 1),
+        scheduler: {
+          ...state.scheduler,
+          startDate: addHours(state.scheduler.startDate, -1),
+          endDate: addHours(state.scheduler.endDate, 1),
+        },
       };
     }
 
     case ZOOM_IN_DAYS: {
       return {
         ...state,
-        startDate: addDays(state.startDate, 1),
-        endDate: addDays(state.endDate, -1),
+        scheduler: {
+          ...state.scheduler,
+          startDate: addDays(state.scheduler.startDate, 1),
+          endDate: addDays(state.scheduler.endDate, -1),
+        },
       };
     }
 
     case ZOOM_OUT_DAYS: {
       return {
         ...state,
-        startDate: addDays(state.startDate, -1),
-        endDate: addDays(state.endDate, 1),
+        scheduler: {
+          ...state.scheduler,
+          startDate: addDays(state.scheduler.startDate, -1),
+          endDate: addDays(state.scheduler.endDate, 1),
+        },
       };
     }
 
     case SHIFT_SCALE_DAYS: {
       return {
         ...state,
-        startDate: addDays(state.startDate, action.days),
-        endDate: addDays(state.endDate, action.days),
+        scheduler: {
+          ...state.scheduler,
+          startDate: addDays(state.scheduler.startDate, action.days),
+          endDate: addDays(state.scheduler.endDate, action.days),
+        },
       };
     }
 
     case SHIFT_SCALE_HOURS: {
       return {
         ...state,
-        startDate: addHours(state.startDate, action.hours),
-        endDate: addHours(state.endDate, action.hours),
+        scheduler: {
+          ...state.scheduler,
+          startDate: addDays(state.scheduler.startDate, action.hours),
+          endDate: addDays(state.scheduler.endDate, action.hours),
+        },
       };
     }
 
@@ -89,12 +118,13 @@ export const reducer = (state = INITIAL_STATE, action: AnyAction) => {
   }
 };
 
-const getStartDate = (state: SchedulerState) => state.startDate;
-const getEndDate = (state: SchedulerState) => state.endDate;
-const getRange = (state: SchedulerState) => state.range;
+const getStartDate = (state: AppState) => state.scheduler.startDate;
+const getEndDate = (state: AppState) => state.scheduler.endDate;
+const getRange = (state: AppState) => state.scheduler.range;
 
-const getStartDateValue = (state: SchedulerState) => state.startDate.valueOf();
-const getEndDateValue = (state: SchedulerState) => state.endDate.valueOf();
+const getStartDateValue = (state: AppState) =>
+  state.scheduler.startDate.valueOf();
+const getEndDateValue = (state: AppState) => state.scheduler.endDate.valueOf();
 
 export const timeScaleDomain = createSelector(
   getStartDate,

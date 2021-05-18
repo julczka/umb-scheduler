@@ -1,6 +1,5 @@
 /* eslint-disable no-redeclare */
 
-import { nanoid } from 'nanoid';
 import type { Variant } from './types/contentTypes';
 
 export class Page implements Page {
@@ -16,7 +15,7 @@ export class Page implements Page {
     pagetitle: string,
     id: string,
     icon: string,
-    variants: Variant[]
+    variants: Variant[],
   ) {
     this.id = id;
     this.pageTitle = pagetitle;
@@ -25,6 +24,11 @@ export class Page implements Page {
   }
 }
 
-const id = nanoid();
+const id = 'kjaskjdjkh128712786';
 
-export const pageState = new Page('Mypage about many things', id, 'bug', []);
+export const pageInitialState = new Page(
+  'Mypage about many things',
+  id,
+  'bug',
+  [],
+);

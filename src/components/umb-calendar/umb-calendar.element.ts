@@ -1,3 +1,4 @@
+/* eslint-disable import/extensions */
 /* eslint-disable no-console */
 import { property, state } from 'lit/decorators.js';
 import { html, css, LitElement } from 'lit';
@@ -6,7 +7,6 @@ import { repeat } from 'lit/directives/repeat.js';
 import { connect } from 'pwa-helpers';
 import { checkIfEqualDates, checkIfTheSameDay } from '../../utils/utils.js';
 import { store } from '../../redux/store.js';
-import { SchedulerState } from '../../types/appTypes.js';
 import {
   shiftScaleDays,
   shiftScaleHours,
@@ -15,6 +15,7 @@ import {
   zoomOutDays,
 } from '../../redux/actions.js';
 import {
+  AppState,
   reversedScaleSelector,
   scaleRangeSelector,
   scaleSelector,
@@ -39,9 +40,9 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     `,
   ];
 
-  stateChanged(schedulerState: SchedulerState) {
-    this.startDate = schedulerState.startDate;
-    this.endDate = schedulerState.endDate;
+  stateChanged(schedulerState: AppState) {
+    this.startDate = schedulerState.scheduler.startDate;
+    this.endDate = schedulerState.scheduler.endDate;
     this.scale = scaleSelector(schedulerState);
     this.scaleInverted = reversedScaleSelector(schedulerState);
     this.scaleRange = scaleRangeSelector(schedulerState);
@@ -207,7 +208,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         ${repeat(
           this.ticks,
           tick => tick.valueOf(),
-          tick => html`<div class="tick">${tick.toLocaleString()}</div>`
+          tick => html`<div class="tick">${tick.toLocaleString()}</div>`,
         )}
         <umb-variant-block
           id="content-bar"
