@@ -17,7 +17,7 @@ export interface Variant {
   language: String;
   mandatory: Boolean;
   versions: Version[];
-  publications: Publication[];
+  publications?: Publication[];
 }
 
 export interface Page {
