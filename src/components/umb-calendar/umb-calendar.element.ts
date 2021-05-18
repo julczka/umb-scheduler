@@ -5,7 +5,11 @@ import { html, css, LitElement } from 'lit';
 import { ScaleLinear, ScaleTime } from 'd3-scale';
 import { repeat } from 'lit/directives/repeat.js';
 import { connect } from 'pwa-helpers';
-import { checkIfEqualDates, checkIfTheSameDay } from '../../utils/utils.js';
+import {
+  checkIfEqualDates,
+  checkIfTheSameDay,
+  generateId,
+} from '../../utils/utils.js';
 import { store } from '../../redux/store.js';
 import {
   createPublication,
@@ -33,9 +37,6 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         display: flex;
         position: relative;
       }
-
-      .tick {
-      }
     `,
   ];
 
@@ -47,7 +48,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       end: null,
       variantId: 'id',
       versionId: 'id',
-      id: 'dsjh',
+      id: generateId(),
     };
     store.dispatch(createPublication(newPublication));
   }
@@ -231,11 +232,11 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
             ></umb-tick>`,
         )}
         ${this.publications.map(
-          publication => html`<umb-variant-block
+          publication => html`<umb-publication
             .publishDate=${publication.start}
             .unpublishDate=${publication.end}
             .scale=${this.scaleInverted}
-          ></umb-variant-block>`,
+          ></umb-publication>`,
         )}
       </div>`;
   }

@@ -1,3 +1,3 @@
-import { UmbVariantBlockElement } from './umb-variant-block.element';
+import { UmbPublicationElement } from './umb-publication.element';
 
-customElements.define('umb-variant-block', UmbVariantBlockElement);
+customElements.define('umb-publication', UmbPublicationElement);

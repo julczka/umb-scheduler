@@ -2,9 +2,8 @@ import { property, state } from 'lit/decorators.js';
 import { ScaleTime } from 'd3-scale';
 import { html, css, LitElement } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
 
-export class UmbVariantBlockElement extends LitElement {
+export class UmbPublicationElement extends LitElement {
   static styles = [
     css`
       :host {
@@ -48,11 +47,11 @@ export class UmbVariantBlockElement extends LitElement {
       this.publishDate !== null
     ) {
       const width =
-        UmbVariantBlockElement.invertDate(
+        UmbPublicationElement.invertDate(
           this.scale,
           this.unpublishDate.valueOf(),
         ) -
-        UmbVariantBlockElement.invertDate(
+        UmbPublicationElement.invertDate(
           this.scale,
           this.publishDate.valueOf(),
         );
@@ -67,7 +66,7 @@ export class UmbVariantBlockElement extends LitElement {
     ) {
       const width =
         100 -
-        UmbVariantBlockElement.invertDate(
+        UmbPublicationElement.invertDate(
           this.scale,
           this.publishDate.valueOf(),
         );
@@ -80,7 +79,7 @@ export class UmbVariantBlockElement extends LitElement {
 
   private calculateTransform() {
     if (this.scale !== null && this.publishDate !== null) {
-      const transform = UmbVariantBlockElement.invertDate(
+      const transform = UmbPublicationElement.invertDate(
         this.scale,
         this.publishDate.valueOf(),
       );
@@ -126,16 +125,6 @@ export class UmbVariantBlockElement extends LitElement {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  private changeStartDate(e: Event) {
-    const input = e.target as HTMLInputElement;
-    console.log(input.value);
-    this.publishDate = new Date(input.value);
-  }
-
-  private changeEndDate(e: Event) {
-    const input = e.target as HTMLInputElement;
-    this.unpublishDate = new Date(input.value);
-  }
 
   render() {
     // eslint-disable-next-line lit-a11y/click-events-have-key-events
@@ -143,16 +132,6 @@ export class UmbVariantBlockElement extends LitElement {
       <div>
         ${this.publishDate?.toLocaleString()} <br />
         ${this.unpublishDate?.toLocaleString()} in date
-        <input
-          type="datetime-local"
-          @input=${this.changeStartDate}
-          max=${ifDefined(this.unpublishDate?.toISOString())}
-        />
-        out date<input
-          type="datetime-local"
-          @input=${this.changeEndDate}
-          min=${ifDefined(this.publishDate?.toISOString())}
-        />
       </div>
     </div>`;
   }

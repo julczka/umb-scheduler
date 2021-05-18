@@ -1,4 +1,5 @@
 import type { Id, Version } from './types/contentTypes';
+import { generateId } from './utils/utils';
 
 export class Variant implements Variant {
   id: String;
@@ -27,27 +28,27 @@ export class Variant implements Variant {
 }
 
 const versionA: Version = {
-  id: 'kjhdsajk87216',
+  id: generateId(),
   name: 'Version A',
 };
 
 const versionB: Version = {
-  id: '897qwe76dshgd',
+  id: generateId(),
   name: 'Version A',
 };
 
 const versionC: Version = {
-  id: 'hsa89qw67wqdcs',
+  id: generateId(),
   name: 'Version A',
 };
 
 const versionD: Version = {
-  id: '897398712dqawd',
+  id: generateId(),
   name: 'Version A',
 };
 
 export const Variant1: Variant = {
-  id: 'jhjkdhakjdsh87112',
+  id: generateId(),
 
   name: 'English (USA)',
 
@@ -59,7 +60,7 @@ export const Variant1: Variant = {
 };
 
 export const Variant2: Variant = {
-  id: 'ashgaa762ew0ds',
+  id: generateId(),
 
   name: 'Danish',
 

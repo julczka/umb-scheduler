@@ -59,10 +59,15 @@ export const checkIfEqualDates = (startDate: Date, endDate: Date) => {
 
 export const createScale = (
   domain: Iterable<Date | NumberValue>,
-  range: Iterable<number>
+  range: Iterable<number>,
 ) => scaleTime().domain(domain).nice().rangeRound(range).clamp(true);
 
 export const createReverseScale = (
   domain: Iterable<number>,
-  range: Iterable<number>
+  range: Iterable<number>,
 ) => scaleLinear().domain(domain).rangeRound(range).clamp(true);
+
+export const generateId = () => `_${Math.random().toString(36).substr(2, 9)}`;
+// Math.random should be unique because of its seeding algorithm.
+// Convert it to base 36 (numbers + letters), and grab the first 9 characters
+// after the decimal.

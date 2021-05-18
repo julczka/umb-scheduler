@@ -176,3 +176,16 @@ export const scaleRangeSelector = createSelector(
   getEndDate,
   (startDate, endDate) => deltaDatesRange(startDate, endDate),
 );
+
+// class Whatever {
+//   getStartDate (state: AppState) { return state.scheduler.startDate};
+//   getEndDate (state: AppState) {return state.scheduler.endDate};
+
+// get scaleSth() {
+//   return createSelector(
+//     this.getStartDate,
+//     this.getEndDate,
+//     (startDate, endDate) => deltaDatesRange(startDate, endDate),
+// }
+
+// }

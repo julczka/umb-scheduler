@@ -4,6 +4,7 @@
     "@open-wc/eslint-config": "^4.3.0",
     "@open-wc/testing": "^2.5.33",
     "@types/d3-scale": "^3.2.2",
+    "@types/uniqid": "^5.3.0",
     "@typescript-eslint/eslint-plugin": "^4.24.0",
     "@typescript-eslint/parser": "^4.24.0",
     "@web/dev-server": "^0.1.17",
@@ -38,10 +39,10 @@
   "dependencies": {
     "d3-scale": "^3.3.0",
     "lit": "^2.0.0-rc.2",
-    "nanoid": "^3.1.23",
     "pwa-helpers": "^0.9.1",
     "redux": "^4.1.0",
     "reselect": "^4.0.0"
+
   },
   "eslintConfig": {
     "parser": "@typescript-eslint/parser",

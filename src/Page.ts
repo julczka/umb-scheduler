@@ -1,6 +1,7 @@
 /* eslint-disable no-redeclare */
 
 import type { Publication, Variant } from './types/contentTypes';
+import { generateId } from './utils/utils';
 
 export class Page implements Page {
   id: string;
@@ -28,7 +29,7 @@ export class Page implements Page {
   }
 }
 
-const id = 'kjaskjdjkh128712786';
+const id = generateId();
 
 export const pageInitialState = new Page(
   'Mypage about many things',
