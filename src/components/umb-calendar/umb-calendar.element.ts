@@ -27,6 +27,7 @@ import {
 } from '../../redux/reducer.js';
 import { Publication, Variant } from '../../types/contentTypes.js';
 import { UmbTickElement } from '../umb-tick/umb-tick.element.js';
+import { UmbPublicationElement } from '../umb-publication/umb-publication.element.js';
 
 type Vector = 1 | -1;
 export class UmbCalendarElement extends connect(store)(LitElement) {
@@ -39,6 +40,8 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       }
     `,
   ];
+
+  private currentPublication: string = '';
 
   // eslint-disable-next-line class-methods-use-this
   protected createPublication(e: Event) {
@@ -225,8 +228,16 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
   hasPopup: boolean = false;
 
   // eslint-disable-next-line class-methods-use-this
-  public openPopUp() {
-    this.hasPopup = true;
+  public openPopUp(e: MouseEvent) {
+    if (!this.hasPopup) this.hasPopup = true;
+    if (e.target instanceof UmbPublicationElement) {
+      this.currentPublication = e.target.id;
+      console.log('clicked on bar');
+      return;
+    }
+    console.log('clicked outside of bar');
+    this.currentPublication = '';
+    this.requestUpdate();
   }
 
   public closePopUp() {
@@ -237,6 +248,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     return html`${this.hasPopup
         ? html`<umb-publication-popup
             .variants=${this.variants}
+            .publicationId=${this.currentPublication}
           ></umb-publication-popup>`
         : ''} <button @click=${this.zoomIn}>ZOOM IN</button>
       <button @click=${this.zoomOut}>ZOOM OUT</button>
@@ -258,6 +270,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
           this.publications,
           publication => publication.id,
           publication => html`<umb-publication
+            @click=${this.openPopUp}
             .id=${publication.id}
             .scale=${this.scaleInverted}
           ></umb-publication>`,

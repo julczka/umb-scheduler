@@ -27,11 +27,27 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
 
   connectedCallback() {
     super.connectedCallback();
+    this.getPublicationFromState();
   }
 
   stateChanged(schedulerState: AppState) {
     this.variants = getVariantsSelector(schedulerState);
   }
+
+  private getPublicationFromState() {
+    if (this.publicationId) {
+      this.publication = store
+        .getState()
+        .page.publications.find(
+          p => p.id === this.publicationId,
+        ) as Publication;
+      this.publishDate = this.publication.start;
+      this.unpublishDate = this.publication.end;
+    }
+  }
+
+  @property()
+  publicationId = '';
 
   @state()
   variants: Variant[] = [];
@@ -61,6 +77,10 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
 
     if (changedProperties.has('varsion') && this.version !== null) {
       this.publication.versionId = this.version.id;
+    }
+
+    if (changedProperties.has('publicationId')) {
+      this.getPublicationFromState();
     }
   }
 
