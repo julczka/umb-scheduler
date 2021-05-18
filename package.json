@@ -70,7 +70,9 @@
     "arrowParens": "avoid"
   },
   "husky": {
-   
+    "hooks": {
+      "pre-commit": "npx lint-staged"
+    }
   },
   "lint-staged": {
     "*.ts": [
