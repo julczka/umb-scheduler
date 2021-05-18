@@ -57,8 +57,8 @@
       ],
       "import/no-unresolved": "off",
       "import/extensions": [
-        "error",
-        "always",
+        "warn",
+        "never",
         {
           "ignorePackages": true
         }
@@ -67,7 +67,8 @@
   },
   "prettier": {
     "singleQuote": true,
-    "arrowParens": "avoid"
+    "arrowParens": "avoid",
+    "trailingComma": "all"
   },
   "husky": {
     "hooks": {

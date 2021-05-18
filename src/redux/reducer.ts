@@ -20,18 +20,18 @@ import {
 const currentMonthStartDate = new Date(
   new Date().getFullYear(),
   new Date().getMonth(),
-  1
+  1,
 );
 const currentMonthendDate = new Date(
   new Date().getFullYear(),
   new Date().getMonth() + 1,
-  0
+  0,
 );
 
 const INITIAL_STATE = new SchedulerState(
   currentMonthStartDate,
   currentMonthendDate,
-  [0, 100]
+  [0, 100],
 );
 
 export const reducer = (state = INITIAL_STATE, action: AnyAction) => {
@@ -99,27 +99,27 @@ const getEndDateValue = (state: SchedulerState) => state.endDate.valueOf();
 export const timeScaleDomain = createSelector(
   getStartDate,
   getEndDate,
-  (startDate, endDate) => [startDate, endDate]
+  (startDate, endDate) => [startDate, endDate],
 );
 
 export const reverseScaleRange = createSelector(
   getStartDateValue,
   getEndDateValue,
-  (startDateValue, endDateValue) => [startDateValue, endDateValue]
+  (startDateValue, endDateValue) => [startDateValue, endDateValue],
 );
 
 export const scaleSelector = createSelector(
   [getRange, timeScaleDomain],
-  (range, domain) => createScale(domain, range)
+  (range, domain) => createScale(domain, range),
 );
 
 export const reversedScaleSelector = createSelector(
   [getRange, reverseScaleRange],
-  (range, domain) => createReverseScale(range, domain)
+  (range, domain) => createReverseScale(range, domain),
 );
 
 export const scaleRangeSelector = createSelector(
   getStartDate,
   getEndDate,
-  (startDate, endDate) => deltaDatesRange(startDate, endDate)
+  (startDate, endDate) => deltaDatesRange(startDate, endDate),
 );
