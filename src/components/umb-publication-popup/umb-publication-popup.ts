@@ -32,6 +32,12 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
   connectedCallback() {
     super.connectedCallback();
     this.getPublicationFromState();
+    console.log('popup-connected', this.publicationId);
+  }
+
+  disconnectedCallback() {
+    this.cleanState();
+    console.log('popup-disconnected', this.publicationId);
   }
 
   stateChanged(schedulerState: AppState) {
@@ -47,6 +53,10 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         ) as Publication;
       this.publishDate = this.publication.start;
       this.unpublishDate = this.publication.end;
+      this.variant = this.variants.find(
+        v => v.id === this.publication.variantId,
+      ) as Variant;
+      console.log(this.variant);
     }
   }
 
@@ -146,34 +156,68 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
   private setVariant(e: Event) {
     const target = e.target as HTMLInputElement;
     this.variant = this.variants.find(el => el.id === target.value) as Variant;
+    this.publication.variantId = this.variant.id;
+    this.updateOrCreatePublication();
   }
 
   private setVersion(e: Event) {
     const target = e.target as HTMLInputElement;
     this.version = this.versions.find(el => el.id === target.value) as Version;
     this.publication.versionId = this.version.id;
+    this.updateOrCreatePublication();
+  }
+
+  private cleanState() {
+    this.publicationId = '';
+    this.publication = {
+      id: '',
+      start: null,
+      end: null,
+      variantId: '',
+      versionId: '',
+    };
+    this.publishDate = null;
+    this.unpublishDate = null;
+    this.version = null;
+    this.variant = null;
   }
 
   private validateOnClose() {
-    if (this.variant === null || this.version === null) {
+    if (
+      this.publication.versionId === null ||
+      this.publication.variantId === null
+    ) {
       this.error = true;
-    } else
+    } else {
       this.dispatchEvent(
         new CustomEvent('close-popup', { bubbles: true, composed: true }),
       );
+    }
   }
 
   render() {
     return html` <select @change=${this.setVariant}>
         <option value="">--Please choose an option--</option>
         ${this.variants.map(
-          variant => html`<option value=${variant.id}>${variant.name}</option>`,
+          variant =>
+            html`<option
+              value=${variant.id}
+              ?selected=${variant.id === this.publication.variantId}
+            >
+              ${variant.name}
+            </option>`,
         )}
       </select>
       <select @change=${this.setVersion}>
         <option value="">--Please choose an option--</option>
         ${this.versions.map(
-          variant => html`<option value=${variant.id}>${variant.name}</option>`,
+          version =>
+            html`<option
+              value=${version.id}
+              ?selected=${version.id === this.publication.versionId}
+            >
+              ${version.name}
+            </option>`,
         )}
       </select>
       in date<input
