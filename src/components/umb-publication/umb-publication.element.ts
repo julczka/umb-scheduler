@@ -154,6 +154,7 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
     // eslint-disable-next-line lit-a11y/click-events-have-key-events
     return html`<div id="content-bar" style=${styleMap(this.dynamicStyles())}>
       <div>
+        <h3 style="margin: 0">${this.id}</h3>
         ${this.variant?.name} ${this.version?.name}<br />
         START ${this.startDate?.toLocaleString()} <br />
         END ${this.endDate?.toLocaleString()}

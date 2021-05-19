@@ -1,7 +1,6 @@
 /* eslint-disable lit-a11y/no-invalid-change-handler */
 import { css, html, LitElement } from 'lit';
 import { property, state } from 'lit/decorators.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
 import { connect } from 'pwa-helpers';
 import { createPublication, updatePublication } from '../../redux/actions.js';
 import { AppState, getVariantsSelector } from '../../redux/reducer.js';
@@ -79,11 +78,11 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
   version: Version | null = null;
 
   willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
-    if (changedProperties.has('variants') && this.variant !== null) {
-      this.versions = this.variants[
-        this.variants.indexOf(this.variant)
-      ].versions;
-    }
+    // if (changedProperties.has('variants') && this.variant !== null) {
+    //   this.versions = this.variants[
+    //     this.variants.indexOf(this.variant)
+    //   ].versions;
+    // }
 
     if (changedProperties.has('variant') && this.variant !== null) {
       this.versions = this.variants[
@@ -163,7 +162,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
   private setVersion(e: Event) {
     const target = e.target as HTMLInputElement;
     this.version = this.versions.find(el => el.id === target.value) as Version;
-    this.publication.versionId = this.version.id;
+    if (this.version !== null) this.publication.versionId = this.version.id;
     this.updateOrCreatePublication();
   }
 
@@ -183,21 +182,28 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
   }
 
   private validateOnClose() {
-    if (
-      this.publication.versionId === null ||
-      this.publication.variantId === null
-    ) {
+    if (this.publication.variantId === '') {
       this.error = true;
-    } else {
-      this.dispatchEvent(
-        new CustomEvent('close-popup', { bubbles: true, composed: true }),
-      );
+      return;
     }
+
+    if (this.publication.versionId === '') {
+      this.error = true;
+      return;
+    }
+
+    this.dispatchEvent(
+      new CustomEvent('close-popup', { bubbles: true, composed: true }),
+    );
   }
 
   render() {
-    return html` <select @change=${this.setVariant}>
-        <option value="">--Please choose an option--</option>
+    return html`<h3>${this.publication.id} ${this.publicationId}</h3>
+      <h4>${this.publication.variantId} ${this.publication.versionId}</h4>
+      <select @change=${this.setVariant}>
+        <option value="" ?disabled=${this.publication.variantId !== ''}>
+          --Please choose an option--
+        </option>
         ${this.variants.map(
           variant =>
             html`<option
@@ -209,7 +215,9 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         )}
       </select>
       <select @change=${this.setVersion}>
-        <option value="">--Please choose an option--</option>
+        <option value="" ?disabled=${this.publication.versionId !== ''}>
+          --Please choose an option--
+        </option>
         ${this.versions.map(
           version =>
             html`<option
@@ -226,7 +234,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
           ? this.publishDate.toISOString().slice(0, 19)
           : ''}
         @input=${this.changeStartDate}
-        max=${ifDefined(this.unpublishDate?.toISOString().slice(0, 19))}
+        .max=${this.unpublishDate?.toISOString().slice(0, 19) as string}
       />
       out date<input
         type="datetime-local"
@@ -234,7 +242,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
           ? this.unpublishDate.toISOString().slice(0, 19)
           : ''}
         @input=${this.changeEndDate}
-        min=${ifDefined(this.publishDate?.toISOString().slice(0, 19))}
+        .min=${this.publishDate?.toISOString().slice(0, 19) as string}
       /><button @click=${this.validateOnClose}>close</button>`;
   }
 }
