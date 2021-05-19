@@ -19,6 +19,7 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
         right: 0;
         height: 10vh;
         border: 1px solid green;
+        pointer-events: none;
       }
 
       #content-bar {
@@ -26,6 +27,7 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
         height: 100%;
         position: relative;
         font-size: 0.7rem;
+        pointer-events: auto;
         /* resize: horizontal;
         overflow: auto; */
         /* transition: width 300ms ease-out;
@@ -152,9 +154,9 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
     // eslint-disable-next-line lit-a11y/click-events-have-key-events
     return html`<div id="content-bar" style=${styleMap(this.dynamicStyles())}>
       <div>
-        ${this.variant?.name} ${this.version?.name}
-        ${this.startDate?.toLocaleString()} <br />
-        ${this.endDate?.toLocaleString()} in date
+        ${this.variant?.name} ${this.version?.name}<br />
+        START ${this.startDate?.toLocaleString()} <br />
+        END ${this.endDate?.toLocaleString()}
       </div>
     </div>`;
   }

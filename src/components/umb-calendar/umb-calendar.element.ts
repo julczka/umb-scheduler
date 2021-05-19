@@ -234,10 +234,10 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     if (!this.hasPopup) this.hasPopup = true;
     if (e.target instanceof UmbPublicationElement) {
       this.currentPublication = e.target.id;
-      console.log('clicked on bar');
+      console.log('clicked on bar', e.target);
       return;
     }
-    console.log('clicked outside of bar');
+    console.log('clicked outside of bar', e.target);
     if (e.target instanceof UmbTickElement) {
       this.currentDate = e.target.date ? e.target.date : null;
     }

@@ -226,7 +226,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
           ? this.publishDate.toISOString().slice(0, 19)
           : ''}
         @input=${this.changeStartDate}
-        max=${ifDefined(this.unpublishDate?.toISOString())}
+        max=${ifDefined(this.unpublishDate?.toISOString().slice(0, 19))}
       />
       out date<input
         type="datetime-local"
@@ -234,7 +234,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
           ? this.unpublishDate.toISOString().slice(0, 19)
           : ''}
         @input=${this.changeEndDate}
-        min=${ifDefined(this.publishDate?.toISOString())}
+        min=${ifDefined(this.publishDate?.toISOString().slice(0, 19))}
       /><button @click=${this.validateOnClose}>close</button>`;
   }
 }
