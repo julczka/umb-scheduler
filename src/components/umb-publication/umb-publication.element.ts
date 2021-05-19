@@ -40,14 +40,17 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
     const pub = appState.page.publications.find(
       p => p.id === this.id,
     ) as Publication;
-    this.startDate = pub.start;
-    this.endDate = pub.end;
-    this.variant = appState.page.variants.find(
-      v => v.id === pub.variantId,
-    ) as Variant;
-    this.version = appState.page.variants
-      .find(v => v.id === pub.variantId)
-      ?.versions.find(v => v.id === pub.versionId) as Version;
+    if (pub !== undefined) {
+      this.startDate = pub.start ? pub.start : null;
+      this.endDate = pub.end;
+      this.variant = appState.page.variants.find(
+        v => v.id === pub.variantId,
+      ) as Variant;
+      this.version = appState.page.variants
+        .find(v => v.id === pub.variantId)
+        ?.versions.find(v => v.id === pub.versionId) as Version;
+    }
+
     this.requestUpdate();
   }
 

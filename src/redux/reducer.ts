@@ -17,6 +17,7 @@ import {
   SHIFT_SCALE_HOURS,
   CREATE_PUBLICATION,
   UPDATE_PUBLICATION,
+  REMOVE_PUBLICATION,
 } from './actions.js';
 import { Page, pageInitialState } from '../Page';
 import { Variant1, Variant2 } from '../Variant';
@@ -136,6 +137,19 @@ export const reducer = (state = INITIAL_STATE, action: AnyAction) => {
             publication.id === action.publicationId
               ? action.publication
               : publication,
+          ),
+        },
+      };
+    }
+
+    case REMOVE_PUBLICATION: {
+      console.log(action.type);
+      return {
+        ...state,
+        page: {
+          ...state.page,
+          publications: state.page.publications.filter(
+            publication => publication.id !== action.publicationId,
           ),
         },
       };

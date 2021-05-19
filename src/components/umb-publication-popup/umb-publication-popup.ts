@@ -2,7 +2,11 @@
 import { css, html, LitElement } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { connect } from 'pwa-helpers';
-import { createPublication, updatePublication } from '../../redux/actions.js';
+import {
+  createPublication,
+  removePublication,
+  updatePublication,
+} from '../../redux/actions.js';
 import { AppState, getVariantsSelector } from '../../redux/reducer.js';
 import { store } from '../../redux/store.js';
 import { Publication, Variant, Version } from '../../types/contentTypes';
@@ -130,12 +134,40 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
   };
 
   private changeStartDate(e: Event) {
+    if (e.target instanceof HTMLButtonElement) {
+      this.publishDate = null;
+      this.publication.start = null;
+      store.dispatch(removePublication(this.publication.id));
+      this.cleanState();
+      this.dispatchEvent(
+        new CustomEvent('close-popup', { bubbles: true, composed: true }),
+      );
+      return;
+    }
     const input = e.target as HTMLInputElement;
     this.publication.start = new Date(input.value);
     this.updateOrCreatePublication();
   }
 
   private changeEndDate(e: Event) {
+    if (
+      e.target instanceof HTMLButtonElement &&
+      this.publication.end === null &&
+      this.unpublishDate === null
+    ) {
+      this.requestUpdate();
+      console.log('nope');
+      return;
+    }
+
+    if (e.target instanceof HTMLButtonElement) {
+      this.unpublishDate = null;
+      this.publication.end = null;
+      this.updateOrCreatePublication();
+      console.log('updateme');
+      return;
+    }
+
     const input = e.target as HTMLInputElement;
     this.publication.end = new Date(input.value);
     this.updateOrCreatePublication();
@@ -236,6 +268,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         @input=${this.changeStartDate}
         .max=${this.unpublishDate?.toISOString().slice(0, 19) as string}
       />
+      <button @click=${this.changeStartDate}>X</button>
       out date<input
         type="datetime-local"
         .value=${this.unpublishDate
@@ -243,6 +276,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
           : ''}
         @input=${this.changeEndDate}
         .min=${this.publishDate?.toISOString().slice(0, 19) as string}
-      /><button @click=${this.validateOnClose}>close</button>`;
+      /><button @click=${this.changeEndDate}>X</button
+      ><button @click=${this.validateOnClose}>close</button>`;
   }
 }
