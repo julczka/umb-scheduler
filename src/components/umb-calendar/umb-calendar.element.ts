@@ -5,14 +5,9 @@ import { html, css, LitElement } from 'lit';
 import { ScaleLinear, ScaleTime } from 'd3-scale';
 import { repeat } from 'lit/directives/repeat.js';
 import { connect } from 'pwa-helpers';
-import {
-  checkIfEqualDates,
-  checkIfTheSameDay,
-  generateId,
-} from '../../utils/utils.js';
+import { checkIfEqualDates, checkIfTheSameDay } from '../../utils/utils.js';
 import { store } from '../../redux/store.js';
 import {
-  createPublication,
   shiftScaleDays,
   shiftScaleHours,
   zoomInDays,
@@ -26,35 +21,42 @@ import {
   scaleSelector,
 } from '../../redux/reducer.js';
 import { Publication, Variant } from '../../types/contentTypes.js';
-import { UmbTickElement } from '../umb-tick/umb-tick.element.js';
 import { UmbPublicationElement } from '../umb-publication/umb-publication.element.js';
+import { UmbTickElement } from '../umb-tick/umb-tick.element.js';
 
 type Vector = 1 | -1;
 export class UmbCalendarElement extends connect(store)(LitElement) {
   static styles = [
     css`
+      :host {
+      }
+
       #tickContainer {
         width: 90vw;
         display: flex;
         position: relative;
+        align-items: stretch;
+        height: 70vh;
       }
     `,
   ];
 
   private currentPublication: string = '';
 
+  private currentDate: Date | null = null;
+
   // eslint-disable-next-line class-methods-use-this
-  protected createPublication(e: Event) {
-    const tick = e.target as UmbTickElement;
-    const newPublication: Publication = {
-      start: tick.date,
-      end: null,
-      variantId: 'id',
-      versionId: 'id',
-      id: generateId(),
-    };
-    store.dispatch(createPublication(newPublication));
-  }
+  // protected createPublication(e: Event) {
+  //   const tick = e.target as UmbTickElement;
+  //   const newPublication: Publication = {
+  //     start: tick.date,
+  //     end: null,
+  //     variantId: 'id',
+  //     versionId: 'id',
+  //     id: generateId(),
+  //   };
+  //   store.dispatch(createPublication(newPublication));
+  // }
 
   stateChanged(schedulerState: AppState) {
     this.startDate = schedulerState.scheduler.startDate;
@@ -92,6 +94,9 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
 
   @state()
   protected scaleRange = '';
+
+  @state()
+  hasPopup: boolean = false;
 
   protected calculateTicks(number: number) {
     if (this.scale !== null) this.ticks = this.scale.ticks(number);
@@ -224,9 +229,6 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     this.shiftScale(-1);
   }
 
-  @state()
-  hasPopup: boolean = false;
-
   // eslint-disable-next-line class-methods-use-this
   public openPopUp(e: MouseEvent) {
     if (!this.hasPopup) this.hasPopup = true;
@@ -236,7 +238,11 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       return;
     }
     console.log('clicked outside of bar');
+    if (e.target instanceof UmbTickElement) {
+      this.currentDate = e.target.date ? e.target.date : null;
+    }
     this.currentPublication = '';
+
     this.requestUpdate();
   }
 
@@ -249,6 +255,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         ? html`<umb-publication-popup
             .variants=${this.variants}
             .publicationId=${this.currentPublication}
+            .date=${this.currentDate}
           ></umb-publication-popup>`
         : ''} <button @click=${this.zoomIn}>ZOOM IN</button>
       <button @click=${this.zoomOut}>ZOOM OUT</button>

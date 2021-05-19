@@ -7,8 +7,23 @@ export class UmbTickElement extends LitElement {
       :host {
         flex: 1;
         font-size: 9px;
-        height: 30vh;
+        /* height: 100%; */
         border: 1px solid red;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #line-container {
+        display: flex;
+        flex: 1;
+        justify-content: center;
+        align-items: stretch;
+      }
+
+      #line {
+        flex: 1;
+        max-width: 1px;
+        background-color: pink;
       }
     `,
   ];
@@ -17,6 +32,11 @@ export class UmbTickElement extends LitElement {
   public date: Date | null = null;
 
   render() {
-    return html`${this.date ? this.date.toLocaleString() : ''}`;
+    return html`<div id="date-container">
+        ${this.date ? this.date.toLocaleString() : ''}
+      </div>
+      <div id="line-container">
+        <div id="line"></div>
+      </div>`;
   }
 }

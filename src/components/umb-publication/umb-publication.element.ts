@@ -18,6 +18,7 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
         left: 0;
         right: 0;
         height: 10vh;
+        border: 1px solid green;
       }
 
       #content-bar {

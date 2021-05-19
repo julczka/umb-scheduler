@@ -22,6 +22,10 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         z-index: 100;
         bottom: 0;
       }
+
+      :host([error]) {
+        background: coral;
+      }
     `,
   ];
 
@@ -58,6 +62,9 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
   @state()
   versions: Version[] = [];
 
+  @property({ type: Boolean, reflect: true })
+  error = false;
+
   @property({ type: Object, attribute: false })
   version: Version | null = null;
 
@@ -75,14 +82,26 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       this.publication.variantId = this.variant.id;
     }
 
-    if (changedProperties.has('varsion') && this.version !== null) {
+    if (changedProperties.has('version') && this.version !== null) {
       this.publication.versionId = this.version.id;
     }
 
     if (changedProperties.has('publicationId')) {
       this.getPublicationFromState();
     }
+
+    if (changedProperties.has('date')) {
+      this.publishDate = this.date;
+      this.publication.start = this.date;
+    }
+
+    if (this.version !== null && this.variant !== null) {
+      this.error = false;
+    }
   }
+
+  @property({ type: Object, attribute: false })
+  date: Date | null = null;
 
   @property({ type: Object, attribute: false })
   publishDate: Date | null = null;
@@ -135,6 +154,15 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
     this.publication.versionId = this.version.id;
   }
 
+  private validateOnClose() {
+    if (this.variant === null || this.version === null) {
+      this.error = true;
+    } else
+      this.dispatchEvent(
+        new CustomEvent('close-popup', { bubbles: true, composed: true }),
+      );
+  }
+
   render() {
     return html` <select @change=${this.setVariant}>
         <option value="">--Please choose an option--</option>
@@ -163,13 +191,6 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
           : ''}
         @input=${this.changeEndDate}
         min=${ifDefined(this.publishDate?.toISOString())}
-      /><button
-        @click=${() =>
-          this.dispatchEvent(
-            new CustomEvent('close-popup', { bubbles: true, composed: true }),
-          )}
-      >
-        close
-      </button>`;
+      /><button @click=${this.validateOnClose}>close</button>`;
   }
 }
