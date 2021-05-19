@@ -263,19 +263,52 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       in date<input
         type="datetime-local"
         .value=${this.publishDate
-          ? this.publishDate.toISOString().slice(0, 19)
+          ? this.publishDate
+              .toLocaleString('sv-SE', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+              .replace(' ', 'T')
           : ''}
         @input=${this.changeStartDate}
-        .max=${this.unpublishDate?.toISOString().slice(0, 19) as string}
+        .max=${this.unpublishDate
+          ?.toLocaleString('sv-SE', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+          })
+          .replace(' ', 'T') as string}
       />
       <button @click=${this.changeStartDate}>X</button>
       out date<input
         type="datetime-local"
         .value=${this.unpublishDate
-          ? this.unpublishDate.toISOString().slice(0, 19)
+          ? this.unpublishDate
+              .toLocaleString('sv-SE', {
+                //! this locale is a hacky way to get properly formatted string. DO NOT CHANGE TO UNDEFINED!
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+              .replace(' ', 'T')
           : ''}
         @input=${this.changeEndDate}
-        .min=${this.publishDate?.toISOString().slice(0, 19) as string}
+        .min=${this.publishDate
+          ?.toLocaleString('sv-SE', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+          })
+          .replace(' ', 'T') as string}
       /><button @click=${this.changeEndDate}>X</button
       ><button @click=${this.validateOnClose}>close</button>`;
   }

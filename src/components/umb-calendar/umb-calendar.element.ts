@@ -234,6 +234,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     if (!this.hasPopup) this.hasPopup = true;
     if (e.target instanceof UmbPublicationElement) {
       this.currentPublication = e.target.id;
+      this.currentDate = e.target.startDate;
       console.log('clicked on bar', e.target);
       return;
     }
@@ -248,6 +249,8 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
 
   public closePopUp() {
     this.hasPopup = false;
+    this.currentPublication = '';
+    this.currentDate = null;
   }
 
   render() {
