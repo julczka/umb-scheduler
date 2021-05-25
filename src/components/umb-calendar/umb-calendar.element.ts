@@ -231,6 +231,24 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     this.shiftScale(-1);
   }
 
+  // private deltaTicks() {
+  //   return this.ticks[1].valueOf() - this.ticks[0].valueOf();
+  // }
+
+  // private width() {
+  //   if (this.scaleInverted !== null && this.startDate !== null) {
+  //     console.log(
+  //       this.deltaTicks(),
+  //       UmbCalendarElement.invertDate(this.scaleInverted, this.deltaTicks()),
+  //     );
+  //     return UmbCalendarElement.invertDate(
+  //       this.scaleInverted,
+  //       this.deltaTicks(),
+  //     );
+  //   }
+  // }
+
+  // eslint-disable-next-line class-methods-use-this
   public openPopUp(e: MouseEvent) {
     if (!this.hasPopup) this.hasPopup = true;
     if (e.target instanceof UmbPublicationElement) {
@@ -254,8 +272,19 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     this.currentDate = null;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  // protected dynamicStyles() {
+  //   console.log(this.width());
+  //   return { minWidth: `${this.width()}px` };
+  // }
+
   render() {
-    return html` <umb-cal-navigation></umb-cal-navigation>
+    return html` <umb-cal-navigation
+        @zoom-in=${this.zoomIn}
+        @zoom-out=${this.zoomOut}
+        @move-back=${this.prev}
+        @move-forward=${this.next}
+      ></umb-cal-navigation>
       ${this.hasPopup
         ? html`<umb-publication-popup
             .variants=${this.variants}
@@ -280,3 +309,20 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       </div>`;
   }
 }
+
+// .publishDate=${publication.start}
+//             .unpublishDate=${publication.end}
+//             .publication=${publication}
+
+// repeat(
+//   this.ticks,
+//   tick => tick.valueOf(),
+//   tick =>
+//     html`<umb-tick @click=${this.openPopUp} .date=${tick}></umb-tick>`,
+// )
+
+// <button @click=${this.zoomIn}>ZOOM IN</button>
+//       <button @click=${this.zoomOut}>ZOOM OUT</button>
+//       <button @click=${this.prev}>PREV</button>
+//       <button @click=${this.next}>NEXT</button>
+//       <br />

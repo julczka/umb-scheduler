@@ -1,3 +1,4 @@
+import { state } from 'lit/decorators.js';
 import { css, html, LitElement } from 'lit';
 
 export class UmbCalendarNavigationElement extends LitElement {
@@ -10,6 +11,11 @@ export class UmbCalendarNavigationElement extends LitElement {
         padding: 1em;
         background-color: var(--uui-interface-surface);
         border-bottom: 0.5px solid var(--uui-interface-border);
+      }
+
+      #date {
+        margin-left: 1em;
+        font-weight: bold;
       }
     `,
   ];
@@ -39,14 +45,29 @@ export class UmbCalendarNavigationElement extends LitElement {
     this.fireEvent('go-to-today');
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    setInterval(() => {
+      this.nowDate = new Date();
+    }, 1000);
+  }
+
+  @state()
+  nowDate = new Date();
+
   render() {
-    return html`<uui-button-group
-        ><uui-button look="outline" @click=${this.previous}>Previous</uui-button
-        ><uui-button look="outline" @click=${this.next}>Today</uui-button
-        ><uui-button look="outline" @click=${this.today}
-          >Next</uui-button
-        ></uui-button-group
-      ><uui-button-group
+    return html`<div>
+        <uui-button-group
+          ><uui-button look="outline" @click=${this.previous}
+            >Previous</uui-button
+          ><uui-button look="outline" @click=${this.today}>Today</uui-button
+          ><uui-button look="outline" @click=${this.next}
+            >Next</uui-button
+          ></uui-button-group
+        >
+        <span id="date">${this.nowDate.toLocaleString()}</span>
+      </div>
+      <uui-button-group
         ><uui-button look="outline" @click=${this.zoomIn}>Zoom in</uui-button
         ><uui-button look="outline" @click=${this.zoomOut}
           >Zoom out</uui-button
