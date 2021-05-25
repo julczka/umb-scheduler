@@ -34,26 +34,37 @@ const process = {
       position: fixed;  
       top: 50%;
       left: 50%;
+      
     
     } 
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: black;
+      opacity: 0;
+      transition: opacity 250ms linear;
+      pointer-events: none;
+
+    }
 
     .darken {
-      filter: grayscale(1);
+      opacity: 0.7;
     }
 
-    #scheduler {
-
-    }
   </style>
   <uui-button id="entry-point" look="primary">Schedule</uui-button>
+  <div class="overlay"></div>
   <umb-scheduler id="scheduler"></umb-scheduler>
   <script>
-    // const scheduler = document.querySelector('#scheduler');
+  {  const overlay = document.querySelector('.overlay');
     document.querySelector('#entry-point').onclick = function() {
-      console.log('workin')
-      document.body.classList.add('darken')
+      overlay.classList.add('darken')
+      
     };
-    
+    }
   </script>
   <script type="module" src="./ui-lib/00ad8f16.js"></script>
   <script type="module" src="./out-tsc/src/index.js"></script>
