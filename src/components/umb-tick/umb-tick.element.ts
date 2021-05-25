@@ -8,7 +8,7 @@ export class UmbTickElement extends LitElement {
         flex: 1;
         font-size: 9px;
         /* height: 100%; */
-        border: 1px solid red;
+        /* border: 1px solid red; */
         display: flex;
         flex-direction: column;
         box-sizing: border-box;

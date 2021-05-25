@@ -5,3 +5,5 @@ import './components/umb-calendar';
 import './components/umb-scheduler';
 import './components/umb-tick';
 import './components/umb-sch-header';
+import './components/umb-sch-footer';
+import './components/umb-cal-navigation';

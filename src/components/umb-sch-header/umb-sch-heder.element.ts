@@ -15,6 +15,7 @@ export class UmbSchedulerHeaderElement extends connect(store)(LitElement) {
         background-color: var(--uui-interface-chosen);
         color: var(--uui-interface-chosen-contrast);
         padding: 1rem;
+        font-weight: bold;
       }
 
       #page-name {

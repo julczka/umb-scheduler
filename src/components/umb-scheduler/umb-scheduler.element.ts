@@ -10,14 +10,12 @@ export class UmbScheduler extends LitElement {
       position: absolute;
       top: 0;
       right: 0;
-      -webkit-box-shadow: -3px 0px 15px -2px rgba(0, 0, 0, 0.42);
-      box-shadow: -3px 0px 15px -2px rgba(0, 0, 0, 0.42);
-      /* display: flex;
+      -webkit-box-shadow: var(--uui-shadow-depth-5);
+      box-shadow: var(--uui-shadow-depth-5);
+      display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-
-      color: #1a2b42; */
+      align-items: stretch;
+      justify-content: space-between;
 
       /* margin: 0 auto;
       text-align: center; */
@@ -28,6 +26,7 @@ export class UmbScheduler extends LitElement {
     return html`
       <umb-sch-header></umb-sch-header>
       <umb-calendar></umb-calendar>
+      <umb-sch-footer></umb-sch-footer>
     `;
   }
 }
