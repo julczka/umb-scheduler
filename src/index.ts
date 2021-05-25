@@ -4,3 +4,4 @@ import './components/umb-publication';
 import './components/umb-calendar';
 import './components/umb-scheduler';
 import './components/umb-tick';
+import './components/umb-sch-header';
