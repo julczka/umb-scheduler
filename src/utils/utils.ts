@@ -71,3 +71,12 @@ export const generateId = () => `_${Math.random().toString(36).substr(2, 9)}`;
 // Math.random should be unique because of its seeding algorithm.
 // Convert it to base 36 (numbers + letters), and grab the first 9 characters
 // after the decimal.
+
+export const isToday = (someDate: Date) => {
+  const today = new Date();
+  return (
+    someDate.getDate() === today.getDate() &&
+    someDate.getMonth() === today.getMonth() &&
+    someDate.getFullYear() === today.getFullYear()
+  );
+};

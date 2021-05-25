@@ -1,5 +1,6 @@
 import { property } from 'lit/decorators.js';
 import { css, html, LitElement } from 'lit';
+import { isToday } from '../../utils/utils';
 
 const weekdays = [
   'Sunday',
@@ -93,6 +94,18 @@ export class UmbTickElement extends LitElement {
         transform: translate(-50%, -50%);
       }
 
+      :host([today]) .circle:first-of-type {
+        background-color: var(--uui-interface-chosen);
+        border: none;
+      }
+
+      .today {
+        width: 26px;
+        background: transparent;
+        transform: translateY(-50%);
+        border: 1px solid var(--uui-interface-chosen);
+      }
+
       .circle:last-of-type {
         bottom: 0;
         left: 50%;
@@ -107,6 +120,9 @@ export class UmbTickElement extends LitElement {
   @property({ type: Boolean, reflect: true, attribute: 'show-month' })
   public showMonth: Boolean = false;
 
+  @property({ type: Boolean, reflect: true, attribute: 'today' })
+  public isToday: Boolean = false;
+
   render() {
     return html`<div id="date-container">
         ${this.date
@@ -120,6 +136,7 @@ export class UmbTickElement extends LitElement {
       </div>
       <div id="line-container">
         <span class="circle"></span>
+        ${this.isToday ? html`<span class="circle today"></span>` : ''}
         <div id="line"></div>
         <span class="circle"></span>
       </div>`;

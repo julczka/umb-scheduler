@@ -5,7 +5,11 @@ import { html, css, LitElement } from 'lit';
 import { ScaleLinear, ScaleTime } from 'd3-scale';
 import { repeat } from 'lit/directives/repeat.js';
 import { connect } from 'pwa-helpers';
-import { checkIfEqualDates, checkIfTheSameDay } from '../../utils/utils.js';
+import {
+  checkIfEqualDates,
+  checkIfTheSameDay,
+  isToday,
+} from '../../utils/utils.js';
 import { store } from '../../redux/store.js';
 import {
   shiftScaleDays,
@@ -282,6 +286,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
               @click=${this.openPopUp}
               .date=${tick}
               ?show-month=${tick.getDate() === 1}
+              ?today=${isToday(tick)}
             ></umb-tick>`,
         )}
         ${repeat(
