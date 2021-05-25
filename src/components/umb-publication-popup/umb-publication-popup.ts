@@ -327,9 +327,10 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
 
   showVersionAndVariantTemplate() {
     return html`<div class="select-wrappper">
-        <span class="input-label"
-          >${this.variant ? this.variant.name : ''}</span
-        >
+        <span class="input-label">${this.variant ? this.variant.name : ''}</span
+        >${this.variant?.mandatory
+          ? html`<uui-tag look="warning">Mandatory</uui-tag>`
+          : ''}
       </div>
       <div class="select-wrappper">
         <span class="input-label"
