@@ -113,6 +113,9 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         v => v.id === this.publication.variantId,
       ) as Variant;
       console.log(this.variant);
+      this.version = this.variant.versions.find(
+        version => version.id === this.publication.versionId,
+      ) as Version;
     }
   }
 
@@ -299,6 +302,42 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       .replace(' ', 'T');
   }
 
+  chooseVersionAndVariantTemplate() {
+    return html`<div class="select-wrappper">
+        <span class="input-label">Choose variant</span>
+        <umb-select
+          @change=${this.setVariant}
+          .options=${this.variants}
+          class="input-flex"
+          .value=${this.variant ? this.variant.id : ''}
+        >
+        </umb-select>
+      </div>
+      <div class="select-wrappper">
+        <span class="input-label">Choose version</span>
+        <umb-select
+          @change=${this.setVersion}
+          .options=${this.versions}
+          class="input-flex"
+          .value=${this.version ? this.version.id : ''}
+        >
+        </umb-select>
+      </div>`;
+  }
+
+  showVersionAndVariantTemplate() {
+    return html`<div class="select-wrappper">
+        <span class="input-label"
+          >${this.variant ? this.variant.name : ''}</span
+        >
+      </div>
+      <div class="select-wrappper">
+        <span class="input-label"
+          >${this.version ? this.version.name : ''}</span
+        >
+      </div>`;
+  }
+
   render() {
     return html` <div id="popup-wrapper">
       <div id="page-title">
@@ -311,26 +350,9 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         </div>
         <span>${this.pageTitle}</span>
       </div>
-      <div class="select-wrappper">
-        <span class="input-label">Choose variant</span>
-        <umb-select
-          @change=${this.setVariant}
-          .options=${this.variants}
-          class="input-flex"
-          .value=${this.variant ? this.variant : ''}
-        >
-        </umb-select>
-      </div>
-      <div class="select-wrappper">
-        <span class="input-label">Choose version</span>
-        <umb-select
-          @change=${this.setVersion}
-          .options=${this.versions}
-          class="input-flex"
-          .value=${this.version ? this.version : ''}
-        >
-        </umb-select>
-      </div>
+      ${this.publicationId
+        ? this.showVersionAndVariantTemplate()
+        : this.chooseVersionAndVariantTemplate()}
       <div class="date-input-wrapper">
         <span class="input-label">Publish on</span>
         <div class="input-flex">
