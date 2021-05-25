@@ -6,11 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="Description" content="Put your description here.">
   <base href="/">
-  <link rel="stylesheet" href="./src/styles/index.css"
+  <link rel="stylesheet" href="./src/styles/index.css">
 
-  <style>
-
-  </style>
+  
   <title>umb-scheduler</title>
   <script>
 
@@ -25,9 +23,39 @@ const process = {
 </head>
 
 <body>
-  <umb-scheduler></umb-scheduler>
-  <script type="module" src="./ui-lib/00ad8f16.js"></script>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background-image: url('./public/backoffice-background-min.png');
+    }
 
+    #entry-point {
+      position: fixed;  
+      top: 50%;
+      left: 50%;
+    
+    } 
+
+    .darken {
+      filter: grayscale(1);
+    }
+
+    #scheduler {
+
+    }
+  </style>
+  <uui-button id="entry-point" look="primary">Schedule</uui-button>
+  <umb-scheduler id="scheduler"></umb-scheduler>
+  <script>
+    // const scheduler = document.querySelector('#scheduler');
+    document.querySelector('#entry-point').onclick = function() {
+      console.log('workin')
+      document.body.classList.add('darken')
+    };
+    
+  </script>
+  <script type="module" src="./ui-lib/00ad8f16.js"></script>
   <script type="module" src="./out-tsc/src/index.js"></script>
 </body>
 

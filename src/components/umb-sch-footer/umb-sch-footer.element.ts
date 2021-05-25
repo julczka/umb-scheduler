@@ -10,6 +10,7 @@ export class UmbSchedulerFooterElement extends LitElement {
         box-sizing: border-box;
         padding: 1.2rem;
         border-top: 0.5px solid var(--uui-interface-border);
+        background: var(--uui-interface-surface);
       }
 
       uui-button:first-child {

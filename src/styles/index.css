@@ -7,7 +7,6 @@ UUI - Mapping-level or specific component name - State - Name - Part - Overwrite
 }
 /* Size Properties */
 :root {
-
   --uui-size-half-base-unit: 3px;
   --uui-size-base-unit: 6px;
   --uui-size-xsmall: 9px;
@@ -17,7 +16,6 @@ UUI - Mapping-level or specific component name - State - Name - Part - Overwrite
   --uui-size-large: 30px;
   --uui-size-xlarge: 42px;
   --uui-size-xxlarge: 66px;
-
 
   /** concept for a different naming convention: */
   --uui-size-space-1: 3px;
@@ -35,20 +33,19 @@ UUI - Mapping-level or specific component name - State - Name - Part - Overwrite
 
   /** Other size props: */
   --uui-size-border-radius: 3px;
-
 }
 /* Currently used https://chir.ag/projects/name-that-color/ for naming inspiration */
 /* Color Properties */
 :root {
-  --uui-color-deep-saffron: #F79C37;
+  --uui-color-deep-saffron: #f79c37;
   --uui-color-deep-saffron-light: rgb(249, 181, 103);
   --uui-color-deep-saffron-dark: rgb(222, 145, 56);
   --uui-color-deep-saffron-dimmed: rgb(166, 150, 133);
-  --uui-color-sunglow: #FAD634;
+  --uui-color-sunglow: #fad634;
   --uui-color-sunglow-light: rgb(251, 224, 101);
   --uui-color-sunglow-dark: rgb(224, 193, 51);
   --uui-color-sunglow-dimmed: rgb(166, 160, 133);
-  --uui-color-spanish-pink: #F5C1BC;
+  --uui-color-spanish-pink: #f5c1bc;
   --uui-color-spanish-pink-light: rgb(248, 214, 211);
   --uui-color-spanish-pink-dark: rgb(232, 192, 189);
   --uui-color-spanish-pink-dimmed: rgb(219, 212, 212);
@@ -56,26 +53,30 @@ UUI - Mapping-level or specific component name - State - Name - Part - Overwrite
   --uui-color-gunmetal-light: rgb(35, 55, 83);
   --uui-color-gunmetal-dark: rgb(23, 27, 33);
   --uui-color-gunmetal-dimmed: rgb(54, 54, 54);
-  --uui-color-space-cadet: #1B264F;
+  --uui-color-space-cadet: #1b264f;
   --uui-color-space-cadet-light: rgb(38, 53, 110);
   --uui-color-space-cadet-dark: rgb(28, 35, 59);
   --uui-color-space-cadet-dimmed: rgb(43, 48, 64);
-  --uui-color-violet-blue: #3544B1;
+  --uui-color-violet-blue: #3544b1;
   --uui-color-violet-blue-light: rgb(70, 86, 200);
   --uui-color-violet-blue-dark: rgb(54, 65, 156);
   --uui-color-violet-blue-dimmed: rgb(87, 87, 87);
-  --uui-color-matisse: #2152A3;
+  --uui-color-matisse: #2152a3;
   --uui-color-matisse-light: rgb(40, 99, 195);
   --uui-color-matisse-dark: rgb(33, 75, 143);
   --uui-color-matisse-dimmed: rgb(61, 67, 77);
-  --uui-color-malibu: #3879FF;
+  --uui-color-malibu: #3879ff;
   --uui-color-malibu-light: rgb(97, 150, 255);
   --uui-color-malibu-dark: rgb(56, 116, 235);
   --uui-color-malibu-dimmed: rgb(115, 120, 130);
-  --uui-color-maroon-flush: #D42054;
+  --uui-color-maroon-flush: #d42054;
   --uui-color-maroon-flush-light: rgb(226, 60, 107);
   --uui-color-maroon-flush-dark: rgb(191, 33, 78);
-  --uui-color-maroon-flush-dimmed: rgb(133, 107, 114);/* A11Y acceptable color. Originally #2BC37C*/
+  --uui-color-maroon-flush-dimmed: rgb(
+    133,
+    107,
+    114
+  ); /* A11Y acceptable color. Originally #2BC37C*/
   --uui-color-jungle-green: #25aa60;
   --uui-color-jungle-green-light: rgb(43, 197, 112);
   --uui-color-jungle-green-dark: rgb(38, 156, 91);
@@ -90,19 +91,19 @@ UUI - Mapping-level or specific component name - State - Name - Part - Overwrite
   --uui-color-cocoa-black-light: rgb(39, 36, 32);
   --uui-color-cocoa-black-dark: rgb(20, 20, 20);
   --uui-color-cocoa-black-dimmed: rgb(48, 48, 48);
-  --uui-color-dune-black: #2E2B29;
+  --uui-color-dune-black: #2e2b29;
   --uui-color-dune-black-light: rgb(57, 53, 50);
   --uui-color-dune-black-dark: rgb(38, 38, 38);
   --uui-color-dune-black-dimmed: rgb(64, 64, 64);
-  --uui-color-cocoa-brown: #332A24;
+  --uui-color-cocoa-brown: #332a24;
   --uui-color-cocoa-brown-light: rgb(66, 54, 47);
   --uui-color-cocoa-brown-dark: rgb(38, 37, 36);
   --uui-color-cocoa-brown-dimmed: rgb(43, 43, 43);
-  --uui-color-chamoisee: #9D8057;
+  --uui-color-chamoisee: #9d8057;
   --uui-color-chamoisee-light: rgb(175, 148, 110);
   --uui-color-chamoisee-dark: rgb(138, 116, 87);
   --uui-color-chamoisee-dimmed: rgb(115, 113, 110);
-  --uui-color-timberwolf: #E2DAD4;
+  --uui-color-timberwolf: #e2dad4;
   --uui-color-timberwolf-light: rgb(243, 239, 237);
   --uui-color-timberwolf-dark: rgb(208, 208, 208);
   --uui-color-timberwolf-dimmed: rgb(207, 207, 207);
@@ -114,7 +115,7 @@ UUI - Mapping-level or specific component name - State - Name - Part - Overwrite
   --uui-color-sand-light: rgb(255, 255, 255);
   --uui-color-sand-dark: rgb(226, 226, 226);
   --uui-color-sand-dimmed: rgb(231, 231, 231);
-  --uui-color-white: #FEFEFE;
+  --uui-color-white: #fefefe;
   --uui-color-white-light: rgb(255, 255, 255);
   --uui-color-white-dark: rgb(250, 250, 250);
   --uui-color-white-dimmed: rgb(228, 228, 228);
@@ -122,27 +123,31 @@ UUI - Mapping-level or specific component name - State - Name - Part - Overwrite
   --uui-color-black-light: rgb(26, 26, 26);
   --uui-color-black-dark: rgb(5, 5, 5);
   --uui-color-black-dimmed: rgb(36, 36, 36);
-  --uui-color-grey: #C4C4C4;
+  --uui-color-grey: #c4c4c4;
   --uui-color-grey-light: rgb(222, 222, 222);
   --uui-color-grey-dark: rgb(179, 179, 179);
   --uui-color-grey-dimmed: rgb(189, 189, 189);
-  --uui-color-dusty-grey: #9B9B9B;
+  --uui-color-dusty-grey: #9b9b9b;
   --uui-color-dusty-grey-light: rgb(176, 176, 176);
   --uui-color-dusty-grey-dark: rgb(141, 141, 141);
   --uui-color-dusty-grey-dimmed: rgb(186, 186, 186);
-  --uui-color-mine-grey: #3E3E3E;
+  --uui-color-mine-grey: #3e3e3e;
   --uui-color-mine-grey-light: rgb(82, 82, 82);
   --uui-color-mine-grey-dark: rgb(56, 56, 56);
   --uui-color-mine-grey-dimmed: rgb(87, 87, 87);
-
 }
 /** Interface shadows*/
 :root {
-  --uui-shadow-depth-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  --uui-shadow-depth-2: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-  --uui-shadow-depth-3: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-  --uui-shadow-depth-4: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-  --uui-shadow-depth-5: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+  --uui-shadow-depth-1: 0 1px 3px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.24);
+  --uui-shadow-depth-2: 0 3px 6px rgba(0, 0, 0, 0.16),
+    0 3px 6px rgba(0, 0, 0, 0.23);
+  --uui-shadow-depth-3: 0 10px 20px rgba(0, 0, 0, 0.19),
+    0 6px 6px rgba(0, 0, 0, 0.23);
+  --uui-shadow-depth-4: 0 14px 28px rgba(0, 0, 0, 0.25),
+    0 10px 10px rgba(0, 0, 0, 0.22);
+  --uui-shadow-depth-5: 0 19px 38px rgba(0, 0, 0, 0.3),
+    0 15px 12px rgba(0, 0, 0, 0.22);
 }
 
 /** Standard interface style*/
@@ -316,10 +321,10 @@ UUI - Mapping-level or specific component name - State - Name - Part - Overwrite
   --uui-look-placeholder-font-weight: 400;
   --uui-look-placeholder-border-style: dashed;
 }
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
 
-    /** Interface */
+    
     --uui-interface-background: var(--uui-color-black);
     --uui-interface-background-hover: var(--uui-color-black-dark);
     --uui-interface-background-disabled: var(--uui-color-black-dimmed);
@@ -339,8 +344,7 @@ UUI - Mapping-level or specific component name - State - Name - Part - Overwrite
     --uui-interface-contrast-hover: var(--uui-color-malibu);
     --uui-interface-contrast-disabled: var(--uui-color-chamoisee-dimmed);
     --uui-interface-contrast-focus: var(--uui-color-white);
-    /*--uui-interface-contrast-selected: var(--uui-color-malibu);*/
-    /*--uui-interface-contrast-active: var(--uui-color-spanish-pink);*/
+   
 
     --uui-interface-border: var(--uui-color-grey);
     --uui-interface-border-hover: var(--uui-color-grey-light);
@@ -368,14 +372,13 @@ UUI - Mapping-level or specific component name - State - Name - Part - Overwrite
     --uui-interface-chosen-contrast-focus: var(--uui-color-white);
 
 
-    /** Interface looks: */
-    /** PRIMARY */
+   
     --uui-look-primary-surface: var(--uui-color-violet-blue);
     --uui-look-primary-surface-hover: var(--uui-color-violet-blue-light);
     --uui-look-primary-surface-disabled: var(--uui-color-violet-blue-dimmed);
     --uui-look-primary-surface-focus: var(--uui-color-violet-blue);
 
-    /** SECONDARY */
+    
     --uui-look-secondary-surface: var(--uui-color-mine-grey);
     --uui-look-secondary-surface-hover: var(--uui-color-mine-grey-light);
     --uui-look-secondary-surface-disabled: var(--uui-color-mine-grey-dimmed);
@@ -389,7 +392,7 @@ UUI - Mapping-level or specific component name - State - Name - Part - Overwrite
     --uui-look-secondary-border-disabled: var(--uui-color-mine-grey-dimmed);
     --uui-look-secondary-border-focus: var(--uui-color-mine-grey);
 
-    /** POSITIVE */
+
     --uui-look-positive-surface: var(--uui-color-dark-green);
     --uui-look-positive-surface-hover: var(--uui-color-dark-green);
     --uui-look-positive-surface-disabled: var(--uui-color-dark-green-dimmed);
@@ -400,14 +403,14 @@ UUI - Mapping-level or specific component name - State - Name - Part - Overwrite
     --uui-look-positive-border-focus: var(--uui-color-dark-green-dark);
 
 
-    /** WARNING look */
+   
     --uui-look-warning-surface: var(--uui-color-sunglow-dark);
 
-    /** DANGER look */
+
     --uui-look-danger-surface: var(--uui-color-maroon-flush-dark);
 
 
-    /** OUTLINE */
+  
     --uui-look-outline-contrast: var(--uui-color-white);
     --uui-look-outline-contrast-hover: var(--uui-color-malibu);
     --uui-look-outline-contrast-disabled: var(--uui-color-white-dimmed);
@@ -418,7 +421,7 @@ UUI - Mapping-level or specific component name - State - Name - Part - Overwrite
     --uui-look-outline-border-disabled: var(--uui-color-white-dimmed);
     --uui-look-outline-border-focus: var(--uui-color-white);
 
-    /** PLACEHOLDER */
+    
     --uui-look-placeholder-contrast: var(--uui-color-white);
     --uui-look-placeholder-contrast-hover: var(--uui-color-malibu);
     --uui-look-placeholder-contrast-disabled: var(--uui-color-white-dimmed);
@@ -430,10 +433,9 @@ UUI - Mapping-level or specific component name - State - Name - Part - Overwrite
     --uui-look-placeholder-border-focus: var(--uui-color-white);
   }
 
-}
+} */
 @media screen and (-ms-high-contrast: active) {
   :root {
-
     /** POSITIVE */
     --uui-look-positive-surface: var(--uui-color-dark-green);
     --uui-look-positive-surface-hover: var(--uui-color-dark-green);
@@ -443,7 +445,6 @@ UUI - Mapping-level or specific component name - State - Name - Part - Overwrite
     --uui-look-positive-border-hover: var(--uui-color-dark-green);
     --uui-look-positive-border-disabled: var(--uui-color-dark-green-dimmed);
     --uui-look-positive-border-focus: var(--uui-color-dark-green);
-
 
     /** OUTLINE */
     --uui-look-outline-contrast: var(--uui-color-black);
@@ -469,7 +470,6 @@ UUI - Mapping-level or specific component name - State - Name - Part - Overwrite
 
     --uui-look-placeholder-font-weight: 700;
   }
-
 }
 /*
 
@@ -495,9 +495,8 @@ Temporary solution to include root css from a component, don't know at this stag
 /* Webfont: LatoLatin-Black */
 @font-face {
   font-family: 'Lato';
-  src: local('LatoLatin Black'),
-       local('LatoLatin-Black'),
-       url('/src/assets/fonts/lato/LatoLatin-Black.woff2') format('woff2');
+  src: local('LatoLatin Black'), local('LatoLatin-Black'),
+    url('/src/assets/fonts/lato/LatoLatin-Black.woff2') format('woff2');
   font-style: normal;
   font-display: swap;
   font-weight: 900;
@@ -506,9 +505,8 @@ Temporary solution to include root css from a component, don't know at this stag
 /* Webfont: LatoLatin-BlackItalic */
 @font-face {
   font-family: 'Lato';
-  src: local('LatoLatin BlackItalic'),
-       local('LatoLatin-BlackItalic'),
-       url('/src/assets/fonts/lato/LatoLatin-BlackItalic.woff2') format('woff2');
+  src: local('LatoLatin BlackItalic'), local('LatoLatin-BlackItalic'),
+    url('/src/assets/fonts/lato/LatoLatin-BlackItalic.woff2') format('woff2');
   font-style: italic;
   font-weight: 900;
   font-display: swap;
@@ -517,9 +515,8 @@ Temporary solution to include root css from a component, don't know at this stag
 /* Webfont: LatoLatin-Bold */
 @font-face {
   font-family: 'Lato';
-  src: local('LatoLatin Bold'),
-       local('LatoLatin-Bold'),
-       url('/src/assets/fonts/lato/LatoLatin-Bold.woff2') format('woff2');
+  src: local('LatoLatin Bold'), local('LatoLatin-Bold'),
+    url('/src/assets/fonts/lato/LatoLatin-Bold.woff2') format('woff2');
   font-style: normal;
   font-weight: 700;
   font-display: swap;
@@ -528,9 +525,8 @@ Temporary solution to include root css from a component, don't know at this stag
 /* Webfont: LatoLatin-BoldItalic */
 @font-face {
   font-family: 'Lato';
-  src: local('LatoLatin BoldItalic'),
-       local('LatoLatin-BoldItalic'),
-       url('/src/assets/fonts/lato/LatoLatin-BoldItalic.woff2') format('woff2');
+  src: local('LatoLatin BoldItalic'), local('LatoLatin-BoldItalic'),
+    url('/src/assets/fonts/lato/LatoLatin-BoldItalic.woff2') format('woff2');
   font-style: italic;
   font-weight: 700;
   font-display: swap;
@@ -539,9 +535,8 @@ Temporary solution to include root css from a component, don't know at this stag
 /* Webfont: LatoLatin-Italic */
 @font-face {
   font-family: 'Lato';
-  src: local('LatoLatin Italic'),
-       local('LatoLatin-Italic'),
-       url('/src/assets/fonts/lato/LatoLatin-Italic.woff2') format('woff2');
+  src: local('LatoLatin Italic'), local('LatoLatin-Italic'),
+    url('/src/assets/fonts/lato/LatoLatin-Italic.woff2') format('woff2');
   font-style: italic;
   font-weight: 400;
   font-display: swap;
@@ -550,9 +545,8 @@ Temporary solution to include root css from a component, don't know at this stag
 /* Webfont: LatoLatin-Regular */
 @font-face {
   font-family: 'Lato';
-  src: local('LatoLatin Regular'),
-       local('LatoLatin-Regular'),
-       url('/src/assets/fonts/lato/LatoLatin-Regular.woff2') format('woff2');
+  src: local('LatoLatin Regular'), local('LatoLatin-Regular'),
+    url('/src/assets/fonts/lato/LatoLatin-Regular.woff2') format('woff2');
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -561,9 +555,8 @@ Temporary solution to include root css from a component, don't know at this stag
 /* Webfont: LatoLatin-Light */
 @font-face {
   font-family: 'Lato';
-  src: local('LatoLatin Light'),
-       local('LatoLatin-Light'),
-       url('/src/assets/fonts/lato/LatoLatin-Light.woff2') format('woff2');
+  src: local('LatoLatin Light'), local('LatoLatin-Light'),
+    url('/src/assets/fonts/lato/LatoLatin-Light.woff2') format('woff2');
   font-style: normal;
   font-weight: 300;
   font-display: swap;
@@ -572,9 +565,8 @@ Temporary solution to include root css from a component, don't know at this stag
 /* Webfont: LatoLatin-LightItalic */
 @font-face {
   font-family: 'Lato';
-  src: local('LatoLatin LightItalic'),
-       local('LatoLatin-LightItalic'),
-       url('/src/assets/fonts/lato/LatoLatin-LightItalic.woff2') format('woff2');
+  src: local('LatoLatin LightItalic'), local('LatoLatin-LightItalic'),
+    url('/src/assets/fonts/lato/LatoLatin-LightItalic.woff2') format('woff2');
   font-style: italic;
   font-weight: 300;
   font-display: swap;
@@ -660,7 +652,7 @@ small {
   margin-bottom: var(--uui-size-medium);
 }
 blockquote {
-  float:right;
+  float: right;
   font-size: 15px;
   font-weight: 700;
   font-style: italic;
@@ -668,23 +660,23 @@ blockquote {
   padding-bottom: var(--uui-size-half-base-unit);
   margin-top: 0;
   margin-bottom: var(--uui-size-medium);
-  margin-right: -.035em;
+  margin-right: -0.035em;
   max-width: 16em;
-  quotes: "“" "”" "‘" "’";
+  quotes: '“' '”' '‘' '’';
   line-height: inherit;
 }
 blockquote:before {
   content: open-quote;
-  margin-left: -.46em;
-  margin-right: .08em;
+  margin-left: -0.46em;
+  margin-right: 0.08em;
   vertical-align: bottom;
   font-weight: 400;
   font-size: 2em;
 }
 blockquote:after {
   content: close-quote;
-  margin-left: .08em;
-  margin-right: -.46em;
+  margin-left: 0.08em;
+  margin-right: -0.46em;
   vertical-align: bottom;
   font-weight: 400;
   font-size: 2em;
