@@ -7,3 +7,4 @@ import './components/umb-tick';
 import './components/umb-sch-header';
 import './components/umb-sch-footer';
 import './components/umb-cal-navigation';
+import './components/umb-select';

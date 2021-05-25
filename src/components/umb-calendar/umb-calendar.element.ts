@@ -34,17 +34,21 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         justify-content: space-between;
         flex: 1;
         align-items: stretch;
-        overflow: auto;
         background-color: #f6f4f4;
       }
 
       #tickContainer {
-        padding: 1em 0;
+        box-sizing: border-box;
+        padding: 1em 1em 2em 1em;
         width: 90vw;
         display: flex;
         position: relative;
         align-items: stretch;
         flex: 1;
+      }
+
+      umb-tick:first-of-type {
+        --umb-tick-month-visibility: visible;
       }
     `,
   ];
@@ -231,23 +235,6 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     this.shiftScale(-1);
   }
 
-  // private deltaTicks() {
-  //   return this.ticks[1].valueOf() - this.ticks[0].valueOf();
-  // }
-
-  // private width() {
-  //   if (this.scaleInverted !== null && this.startDate !== null) {
-  //     console.log(
-  //       this.deltaTicks(),
-  //       UmbCalendarElement.invertDate(this.scaleInverted, this.deltaTicks()),
-  //     );
-  //     return UmbCalendarElement.invertDate(
-  //       this.scaleInverted,
-  //       this.deltaTicks(),
-  //     );
-  //   }
-  // }
-
   // eslint-disable-next-line class-methods-use-this
   public openPopUp(e: MouseEvent) {
     if (!this.hasPopup) this.hasPopup = true;
@@ -258,7 +245,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       return;
     }
     console.log('clicked outside of bar', e.target);
-    if (e.target instanceof UmbTickElement) {
+    if (e.target instanceof UmbTickElement && !this.hasPopup) {
       this.currentDate = e.target.date ? e.target.date : null;
     }
     this.currentPublication = '';
@@ -271,12 +258,6 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     this.currentPublication = '';
     this.currentDate = null;
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  // protected dynamicStyles() {
-  //   console.log(this.width());
-  //   return { minWidth: `${this.width()}px` };
-  // }
 
   render() {
     return html` <umb-cal-navigation
@@ -295,7 +276,11 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       <div id="tickContainer" @wheel=${this.handleWheelEvent}>
         ${this.ticks.map(
           tick =>
-            html`<umb-tick @click=${this.openPopUp} .date=${tick}></umb-tick>`,
+            html`<umb-tick
+              @click=${this.openPopUp}
+              .date=${tick}
+              ?show-month=${tick.getDate() === 1}
+            ></umb-tick>`,
         )}
         ${repeat(
           this.publications,
@@ -309,20 +294,3 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       </div>`;
   }
 }
-
-// .publishDate=${publication.start}
-//             .unpublishDate=${publication.end}
-//             .publication=${publication}
-
-// repeat(
-//   this.ticks,
-//   tick => tick.valueOf(),
-//   tick =>
-//     html`<umb-tick @click=${this.openPopUp} .date=${tick}></umb-tick>`,
-// )
-
-// <button @click=${this.zoomIn}>ZOOM IN</button>
-//       <button @click=${this.zoomOut}>ZOOM OUT</button>
-//       <button @click=${this.prev}>PREV</button>
-//       <button @click=${this.next}>NEXT</button>
-//       <br />

@@ -18,12 +18,17 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
   static styles = [
     css`
       :host {
-        position: absolute;
+        position: fixed;
+        top: 50%;
+
         background: white;
         height: 200px;
         padding: 1em;
         z-index: 100;
-        bottom: 0;
+        bottom: 50%;
+        box-sizing: border-box;
+        padding: 1em;
+        box-shadow: var(--uui-shadow-depth-3);
       }
 
       :host([error]) {
@@ -45,6 +50,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
 
   stateChanged(schedulerState: AppState) {
     this.variants = getVariantsSelector(schedulerState);
+    this.pageTitle = schedulerState.page.pageTitle;
   }
 
   private getPublicationFromState() {
@@ -71,6 +77,9 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
 
   @property({ type: Object, attribute: false })
   variant: Variant | null = null;
+
+  @property()
+  pageTitle = '';
 
   @state()
   versions: Version[] = [];
@@ -229,87 +238,52 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
     );
   }
 
+  private static _serializeDateforInput(date: Date) {
+    return date
+      .toLocaleString('sv-SE', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+      .replace(' ', 'T');
+  }
+
   render() {
-    return html`<h3>${this.publication.id} ${this.publicationId}</h3>
+    return html` <h2>${this.pageTitle}</h2>
+      <h3>${this.publication.id} ${this.publicationId}</h3>
       <h4>${this.publication.variantId} ${this.publication.versionId}</h4>
-      <select @change=${this.setVariant}>
-        <option value="" ?disabled=${this.publication.variantId !== ''}>
-          --Please choose an option--
-        </option>
-        ${this.variants.map(
-          variant =>
-            html`<option
-              value=${variant.id}
-              ?selected=${variant.id === this.publication.variantId}
-            >
-              ${variant.name}
-            </option>`,
-        )}
-      </select>
-      <select @change=${this.setVersion}>
-        <option value="" ?disabled=${this.publication.versionId !== ''}>
-          --Please choose an option--
-        </option>
-        ${this.versions.map(
-          version =>
-            html`<option
-              value=${version.id}
-              ?selected=${version.id === this.publication.versionId}
-            >
-              ${version.name}
-            </option>`,
-        )}
-      </select>
-      in date<input
+      <umb-select @change=${this.setVariant} .options=${this.variants}>
+      </umb-select>
+      <umb-select @change=${this.setVersion} .options=${this.versions}>
+      </umb-select>
+      in date<uui-textfield
         type="datetime-local"
         .value=${this.publishDate
-          ? this.publishDate
-              .toLocaleString('sv-SE', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-              })
-              .replace(' ', 'T')
+          ? UmbPublicationPopupElement._serializeDateforInput(this.publishDate)
           : ''}
         @input=${this.changeStartDate}
         .max=${this.unpublishDate
-          ?.toLocaleString('sv-SE', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-          })
-          .replace(' ', 'T') as string}
-      />
-      <button @click=${this.changeStartDate}>X</button>
-      out date<input
+          ? UmbPublicationPopupElement._serializeDateforInput(
+              this.unpublishDate,
+            )
+          : ''}
+      ></uui-textfield>
+      <uui-button look="danger" @click=${this.changeStartDate}>X</uui-button>
+      out date<uui-textfield
         type="datetime-local"
         .value=${this.unpublishDate
-          ? this.unpublishDate
-              .toLocaleString('sv-SE', {
-                //! this locale is a hacky way to get properly formatted string. DO NOT CHANGE TO UNDEFINED!
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-              })
-              .replace(' ', 'T')
+          ? UmbPublicationPopupElement._serializeDateforInput(
+              this.unpublishDate,
+            )
           : ''}
         @input=${this.changeEndDate}
         .min=${this.publishDate
-          ?.toLocaleString('sv-SE', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-          })
-          .replace(' ', 'T') as string}
-      /><button @click=${this.changeEndDate}>X</button
-      ><button @click=${this.validateOnClose}>close</button>`;
+          ? UmbPublicationPopupElement._serializeDateforInput(this.publishDate)
+          : ''}
+      ></uui-textfield
+      ><uui-button look="danger" @click=${this.changeEndDate}>X</uui-button
+      ><uui-button @click=${this.validateOnClose}>close</uui-button>`;
   }
 }

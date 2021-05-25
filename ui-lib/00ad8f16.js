@@ -2487,7 +2487,7 @@ class e{constructor(e){this.promise=new Promise(((e,t)=>{this.resolve=e,this.rej
             background-color: var(--uui-look-${0}-surface);
             color: var(--uui-look-${0}-contrast);
           }
-        `),e,e,e)))],r([a({attribute:!0})],Fn.prototype,"size",void 0),r([a({attribute:!0})],Fn.prototype,"look",void 0),customElements.define("uui-tag",Fn);class Kn extends t{}Kn.INPUT="input",Kn.CHANGE="change",Kn.KEYUP="keyup";let Gn,Yn,Jn=e=>e;class Xn extends ge{constructor(){super(),this.label="",this.placeholder="",this.disabled=!1,this._value="",this.type="text",this.valid=!0,this._internals=this.attachInternals()}firstUpdated(){this.label||console.warn(this.tagName+" needs a `label`")}get value(){return this._value}set value(e){this._value=e,this._internals.setFormValue(this._value)}onInput(e){this.value=e.target.value,this.dispatchEvent(new Kn(Kn.INPUT))}onChange(){this.dispatchEvent(new Kn(Kn.CHANGE))}onKeyup(){this.dispatchEvent(new Kn(Kn.KEYUP))}render(){return L(Gn||(Gn=Jn`
+        `),e,e,e)))],r([a({attribute:!0})],Fn.prototype,"size",void 0),r([a({attribute:!0})],Fn.prototype,"look",void 0),customElements.define("uui-tag",Fn);class Kn extends t{}Kn.INPUT="input",Kn.CHANGE="change",Kn.KEYUP="keyup";let Gn,Yn,Jn=e=>e;class Xn extends ge{constructor(){super(),this.label="",this.placeholder="",this.disabled=!1,this._value="",this.type="text",this.min="",this.max="",this.valid=!0,this._internals=this.attachInternals()}firstUpdated(){this.label||console.warn(this.tagName+" needs a `label`")}get value(){return this._value}set value(e){this._value=e,this._internals.setFormValue(this._value)}onInput(e){this.value=e.target.value,this.dispatchEvent(new Kn(Kn.INPUT))}onChange(){this.dispatchEvent(new Kn(Kn.CHANGE))}onKeyup(){this.dispatchEvent(new Kn(Kn.KEYUP))}render(){return L(Gn||(Gn=Jn`
       <input
         type="${0}"
         value=${0}
@@ -2497,8 +2497,10 @@ class e{constructor(e){this.promise=new Promise(((e,t)=>{this.resolve=e,this.rej
         @input=${0}
         @change=${0}
         @keyup=${0}
+        .min=${0}
+        .max=${0}
       />
-    `),this.type,this.value,this.placeholder,this.label,this.disabled,this.onInput,this.onChange,this.onKeyup)}}Xn.styles=[ie(Yn||(Yn=Jn`
+    `),this.type,this.value,this.placeholder,this.label,this.disabled,this.onInput,this.onChange,this.onKeyup,this.min,this.max)}}Xn.styles=[ie(Yn||(Yn=Jn`
       :host {
         display: inline-block;
       }
@@ -2555,7 +2557,7 @@ class e{constructor(e){this.promise=new Promise(((e,t)=>{this.resolve=e,this.rej
 
         color: var(--uui-interface-contrast-disabled);
       }
-    `))],Xn.formAssociated=!0,r([a()],Xn.prototype,"label",void 0),r([a({})],Xn.prototype,"placeholder",void 0),r([a({type:Boolean})],Xn.prototype,"disabled",void 0),r([l()],Xn.prototype,"_value",void 0),r([a()],Xn.prototype,"value",null),r([a({type:String})],Xn.prototype,"type",void 0),r([a({type:Boolean,reflect:!0})],Xn.prototype,"valid",void 0),customElements.define("uui-textfield",Xn);let Zn,Qn,ea=e=>e;const ta=D(Zn||(Zn=ea`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    `))],Xn.formAssociated=!0,r([a()],Xn.prototype,"label",void 0),r([a({})],Xn.prototype,"placeholder",void 0),r([a({type:Boolean})],Xn.prototype,"disabled",void 0),r([l()],Xn.prototype,"_value",void 0),r([a()],Xn.prototype,"value",null),r([a({type:String})],Xn.prototype,"type",void 0),r([a({type:String})],Xn.prototype,"min",void 0),r([a({type:String})],Xn.prototype,"max",void 0),r([a({type:Boolean,reflect:!0})],Xn.prototype,"valid",void 0),customElements.define("uui-textfield",Xn);let Zn,Qn,ea=e=>e;const ta=D(Zn||(Zn=ea`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
 <path d="M461.884 68.14c-132.601 81.297-228.817 183.87-272.048 235.345l-105.874-82.95-46.751 37.691 182.941 186.049c31.485-80.646 131.198-238.264 252.956-350.252L461.884 68.14z"/>
 </svg>`)),ia=D(Qn||(Qn=ea`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
 <path d="M422.952 371.305L307.064 255.418l115.884-115.887-51.722-51.723L255.34 203.693 139.457 87.812l-51.726 51.719 115.885 115.885L87.731 371.305l51.726 51.721L255.344 307.14l115.884 115.882z"/>
