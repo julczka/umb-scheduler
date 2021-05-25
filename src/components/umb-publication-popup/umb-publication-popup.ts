@@ -377,6 +377,9 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
                 )
               : ''}
             @input=${this.changeStartDate}
+            .min=${UmbPublicationPopupElement._serializeDateforInput(
+              new Date(),
+            )}
             .max=${this.unpublishDate
               ? UmbPublicationPopupElement._serializeDateforInput(
                   this.unpublishDate,
