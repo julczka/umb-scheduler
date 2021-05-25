@@ -167,7 +167,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     e.preventDefault();
 
     if (e.deltaX === 0) {
-      if (e.deltaY > 0) {
+      if (e.deltaY < 0) {
         this.zoomIn();
         return;
       }

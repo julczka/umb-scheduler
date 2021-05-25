@@ -1,6 +1,5 @@
 import { property } from 'lit/decorators.js';
 import { css, html, LitElement } from 'lit';
-import { isToday } from '../../utils/utils';
 
 const weekdays = [
   'Sunday',
@@ -81,7 +80,7 @@ export class UmbTickElement extends LitElement {
       .circle {
         position: absolute;
         aspect-ratio: 1;
-        background-color: #f6f4f4;
+        background-color: var(--uui-interface-surface);
         width: 15px;
         box-sizing: border-box;
         border: 1px solid var(--uui-interface-border);

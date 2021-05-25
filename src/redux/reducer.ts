@@ -22,16 +22,8 @@ import {
 import { Page, pageInitialState } from '../Page';
 import { Variant1, Variant2 } from '../Variant';
 
-const currentMonthStartDate = new Date(
-  new Date().getFullYear(),
-  new Date().getMonth(),
-  1,
-);
-const currentMonthendDate = new Date(
-  new Date().getFullYear(),
-  new Date().getMonth() + 1,
-  0,
-);
+const currentMonthStartDate = new Date(addDays(new Date(), 14));
+const currentMonthendDate = new Date(addDays(new Date(), -14));
 
 export interface AppState {
   scheduler: SchedulerState;
