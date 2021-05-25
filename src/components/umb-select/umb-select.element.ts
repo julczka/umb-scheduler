@@ -56,10 +56,12 @@ export class UmbSelectElement extends LitElement {
 
   protected setValue(e: Event): void {
     const target = e.target as HTMLSelectElement;
+
     if (e.target) this.value = target.value;
     this.dispatchEvent(
       new CustomEvent('change', { bubbles: true, composed: true }),
     );
+    console.log(this.value, target.value);
   }
 
   private _toggleCaret() {
@@ -68,8 +70,12 @@ export class UmbSelectElement extends LitElement {
 
   render() {
     return html`<label for="">
-      // eslint-disable-next-line lit-a11y/no-invalid-change-handler
-      <select @change=${this.setValue} @click=${this._toggleCaret}>
+      <select
+        @change=${this.setValue}
+        @click=${this._toggleCaret}
+        .value=${this.value}
+      >
+        <option value="" disabled selected>Select your option</option>
         ${this.options.map(
           (option: any) =>
             html`<option .value=${option?.id}>${option?.name}</option>`,

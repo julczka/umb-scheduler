@@ -237,6 +237,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
 
   // eslint-disable-next-line class-methods-use-this
   public openPopUp(e: MouseEvent) {
+    if (this.hasPopup) return;
     if (!this.hasPopup) this.hasPopup = true;
     if (e.target instanceof UmbPublicationElement) {
       this.currentPublication = e.target.id;
@@ -245,9 +246,10 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       return;
     }
     console.log('clicked outside of bar', e.target);
-    if (e.target instanceof UmbTickElement && !this.hasPopup) {
+    if (e.target instanceof UmbTickElement) {
       this.currentDate = e.target.date ? e.target.date : null;
     }
+
     this.currentPublication = '';
 
     this.requestUpdate();
