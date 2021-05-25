@@ -69,6 +69,12 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
 
       .input-label {
         flex: 1;
+        font-weight: bold;
+      }
+
+      #variant {
+        font-size: 21px;
+        font-weight: bold;
       }
 
       .input-flex {
@@ -275,6 +281,11 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
   }
 
   private validateOnClose() {
+    if (this.publication.variantId === '' && this.publication.versionId === '')
+      this.dispatchEvent(
+        new CustomEvent('close-popup', { bubbles: true, composed: true }),
+      );
+
     if (this.publication.variantId === '') {
       this.error = true;
       return;
@@ -327,13 +338,14 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
 
   showVersionAndVariantTemplate() {
     return html`<div class="select-wrappper">
-        <span class="input-label">${this.variant ? this.variant.name : ''}</span
+        <span id="variant" class="input-label"
+          >${this.variant ? this.variant.name : ''}</span
         >${this.variant?.mandatory
           ? html`<uui-tag look="warning">Mandatory</uui-tag>`
           : ''}
       </div>
       <div class="select-wrappper">
-        <span class="input-label"
+        <span id="version" class="input-label"
           >${this.version ? this.version.name : ''}</span
         >
       </div>`;
