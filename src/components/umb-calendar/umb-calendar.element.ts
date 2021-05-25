@@ -45,18 +45,12 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
 
   private currentDate: Date | null = null;
 
-  // eslint-disable-next-line class-methods-use-this
-  // protected createPublication(e: Event) {
-  //   const tick = e.target as UmbTickElement;
-  //   const newPublication: Publication = {
-  //     start: tick.date,
-  //     end: null,
-  //     variantId: 'id',
-  //     versionId: 'id',
-  //     id: generateId(),
-  //   };
-  //   store.dispatch(createPublication(newPublication));
-  // }
+  static invertDate(
+    scale: ScaleLinear<number, number, never>,
+    date: number,
+  ): number {
+    return scale.invert(date) as any;
+  }
 
   stateChanged(schedulerState: AppState) {
     this.startDate = schedulerState.scheduler.startDate;
@@ -229,6 +223,23 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     this.shiftScale(-1);
   }
 
+  // private deltaTicks() {
+  //   return this.ticks[1].valueOf() - this.ticks[0].valueOf();
+  // }
+
+  // private width() {
+  //   if (this.scaleInverted !== null && this.startDate !== null) {
+  //     console.log(
+  //       this.deltaTicks(),
+  //       UmbCalendarElement.invertDate(this.scaleInverted, this.deltaTicks()),
+  //     );
+  //     return UmbCalendarElement.invertDate(
+  //       this.scaleInverted,
+  //       this.deltaTicks(),
+  //     );
+  //   }
+  // }
+
   // eslint-disable-next-line class-methods-use-this
   public openPopUp(e: MouseEvent) {
     if (!this.hasPopup) this.hasPopup = true;
@@ -253,6 +264,12 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     this.currentDate = null;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  // protected dynamicStyles() {
+  //   console.log(this.width());
+  //   return { minWidth: `${this.width()}px` };
+  // }
+
   render() {
     return html`${this.hasPopup
         ? html`<umb-publication-popup
@@ -270,9 +287,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       ${this.endDate ? this.endDate.toLocaleString() : ''}
 
       <div id="tickContainer" @wheel=${this.handleWheelEvent}>
-        ${repeat(
-          this.ticks,
-          tick => tick.valueOf(),
+        ${this.ticks.map(
           tick =>
             html`<umb-tick @click=${this.openPopUp} .date=${tick}></umb-tick>`,
         )}
@@ -292,3 +307,10 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
 // .publishDate=${publication.start}
 //             .unpublishDate=${publication.end}
 //             .publication=${publication}
+
+// repeat(
+//   this.ticks,
+//   tick => tick.valueOf(),
+//   tick =>
+//     html`<umb-tick @click=${this.openPopUp} .date=${tick}></umb-tick>`,
+// )

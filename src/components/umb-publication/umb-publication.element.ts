@@ -1,5 +1,5 @@
 import { property, state } from 'lit/decorators.js';
-import { ScaleTime } from 'd3-scale';
+import { ScaleLinear } from 'd3-scale';
 import { html, css, LitElement } from 'lit';
 import { connect } from 'pwa-helpers';
 import { styleMap } from 'lit/directives/style-map.js';
@@ -70,7 +70,7 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
   version: Version | null = null;
 
   static invertDate(
-    scale: ScaleTime<number, number, never>,
+    scale: ScaleLinear<number, number, never>,
     date: number,
   ): number {
     return scale.invert(date) as any;
@@ -139,7 +139,7 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
   }
 
   @state()
-  protected scale: ScaleTime<number, number, never> | null = null;
+  protected scale: ScaleLinear<number, number, never> | null = null;
 
   @state()
   protected width: number = 0;

@@ -11,6 +11,7 @@ export class UmbTickElement extends LitElement {
         border: 1px solid red;
         display: flex;
         flex-direction: column;
+        box-sizing: border-box;
       }
 
       #line-container {
