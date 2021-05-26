@@ -2,6 +2,7 @@
 /* eslint-disable import/extensions */
 /* eslint-disable no-console */
 import { property, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { html, css, LitElement } from 'lit';
 import { ScaleLinear, ScaleTime } from 'd3-scale';
 import { connect } from 'pwa-helpers';
@@ -44,19 +45,16 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
 
       #tickContainer {
         box-sizing: border-box;
-        padding: 1em 1em 2em 1em;
         width: 90vw;
         display: flex;
         position: relative;
         align-items: stretch;
-        flex: 1;
         border: 1px solid purple;
         box-sizing: border-box;
       }
 
       #variants {
         position: absolute;
-        padding: 1em 1em 2em 1em;
         left: 0;
         right: 0;
         top: 15%;
@@ -64,7 +62,6 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         scrollbar-width: thin;
         scrollbar-color: var(--uui-interface-contrast-disabled)
           var(--uui-interface-background-alt);
-        overflow: auto;
         border: 1px solid yellow;
         box-sizing: border-box;
         /* pointer-events: none; */
@@ -392,10 +389,6 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
             .date=${this.currentDate}
           ></umb-publication-popup>`
         : ''}
-      <div id="tickContainer" @wheel=${this.handleWheelEvent}>
-        ${this.ticksTemplate()}
-        <div id="variants" @click=${this.openPopUp}>
-          ${this.varinatsTemplate()}
         </div>
       </div>`;
   }
