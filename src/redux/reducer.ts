@@ -32,7 +32,7 @@ import {
   Variant8,
   Variant9,
 } from '../Variant';
-import { Publication } from '../types/contentTypes.js';
+import type { Publication, Variant } from '../types/contentTypes';
 
 const currentMonthStartDate = addDays(new Date(), -14);
 const currentMonthEndDate = addDays(new Date(), 14);
@@ -221,6 +221,14 @@ const getStartDateValue = (state: AppState) =>
 const getEndDateValue = (state: AppState) => state.scheduler.endDate.valueOf();
 
 export const getVariants = (state: AppState) => state.page.variants;
+export const getPublications = (state: AppState) => state.page.publications;
+
+const filteredVariants = (variants: Variant[], publications: Publication[]) =>
+  variants.filter(variant =>
+    publications
+      .map(publication => publication.variantId)
+      .some(el => el === variant.id),
+  );
 
 export const getVariantsSelector = createSelector([getVariants], variants => [
   ...variants,
@@ -252,4 +260,10 @@ export const scaleRangeSelector = createSelector(
   getStartDate,
   getEndDate,
   (startDate, endDate) => deltaDatesRange(startDate, endDate),
+);
+
+export const variantsWithPublicationsSelector = createSelector(
+  getVariants,
+  getPublications,
+  (variants, publications) => filteredVariants(variants, publications),
 );

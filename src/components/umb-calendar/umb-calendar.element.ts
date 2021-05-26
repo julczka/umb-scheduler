@@ -1,3 +1,4 @@
+/* eslint-disable lit-a11y/click-events-have-key-events */
 /* eslint-disable import/extensions */
 /* eslint-disable no-console */
 import { property, state } from 'lit/decorators.js';
@@ -23,6 +24,7 @@ import {
   reversedScaleSelector,
   scaleRangeSelector,
   scaleSelector,
+  variantsWithPublicationsSelector,
 } from '../../redux/reducer.js';
 import { Publication, Variant } from '../../types/contentTypes.js';
 import { UmbPublicationElement } from '../umb-publication/umb-publication.element.js';
@@ -116,6 +118,9 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     this.scaleRange = scaleRangeSelector(schedulerState);
     this.publications = schedulerState.page.publications;
     this.variants = schedulerState.page.variants;
+    this.variantsWithPublications = variantsWithPublicationsSelector(
+      schedulerState,
+    );
   }
 
   @state()
@@ -123,6 +128,9 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
 
   @state()
   protected variants: Variant[] = [];
+
+  @state()
+  protected variantsWithPublications: Variant[] = [];
 
   @state()
   protected publications: Publication[] = [];
@@ -146,15 +154,6 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
   protected scaleRange = '';
 
   private ctrPressed = false;
-
-  private _toggleControlPressed = (e: KeyboardEvent) => {
-    e.preventDefault();
-    console.log(this);
-    if (e.key === 'z') {
-      this.ctrPressed = !this.ctrPressed;
-      console.log(this.ctrPressed);
-    }
-  };
 
   @state()
   hasPopup: boolean = false;
@@ -193,8 +192,6 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
   constructor() {
     super();
     this.addEventListener('close-popup', this.closePopUp);
-    // this.addEventListener('keydown', this._toggleControlPressed);
-    // this.addEventListener('keyup', this._toggleControlPressed);
   }
 
   connectedCallback() {
@@ -220,11 +217,15 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     window.removeEventListener('resize', () => {
       this.calculateTicks(this.getBoundingClientRect().width / this.tickWidth);
     });
-    document.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (e.key === 'z') this.ctrPressed = true;
+    document.removeEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'z') {
+        this.ctrPressed = true;
+      }
     });
-    document.addEventListener('keyup', (e: KeyboardEvent) => {
-      if (e.key === 'z') this.ctrPressed = false;
+    document.removeEventListener('keyup', (e: KeyboardEvent) => {
+      if (e.key === 'z') {
+        this.ctrPressed = false;
+      }
     });
   }
 
@@ -362,8 +363,8 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
 
   protected varinatsTemplate() {
     return html`
-      ${this.variants.map(
-        variant => html`<div class="variant-container" @click=${this.openPopUp}>
+      ${this.variantsWithPublications.map(
+        variant => html`<div class="variant-container" id=${variant.id}>
           ${this.publications
             .filter(publication => publication.variantId === variant.id)
             .map(
@@ -393,7 +394,9 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         : ''}
       <div id="tickContainer" @wheel=${this.handleWheelEvent}>
         ${this.ticksTemplate()}
-        <div id="variants">${this.varinatsTemplate()}</div>
+        <div id="variants" @click=${this.openPopUp}>
+          ${this.varinatsTemplate()}
+        </div>
       </div>`;
   }
 }
