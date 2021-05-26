@@ -3,7 +3,6 @@
 import { property, state } from 'lit/decorators.js';
 import { html, css, LitElement } from 'lit';
 import { ScaleLinear, ScaleTime } from 'd3-scale';
-import { repeat } from 'lit/directives/repeat.js';
 import { connect } from 'pwa-helpers';
 import {
   checkIfEqualDates,
@@ -27,7 +26,6 @@ import {
 } from '../../redux/reducer.js';
 import { Publication, Variant } from '../../types/contentTypes.js';
 import { UmbPublicationElement } from '../umb-publication/umb-publication.element.js';
-import { UmbTickElement } from '../umb-tick/umb-tick.element.js';
 
 type Vector = 1 | -1;
 export class UmbCalendarElement extends connect(store)(LitElement) {
@@ -61,7 +59,9 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         right: 0;
         top: 15%;
         height: 80%;
-
+        scrollbar-width: thin;
+        scrollbar-color: var(--uui-interface-contrast-disabled)
+          var(--uui-interface-background-alt);
         overflow: auto;
         border: 1px solid yellow;
         box-sizing: border-box;
@@ -69,6 +69,19 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
+      }
+
+      #variants::-webkit-scrollbar {
+        width: 5px;
+      }
+
+      #variants::-webkit-scrollbar-track {
+        background: var(--uui-interface-background-alt);
+        border-radius: 12px;
+      }
+      #variants::-webkit-scrollbar-thumb {
+        background-color: var(--uui-interface-contrast-disabled);
+        border-radius: 12px;
       }
 
       .variant-container {
@@ -132,6 +145,17 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
   @state()
   protected scaleRange = '';
 
+  private ctrPressed = false;
+
+  private _toggleControlPressed = (e: KeyboardEvent) => {
+    e.preventDefault();
+    console.log(this);
+    if (e.key === 'z') {
+      this.ctrPressed = !this.ctrPressed;
+      console.log(this.ctrPressed);
+    }
+  };
+
   @state()
   hasPopup: boolean = false;
 
@@ -169,6 +193,8 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
   constructor() {
     super();
     this.addEventListener('close-popup', this.closePopUp);
+    // this.addEventListener('keydown', this._toggleControlPressed);
+    // this.addEventListener('keyup', this._toggleControlPressed);
   }
 
   connectedCallback() {
@@ -177,12 +203,28 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     window.addEventListener('resize', () => {
       this.calculateTicks(this.getBoundingClientRect().width / this.tickWidth);
     });
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'z') {
+        this.ctrPressed = true;
+      }
+    });
+    document.addEventListener('keyup', (e: KeyboardEvent) => {
+      if (e.key === 'z') {
+        this.ctrPressed = false;
+      }
+    });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     window.removeEventListener('resize', () => {
       this.calculateTicks(this.getBoundingClientRect().width / this.tickWidth);
+    });
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'z') this.ctrPressed = true;
+    });
+    document.addEventListener('keyup', (e: KeyboardEvent) => {
+      if (e.key === 'z') this.ctrPressed = false;
     });
   }
 
@@ -191,9 +233,8 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
   }
 
   protected handleWheelEvent(e: WheelEvent) {
-    e.preventDefault();
-
-    if (e.deltaX === 0) {
+    if (e.deltaX === 0 && this.ctrPressed) {
+      e.preventDefault();
       if (e.deltaY < 0) {
         this.zoomIn();
         return;
@@ -201,6 +242,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       this.zoomOut();
     }
     if (e.deltaY === 0) {
+      e.preventDefault();
       if (e.deltaX > 0) {
         this.next();
         return;
