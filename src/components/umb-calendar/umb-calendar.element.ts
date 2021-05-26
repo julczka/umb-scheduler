@@ -2,13 +2,11 @@
 /* eslint-disable import/extensions */
 /* eslint-disable no-console */
 import { property, state } from 'lit/decorators.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
 import { html, css, LitElement } from 'lit';
 import { ScaleLinear, ScaleTime } from 'd3-scale';
 import { connect } from 'pwa-helpers';
 import {
   checkIfEqualDates,
-  checkIfInRange,
   checkIfTheSameDay,
   isToday,
 } from '../../utils/utils.js';
