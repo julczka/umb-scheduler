@@ -265,6 +265,18 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     this.currentDate = null;
   }
 
+  protected ticksTemplate() {
+    return html` ${this.ticks.map(
+      tick =>
+        html`<umb-tick
+          @click=${this.openPopUp}
+          .date=${tick}
+          ?show-month=${tick.getDate() === 1}
+          ?today=${isToday(tick)}
+        ></umb-tick>`,
+    )}`;
+  }
+
   render() {
     return html` <umb-cal-navigation
         @zoom-in=${this.zoomIn}
@@ -280,15 +292,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
           ></umb-publication-popup>`
         : ''}
       <div id="tickContainer" @wheel=${this.handleWheelEvent}>
-        ${this.ticks.map(
-          tick =>
-            html`<umb-tick
-              @click=${this.openPopUp}
-              .date=${tick}
-              ?show-month=${tick.getDate() === 1}
-              ?today=${isToday(tick)}
-            ></umb-tick>`,
-        )}
+        ${this.ticksTemplate()}
         ${repeat(
           this.publications,
           publication => publication.id,

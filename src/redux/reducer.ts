@@ -22,8 +22,8 @@ import {
 import { Page, pageInitialState } from '../Page';
 import { Variant1, Variant2 } from '../Variant';
 
-const currentMonthStartDate = new Date(addDays(new Date(), 14));
-const currentMonthendDate = new Date(addDays(new Date(), -14));
+const currentMonthStartDate = addDays(new Date(), -14);
+const currentMonthEndDate = addDays(new Date(), 14);
 
 export interface AppState {
   scheduler: SchedulerState;
@@ -33,7 +33,7 @@ export interface AppState {
 pageInitialState.variants = [Variant1, Variant2];
 
 const INITIAL_STATE = {
-  scheduler: new SchedulerState(currentMonthStartDate, currentMonthendDate, [
+  scheduler: new SchedulerState(currentMonthStartDate, currentMonthEndDate, [
     0,
     100,
   ]),
