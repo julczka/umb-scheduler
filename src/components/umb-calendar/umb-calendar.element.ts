@@ -7,6 +7,7 @@ import { repeat } from 'lit/directives/repeat.js';
 import { connect } from 'pwa-helpers';
 import {
   checkIfEqualDates,
+  checkIfInRange,
   checkIfTheSameDay,
   isToday,
 } from '../../utils/utils.js';
@@ -294,13 +295,16 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       <div id="tickContainer" @wheel=${this.handleWheelEvent}>
         ${this.ticksTemplate()}
         <div class="variant-container">
-          ${repeat(
-            this.publications,
-            publication => publication.id,
+          ${this.publications.map(
             publication => html`<umb-publication
               @click=${this.openPopUp}
               .id=${publication.id}
               .scale=${this.scaleInverted}
+              ?hidden=${checkIfInRange(
+                publication.start,
+                publication.end,
+                this.startDate,
+              )}
             ></umb-publication>`,
           )}
         </div>

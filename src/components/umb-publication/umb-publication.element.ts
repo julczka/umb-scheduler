@@ -22,6 +22,10 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
         pointer-events: none;
       }
 
+      :host([hidden]) {
+        display: none;
+      }
+
       #content-bar {
         background-color: yellow;
         height: 100%;
@@ -56,6 +60,9 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
 
   @property()
   id = '';
+
+  @property({ type: Boolean, reflect: true })
+  hidden = false;
 
   @state()
   startDate: Date | null = null;
@@ -135,6 +142,8 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
     ) {
       this.width = this.calculateWidth();
       this.transform = this.calculateTransform();
+      if (this.width <= 0) this.hidden = true;
+      else this.hidden = false;
     }
   }
 

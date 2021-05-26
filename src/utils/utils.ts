@@ -57,6 +57,18 @@ export const checkIfEqualDates = (startDate: Date, endDate: Date) => {
   return false;
 };
 
+export const checkIfInRange = (
+  startDate: Date | null,
+  // endDate: Date | null,
+  rangeStart: Date | null,
+  rangeEnd: Date | null,
+) => {
+  if (startDate && rangeStart && rangeEnd) {
+    if (startDate > rangeStart && startDate < rangeEnd) return true;
+  }
+  return false;
+};
+
 export const createScale = (
   domain: Iterable<Date | NumberValue>,
   range: Iterable<number>,
