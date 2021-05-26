@@ -13,12 +13,11 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
   static styles = [
     css`
       :host {
-        position: absolute;
-        top: 50%;
         left: 0;
         right: 0;
-        height: 10vh;
+
         border: 1px solid green;
+        position: absolute;
         pointer-events: none;
       }
 

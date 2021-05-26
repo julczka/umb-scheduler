@@ -20,7 +20,18 @@ import {
   REMOVE_PUBLICATION,
 } from './actions.js';
 import { Page, pageInitialState } from '../Page';
-import { Variant1, Variant2 } from '../Variant';
+import {
+  Variant1,
+  Variant10,
+  Variant2,
+  Variant3,
+  Variant4,
+  Variant5,
+  Variant6,
+  Variant7,
+  Variant8,
+  Variant9,
+} from '../Variant';
 import { Publication } from '../types/contentTypes.js';
 
 const currentMonthStartDate = addDays(new Date(), -14);
@@ -53,7 +64,18 @@ if (existingPublicationsData !== null) {
 
 pageInitialState.variants =
   existingVariantsData === null
-    ? [Variant1, Variant2]
+    ? [
+        Variant1,
+        Variant2,
+        Variant3,
+        Variant4,
+        Variant5,
+        Variant6,
+        Variant7,
+        Variant8,
+        Variant9,
+        Variant10,
+      ]
     : JSON.parse(existingVariantsData);
 
 const INITIAL_STATE = {

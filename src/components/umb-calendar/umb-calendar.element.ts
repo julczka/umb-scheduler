@@ -50,6 +50,32 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         position: relative;
         align-items: stretch;
         flex: 1;
+        border: 1px solid purple;
+        box-sizing: border-box;
+      }
+
+      #variants {
+        position: absolute;
+        padding: 1em 1em 2em 1em;
+        left: 0;
+        right: 0;
+        top: 15%;
+        height: 80%;
+
+        overflow: auto;
+        border: 1px solid yellow;
+        box-sizing: border-box;
+        /* pointer-events: none; */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+
+      .variant-container {
+        border: 1px solid fuchsia;
+        box-sizing: border-box;
+        position: relative;
+        min-height: 10vh;
       }
 
       umb-tick:first-of-type {
@@ -251,8 +277,12 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       return;
     }
     console.log('clicked outside of bar', e.target);
-    if (e.target instanceof UmbTickElement) {
-      this.currentDate = e.target.date ? e.target.date : null;
+    if (this.scale) {
+      // this.currentDate = e.target.date ? e.target.date : null;
+      // e.target instanceof UmbTickElement
+      this.currentDate = this.scale.invert(
+        (e.offsetX * 100) / this.getBoundingClientRect().width,
+      );
     }
 
     this.currentPublication = '';
@@ -278,6 +308,38 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     )}`;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  altClickTEST(e: MouseEvent) {
+    if (this.scale)
+      console.log(
+        this.scale.invert(
+          (e.offsetX * 100) / this.getBoundingClientRect().width,
+        ),
+      );
+  }
+
+  protected varinatsTemplate() {
+    return html`
+      ${this.variants.map(
+        variant => html`<div class="variant-container" @click=${this.openPopUp}>
+          ${this.publications
+            .filter(publication => publication.variantId === variant.id)
+            .map(
+              publication => html`<umb-publication
+                .id=${publication.id}
+                .scale=${this.scaleInverted}
+                ?hidden=${checkIfInRange(
+                  publication.start,
+                  publication.end,
+                  this.startDate,
+                )}
+              ></umb-publication>`,
+            )}
+        </div>`,
+      )}
+    `;
+  }
+
   render() {
     return html` <umb-cal-navigation
         @zoom-in=${this.zoomIn}
@@ -294,20 +356,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         : ''}
       <div id="tickContainer" @wheel=${this.handleWheelEvent}>
         ${this.ticksTemplate()}
-        <div class="variant-container">
-          ${this.publications.map(
-            publication => html`<umb-publication
-              @click=${this.openPopUp}
-              .id=${publication.id}
-              .scale=${this.scaleInverted}
-              ?hidden=${checkIfInRange(
-                publication.start,
-                publication.end,
-                this.startDate,
-              )}
-            ></umb-publication>`,
-          )}
-        </div>
+        <div id="variants">${this.varinatsTemplate()}</div>
       </div>`;
   }
 }

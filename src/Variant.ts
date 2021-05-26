@@ -70,3 +70,99 @@ export const Variant2: Variant = {
 
   versions: [versionC, versionD],
 };
+
+export const Variant3: Variant = {
+  id: generateId(),
+
+  name: 'Spanish',
+
+  language: 'SP',
+
+  mandatory: false,
+
+  versions: [versionC, versionD],
+};
+
+export const Variant4: Variant = {
+  id: generateId(),
+
+  name: 'French',
+
+  language: 'FR',
+
+  mandatory: false,
+
+  versions: [versionC, versionD],
+};
+
+export const Variant5: Variant = {
+  id: generateId(),
+
+  name: 'Russian',
+
+  language: 'RU',
+
+  mandatory: false,
+
+  versions: [versionC, versionD],
+};
+
+export const Variant6: Variant = {
+  id: generateId(),
+
+  name: 'Polish',
+
+  language: 'PL',
+
+  mandatory: false,
+
+  versions: [versionC, versionD],
+};
+
+export const Variant7: Variant = {
+  id: generateId(),
+
+  name: 'German',
+
+  language: 'DE',
+
+  mandatory: false,
+
+  versions: [versionC, versionD],
+};
+
+export const Variant8: Variant = {
+  id: generateId(),
+
+  name: 'Italian',
+
+  language: 'IT',
+
+  mandatory: false,
+
+  versions: [versionC, versionD],
+};
+
+export const Variant9: Variant = {
+  id: generateId(),
+
+  name: 'Klingon',
+
+  language: 'KL',
+
+  mandatory: false,
+
+  versions: [versionC, versionD],
+};
+
+export const Variant10: Variant = {
+  id: generateId(),
+
+  name: 'Esperanto',
+
+  language: 'ES',
+
+  mandatory: false,
+
+  versions: [versionC, versionD],
+};
