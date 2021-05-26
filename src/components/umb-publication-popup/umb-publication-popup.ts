@@ -32,7 +32,8 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       }
 
       :host([error]) #popup-wrapper {
-        outline: 3px solid red;
+        outline: 1px solid var(--uui-color-maroon-flush);
+        box-shadow: 0px 0px 5px 4px var(--uui-color-maroon-flush);
       }
 
       #icon {
@@ -80,6 +81,16 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       .input-flex {
         flex: 2;
         vertical-align: middle;
+        display: flex;
+      }
+
+      .select-flex {
+        display: block;
+        flex: 1;
+      }
+
+      uui-textfield {
+        flex: 1;
       }
 
       #close-button {
@@ -118,7 +129,6 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       this.variant = this.variants.find(
         v => v.id === this.publication.variantId,
       ) as Variant;
-      console.log(this.variant);
       this.version = this.variant.versions.find(
         version => version.id === this.publication.versionId,
       ) as Version;
@@ -319,7 +329,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         <umb-select
           @change=${this.setVariant}
           .options=${this.variants}
-          class="input-flex"
+          class="select-flex"
           .value=${this.variant ? this.variant.id : ''}
         >
         </umb-select>
@@ -329,7 +339,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         <umb-select
           @change=${this.setVersion}
           .options=${this.versions}
-          class="input-flex"
+          class="select-flex"
           .value=${this.version ? this.version.id : ''}
         >
         </umb-select>
@@ -417,6 +427,3 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
     </div>`;
   }
 }
-
-// <h3>${this.publication.id} ${this.publicationId}</h3>
-// <h4>${this.publication.variantId} ${this.publication.versionId}</h4>

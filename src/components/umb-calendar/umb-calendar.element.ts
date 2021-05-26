@@ -45,19 +45,18 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
 
       #tickContainer {
         box-sizing: border-box;
-        padding: 1em 1em 2em 1em;
+        padding: 1em 0em 2em 0em;
         width: 90vw;
         display: flex;
         position: relative;
         align-items: stretch;
         flex: 8;
-        border: 1px solid purple;
         box-sizing: border-box;
       }
 
       #variants {
         position: absolute;
-        padding: 1em 1em 2em 1em;
+        padding: 1em 0em 2em 0em;
         left: 0;
         right: 0;
         top: 15%;
@@ -67,7 +66,6 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
           var(--uui-interface-background-alt);
         overflow-y: auto;
         overflow-x: visible;
-        border: 1px solid yellow;
         box-sizing: border-box;
         /* pointer-events: none; */
         display: flex;
@@ -89,7 +87,6 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       }
 
       .variant-container {
-        border: 1px solid fuchsia;
         box-sizing: border-box;
         position: relative;
         min-height: 10vh;
