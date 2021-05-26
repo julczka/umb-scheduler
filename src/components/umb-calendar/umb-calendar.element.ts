@@ -45,16 +45,19 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
 
       #tickContainer {
         box-sizing: border-box;
+        padding: 1em 1em 2em 1em;
         width: 90vw;
         display: flex;
         position: relative;
         align-items: stretch;
+        flex: 8;
         border: 1px solid purple;
         box-sizing: border-box;
       }
 
       #variants {
         position: absolute;
+        padding: 1em 1em 2em 1em;
         left: 0;
         right: 0;
         top: 15%;
@@ -62,6 +65,8 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         scrollbar-width: thin;
         scrollbar-color: var(--uui-interface-contrast-disabled)
           var(--uui-interface-background-alt);
+        overflow-y: auto;
+        overflow-x: visible;
         border: 1px solid yellow;
         box-sizing: border-box;
         /* pointer-events: none; */
@@ -88,6 +93,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         box-sizing: border-box;
         position: relative;
         min-height: 10vh;
+        overflow-x: visible;
       }
 
       umb-tick:first-of-type {
@@ -320,9 +326,10 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     if (this.scale) {
       // this.currentDate = e.target.date ? e.target.date : null;
       // e.target instanceof UmbTickElement
-      this.currentDate = this.scale.invert(
+      const date = this.scale.invert(
         (e.offsetX * 100) / this.getBoundingClientRect().width,
       );
+      this.currentDate = date > new Date() ? date : new Date();
     }
 
     this.currentPublication = '';
@@ -376,7 +383,8 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
   }
 
   render() {
-    return html` <umb-cal-navigation
+    return html`
+      <umb-cal-navigation
         @zoom-in=${this.zoomIn}
         @zoom-out=${this.zoomOut}
         @move-back=${this.prev}
@@ -389,8 +397,13 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
             .date=${this.currentDate}
           ></umb-publication-popup>`
         : ''}
+      <div id="tickContainer" @wheel=${this.handleWheelEvent}>
+        ${this.ticksTemplate()}
+        <div id="variants" @click=${this.openPopUp}>
+          ${this.varinatsTemplate()}
         </div>
-      </div>`;
+      </div>
+    `;
   }
 }
 
