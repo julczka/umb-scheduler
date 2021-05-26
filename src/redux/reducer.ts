@@ -47,11 +47,12 @@ const existingVariantsData = window.localStorage.getItem('variants');
 
 if (existingPublicationsData !== null) {
   const savedPublications = JSON.parse(existingPublicationsData).map(
-    (publication: any) => ({
-      ...publication,
-      start: new Date(publication.start),
-      end: new Date(publication.end),
-    }),
+    (publication: any) => {
+      const start = new Date(publication.start);
+      const end = publication.end ? new Date(publication.end) : null;
+      const newPublication: Publication = { ...publication, start, end };
+      return newPublication;
+    },
   );
   console.log(savedPublications);
 

@@ -91,7 +91,6 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
       const width =
         UmbPublicationElement.invertDate(this.scale, this.endDate.valueOf()) -
         UmbPublicationElement.invertDate(this.scale, this.startDate.valueOf());
-      console.log(width);
       return width;
     }
 
@@ -103,7 +102,6 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
       const width =
         100 -
         UmbPublicationElement.invertDate(this.scale, this.startDate.valueOf());
-      console.log(width);
       return width;
     }
 
@@ -116,7 +114,6 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
         this.scale,
         this.startDate.valueOf(),
       );
-      console.log(transform);
       return transform;
     }
     return 0;

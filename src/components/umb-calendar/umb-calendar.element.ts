@@ -370,11 +370,6 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
               publication => html`<umb-publication
                 .id=${publication.id}
                 .scale=${this.scaleInverted}
-                ?hidden=${checkIfInRange(
-                  publication.start,
-                  publication.end,
-                  this.startDate,
-                )}
               ></umb-publication>`,
             )}
         </div>`,
