@@ -19,8 +19,16 @@ export class UmbSchedulerFooterElement extends LitElement {
     `,
   ];
 
+  private _schedule() {
+    this.dispatchEvent(
+      new CustomEvent('schedule', { bubbles: true, composed: true }),
+    );
+  }
+
   render() {
     return html`<uui-button>Close</uui-button>
-      <uui-button look="positive">Schedule</uui-button>`;
+      <uui-button look="positive" @click=${this._schedule}
+        >Schedule</uui-button
+      >`;
   }
 }

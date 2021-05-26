@@ -21,6 +21,7 @@ import {
 } from './actions.js';
 import { Page, pageInitialState } from '../Page';
 import { Variant1, Variant2 } from '../Variant';
+import { Publication } from '../types/contentTypes.js';
 
 const currentMonthStartDate = addDays(new Date(), -14);
 const currentMonthEndDate = addDays(new Date(), 14);
@@ -30,7 +31,30 @@ export interface AppState {
   page: Page;
 }
 
-pageInitialState.variants = [Variant1, Variant2];
+const existingPublicationsData = window.localStorage.getItem('publications');
+const existingVariantsData = window.localStorage.getItem('variants');
+
+if (existingPublicationsData !== null) {
+  const savedPublications = JSON.parse(existingPublicationsData).map(
+    (publication: any) => ({
+      ...publication,
+      start: new Date(publication.start),
+      end: new Date(publication.end),
+    }),
+  );
+  console.log(savedPublications);
+
+  pageInitialState.publications = savedPublications as Publication[];
+}
+
+// if (existingVariantsData === null) {
+//   pageInitialState.variants = [Variant1, Variant2];
+// }
+
+pageInitialState.variants =
+  existingVariantsData === null
+    ? [Variant1, Variant2]
+    : JSON.parse(existingVariantsData);
 
 const INITIAL_STATE = {
   scheduler: new SchedulerState(currentMonthStartDate, currentMonthEndDate, [

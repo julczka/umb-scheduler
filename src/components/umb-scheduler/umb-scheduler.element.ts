@@ -1,6 +1,11 @@
+import { property } from 'lit/decorators.js';
 import { LitElement, html, css } from 'lit';
+import { connect } from 'pwa-helpers';
+import { AppState } from '../../redux/reducer';
+import { store } from '../../redux/store';
+import { Publication, Variant } from '../../types/contentTypes';
 
-export class UmbScheduler extends LitElement {
+export class UmbScheduler extends connect(store)(LitElement) {
   static styles = css`
     :host {
       min-height: 100vh;
@@ -22,11 +27,38 @@ export class UmbScheduler extends LitElement {
     }
   `;
 
+  stateChanged(appState: AppState) {
+    this.variants = appState.page.variants;
+    this.publications = appState.page.publications;
+  }
+
+  protected variants: Variant[] = [];
+
+  protected publications: Publication[] = [];
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.localStorage.setItem(
+      'publications',
+      JSON.stringify(this.publications),
+    );
+    window.localStorage.setItem('variants', JSON.stringify(this.variants));
+  }
+
+  protected schedulePublications() {
+    window.localStorage.setItem(
+      'publications',
+      JSON.stringify(this.publications),
+    );
+    window.localStorage.setItem('variants', JSON.stringify(this.variants));
+    console.log('scheduled!');
+  }
+
   render() {
     return html`
       <umb-sch-header></umb-sch-header>
       <umb-calendar></umb-calendar>
-      <umb-sch-footer></umb-sch-footer>
+      <umb-sch-footer @schedule=${this.schedulePublications}></umb-sch-footer>
     `;
   }
 }

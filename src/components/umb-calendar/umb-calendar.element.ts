@@ -293,15 +293,27 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         : ''}
       <div id="tickContainer" @wheel=${this.handleWheelEvent}>
         ${this.ticksTemplate()}
-        ${repeat(
-          this.publications,
-          publication => publication.id,
-          publication => html`<umb-publication
-            @click=${this.openPopUp}
-            .id=${publication.id}
-            .scale=${this.scaleInverted}
-          ></umb-publication>`,
-        )}
+        <div class="variant-container">
+          ${repeat(
+            this.publications,
+            publication => publication.id,
+            publication => html`<umb-publication
+              @click=${this.openPopUp}
+              .id=${publication.id}
+              .scale=${this.scaleInverted}
+            ></umb-publication>`,
+          )}
+        </div>
       </div>`;
   }
 }
+
+// ${repeat(
+//   this.publications,
+//   publication => publication.id,
+//   publication => html`<umb-publication
+//     @click=${this.openPopUp}
+//     .id=${publication.id}
+//     .scale=${this.scaleInverted}
+//   ></umb-publication>`,
+// )}
