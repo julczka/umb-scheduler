@@ -1,8 +1,10 @@
 import { state } from 'lit/decorators.js';
 import { css, html, LitElement } from 'lit';
+import { UmbSchedulerIcons } from '../../UmbSchedulerIcons';
 
 export class UmbCalendarNavigationElement extends LitElement {
   static styles = [
+    UmbSchedulerIcons.styles,
     css`
       :host {
         display: flex;
@@ -14,8 +16,16 @@ export class UmbCalendarNavigationElement extends LitElement {
       }
 
       #date {
-        margin-left: 1em;
         font-weight: bold;
+      }
+
+      .icon {
+        margin-left: 1em;
+      }
+
+      #nav-date-container {
+        display: flex;
+        align-items: center;
       }
     `,
   ];
@@ -56,7 +66,7 @@ export class UmbCalendarNavigationElement extends LitElement {
   nowDate = new Date();
 
   render() {
-    return html`<div>
+    return html`<div id="nav-date-container">
         <uui-button-group
           ><uui-button look="outline" @click=${this.previous}
             >Previous</uui-button
@@ -65,9 +75,15 @@ export class UmbCalendarNavigationElement extends LitElement {
             >Next</uui-button
           ></uui-button-group
         >
-        <span id="date">${this.nowDate.toLocaleString()}</span>
+
+        ${UmbSchedulerIcons.calendarIconTemplate()}<span id="date"
+          >${this.nowDate.toLocaleDateString()}</span
+        >${UmbSchedulerIcons.clockIconTemplate()}<span id="date"
+          >${this.nowDate.toLocaleTimeString()}</span
+        >
       </div>
       <uui-button-group
+        title="To zoom with mouse press Z on keyboard and use your wheel"
         ><uui-button look="outline" @click=${this.zoomIn}>Zoom in</uui-button
         ><uui-button look="outline" @click=${this.zoomOut}
           >Zoom out</uui-button

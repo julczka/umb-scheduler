@@ -398,7 +398,10 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
                 )
               : ''}
           ></uui-textfield
-          ><uui-button look="danger" @click=${this.changeStartDate}
+          ><uui-button
+            title="Remove publication"
+            look="danger"
+            @click=${this.changeStartDate}
             >x</uui-button
           >
         </div>

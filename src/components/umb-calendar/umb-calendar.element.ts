@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable lit-a11y/click-events-have-key-events */
 /* eslint-disable import/extensions */
@@ -344,13 +345,21 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     this.currentDate = null;
   }
 
+  static isErliestOfMonth(ticks: Date[], tick: Date, index: number) {
+    return ticks[index - 1].getMonth() < tick.getMonth();
+  }
+
   protected ticksTemplate() {
     return html` ${this.ticks.map(
-      tick =>
+      (tick, index) =>
         html`<umb-tick
           @click=${this.openPopUp}
           .date=${tick}
-          ?show-month=${tick.getDate() === 1}
+          ?show-month=${tick.getDate() === 1
+            ? true
+            : this.ticks.indexOf(tick) !== 0
+            ? this.ticks[index - 1].getMonth() < tick.getMonth()
+            : false}
           ?today=${isToday(tick)}
         ></umb-tick>`,
     )}`;
@@ -391,6 +400,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         @move-back=${this.prev}
         @move-forward=${this.next}
         @go-to-today=${this.showToday}
+        @wheel=${this.handleWheelEvent}
       ></umb-cal-navigation>
       ${this.hasPopup
         ? html`<umb-publication-popup

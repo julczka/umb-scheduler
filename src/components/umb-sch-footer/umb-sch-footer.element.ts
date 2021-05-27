@@ -1,5 +1,4 @@
 import { css, html, LitElement } from 'lit';
-import { connect } from 'pwa-helpers';
 import { resetState } from '../../redux/actions';
 import { store } from '../../redux/store';
 
