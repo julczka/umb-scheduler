@@ -58,8 +58,8 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         margin-bottom: 0.5em;
       }
 
-      #popup-wrapper > .select-wrappper:nth-child(3) {
-        margin-bottom: 3em;
+      #start-date-input-wrapper {
+        margin-top: 3em;
       }
 
       .date-input-wrapper {
@@ -105,12 +105,10 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
   connectedCallback() {
     super.connectedCallback();
     this.getPublicationFromState();
-    console.log('popup-connected', this.publicationId);
   }
 
   disconnectedCallback() {
     this.cleanState();
-    console.log('popup-disconnected', this.publicationId);
   }
 
   stateChanged(schedulerState: AppState) {
@@ -119,7 +117,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
   }
 
   private getPublicationFromState() {
-    if (this.publicationId) {
+    if (this.publicationId !== '') {
       this.publication = store
         .getState()
         .page.publications.find(
@@ -161,12 +159,6 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
   version: Version | null = null;
 
   willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
-    // if (changedProperties.has('variants') && this.variant !== null) {
-    //   this.versions = this.variants[
-    //     this.variants.indexOf(this.variant)
-    //   ].versions;
-    // }
-
     if (changedProperties.has('variant') && this.variant !== null) {
       this.versions = this.variants[
         this.variants.indexOf(this.variant)
@@ -200,8 +192,6 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
 
   @property({ type: Object, attribute: false })
   unpublishDate: Date | null = null;
-
-  private initId = generateId();
 
   @state()
   publication: Publication = {
@@ -242,6 +232,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
 
   private changeStartDate(e: Event) {
     const target = e.target as HTMLElement;
+
     if (target.nodeName === 'UUI-BUTTON') {
       this.publishDate = null;
       this.publication.start = null;
@@ -252,6 +243,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       );
       return;
     }
+
     const input = e.target as HTMLInputElement;
     this.publication.start = new Date(input.value);
     this.updateOrCreatePublication();
@@ -309,23 +301,25 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         this._tempId = '';
       }
 
-      this.mandatoryVariants
-        .filter(variant => variant.id !== this?.variant?.id)
-        .forEach((variant: Variant) => {
-          store.dispatch(
-            createPublication({
-              ...this.publication,
-              variantId: variant.id,
-              id: generateId(),
-            }),
-          );
-        });
+      if (this.addAllMandatory) {
+        this.mandatoryVariants
+          .filter(variant => variant.id !== this?.variant?.id)
+          .forEach((variant: Variant) => {
+            store.dispatch(
+              createPublication({
+                ...this.publication,
+                variantId: variant.id,
+                id: generateId(),
+              }),
+            );
+          });
+      }
 
       return;
     }
 
     if (this.publication.id === '' && !isVariantMandatory()) {
-      this.publication.id = this.initId;
+      this.publication.id = generateId();
       store.dispatch(createPublication(this.publication));
       return;
     }
@@ -396,17 +390,36 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       .replace(' ', 'T');
   }
 
+  @state()
+  addAllMandatory = false;
+
+  private _setAllMandatory(e: Event) {
+    const target = e.target as any;
+    this.addAllMandatory = target?.checked;
+    console.log(this.addAllMandatory);
+  }
+
   chooseVariantTemplate() {
     return html`<div class="select-wrappper">
-      <span class="input-label">Choose variant</span>
-      <umb-select
-        @change=${this.setVariant}
-        .options=${this.sortedVariants}
-        class="select-flex"
-        .value=${this.variant ? this.variant.id : ''}
-      >
-      </umb-select>
-    </div>`;
+        <span class="input-label">Choose variant</span>
+        <umb-select
+          @change=${this.setVariant}
+          .options=${this.sortedVariants}
+          class="select-flex"
+          .value=${this.variant ? this.variant.id : ''}
+        >
+        </umb-select>
+      </div>
+      ${!this.publicationId
+        ? html`<div class="select-wrappper">
+            <span class="input-label">Add all mandatory variants?</span>
+            <input
+              type="checkbox"
+              @change=${this._setAllMandatory}
+              ?checked=${this.addAllMandatory}
+            />
+          </div>`
+        : ''}`;
   }
 
   choseVersionTemplate() {
@@ -453,7 +466,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       ${this.publicationId
         ? this.showVersionAndVariantTemplate()
         : this.chooseVariantAndVersionTemplate()}
-      <div class="date-input-wrapper">
+      <div class="date-input-wrapper" id="start-date-input-wrapper">
         <span class="input-label">Publish on</span>
         <div class="input-flex">
           <uui-textfield
