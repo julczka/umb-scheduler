@@ -66,7 +66,7 @@ export const Variant2: Variant = {
 
   language: 'DK',
 
-  mandatory: false,
+  mandatory: true,
 
   versions: [versionC, versionD],
 };
@@ -114,7 +114,7 @@ export const Variant6: Variant = {
 
   language: 'PL',
 
-  mandatory: false,
+  mandatory: true,
 
   versions: [versionC, versionD],
 };

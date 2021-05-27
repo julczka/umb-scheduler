@@ -138,8 +138,19 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
   @state()
   variant: Variant | null = null;
 
+  private _version: Version | null = null;
+
+  set version(newVal) {
+    const oldVal = this._version;
+    this._version = newVal;
+    this.error = this._version === undefined;
+    this.requestUpdate('version', oldVal);
+  }
+
   @state()
-  version: Version | null = null;
+  get version() {
+    return this._version;
+  }
 
   static invertDate(
     scale: ScaleLinear<number, number, never>,

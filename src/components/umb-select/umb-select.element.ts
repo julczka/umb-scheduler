@@ -83,7 +83,9 @@ export class UmbSelectElement extends LitElement {
         <option value="" disabled selected>Select your option</option>
         ${this.options.map(
           (option: any) =>
-            html`<option .value=${option?.id}>${option?.name}</option>`,
+            html`<option .value=${option?.id}>
+              ${option?.name} ${option?.mandatory ? '(Mandatory)' : ''}
+            </option>`,
         )}
       </select>
       <uui-caret></uui-caret>

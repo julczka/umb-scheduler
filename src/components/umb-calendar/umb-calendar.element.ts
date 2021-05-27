@@ -5,6 +5,7 @@
 /* eslint-disable no-console */
 import { property, state } from 'lit/decorators.js';
 import { html, css, LitElement } from 'lit';
+import { repeat } from 'lit/directives/repeat.js';
 import { ScaleLinear, ScaleTime } from 'd3-scale';
 import { connect } from 'pwa-helpers';
 import {
@@ -261,7 +262,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       }
 
       case 'DAY': {
-        store.dispatch(shiftScaleHours(vector * 12));
+        store.dispatch(shiftScaleHours(vector * 6));
         break;
       }
 
@@ -271,27 +272,27 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       }
 
       case 'TWO_WEEKS': {
-        store.dispatch(shiftScaleDays(vector * 3));
+        store.dispatch(shiftScaleDays(vector * 2));
         break;
       }
 
       case 'MONTH': {
-        store.dispatch(shiftScaleDays(vector * 7));
+        store.dispatch(shiftScaleDays(vector * 4));
         break;
       }
 
       case 'QUATER': {
-        store.dispatch(shiftScaleDays(vector * 14));
+        store.dispatch(shiftScaleDays(vector * 7));
         break;
       }
 
       case 'HALF_YEAR': {
-        store.dispatch(shiftScaleDays(vector * 30));
+        store.dispatch(shiftScaleDays(vector * 14));
         break;
       }
 
       case 'YEAR': {
-        store.dispatch(shiftScaleDays(vector * 90));
+        store.dispatch(shiftScaleDays(vector * 30));
         break;
       }
 
@@ -332,6 +333,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         (e.offsetX * 100) / this.getBoundingClientRect().width,
       );
       this.currentDate = date > new Date() ? date : new Date();
+      console.log(this.currentDate);
     }
 
     this.currentPublication = '';
@@ -375,18 +377,52 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       );
   }
 
+  private sortByName(a: Variant, b: Variant) {
+    const nameA = a.name ? a.name.toUpperCase() : '';
+    const nameB = b.name ? b.name.toUpperCase() : '';
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+    return 0;
+  }
+
   protected varinatsTemplate() {
+    const mandatoryVariants = this.variantsWithPublications
+      .filter(variant => variant.mandatory)
+      .sort(this.sortByName);
+    const otherVariants = this.variantsWithPublications
+      .filter(variant => !variant.mandatory)
+      .sort(this.sortByName);
+
     return html`
-      ${this.variantsWithPublications.map(
+      ${mandatoryVariants.map(
         variant => html`<div class="variant-container" id=${variant.id}>
-          ${this.publications
-            .filter(publication => publication.variantId === variant.id)
-            .map(
-              publication => html`<umb-publication
-                .id=${publication.id}
-                .scale=${this.scaleInverted}
-              ></umb-publication>`,
-            )}
+          ${repeat(
+            this.publications.filter(
+              publication => publication.variantId === variant.id,
+            ),
+            publication => publication.id,
+            publication => html`<umb-publication
+              .id=${publication.id}
+              .scale=${this.scaleInverted}
+            ></umb-publication>`,
+          )}
+        </div>`,
+      )}${otherVariants.map(
+        variant => html`<div class="variant-container" id=${variant.id}>
+          ${repeat(
+            this.publications.filter(
+              publication => publication.variantId === variant.id,
+            ),
+            publication => publication.id,
+            publication => html`<umb-publication
+              .id=${publication.id}
+              .scale=${this.scaleInverted}
+            ></umb-publication>`,
+          )}
         </div>`,
       )}
     `;

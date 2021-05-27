@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable lit-a11y/no-invalid-change-handler */
 import { css, html, LitElement } from 'lit';
 import { property, state } from 'lit/decorators.js';
@@ -129,9 +130,12 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       this.variant = this.variants.find(
         v => v.id === this.publication.variantId,
       ) as Variant;
-      this.version = this.variant.versions.find(
-        version => version.id === this.publication.versionId,
-      ) as Version;
+      this.version =
+        this.publication.versionId !== ''
+          ? (this.variant.versions.find(
+              version => version.id === this.publication.versionId,
+            ) as Version)
+          : null;
     }
   }
 
@@ -208,6 +212,34 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
     versionId: '',
   };
 
+  private sortByName(a: Variant, b: Variant) {
+    const nameA = a.name ? a.name.toUpperCase() : '';
+    const nameB = b.name ? b.name.toUpperCase() : '';
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+    return 0;
+  }
+
+  get sortedVariants() {
+    const mandatoryVariants = this.variants
+      .filter(variant => variant.mandatory)
+      .sort(this.sortByName);
+    const otherVariants = this.variants
+      .filter(variant => !variant.mandatory)
+      .sort(this.sortByName);
+    return [...mandatoryVariants, ...otherVariants];
+  }
+
+  get mandatoryVariants() {
+    return this.variants
+      .filter(variant => variant.mandatory)
+      .sort(this.sortByName);
+  }
+
   private changeStartDate(e: Event) {
     const target = e.target as HTMLElement;
     if (target.nodeName === 'UUI-BUTTON') {
@@ -250,12 +282,52 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
     this.updateOrCreatePublication();
   }
 
+  private _tempId = '';
+
   private updateOrCreatePublication() {
-    console.log(this.publication.id);
-    if (this.publication.id === '') {
+    const isVariantMandatory = () => {
+      if (this.variant !== null) {
+        return this.mandatoryVariants.some(
+          variant => variant.id === this.variant?.id && variant.mandatory,
+        );
+      }
+      return false;
+    };
+
+    if (this.publication.id === '' && isVariantMandatory()) {
+      console.log('mandaory variantg chosen');
+
+      if (this.variant !== null && this.variant.id) {
+        store.dispatch(
+          createPublication({
+            ...this.publication,
+            variantId: this.variant.id,
+            id: this._tempId,
+          }),
+        );
+        this.publicationId = this._tempId;
+        this._tempId = '';
+      }
+
+      this.mandatoryVariants
+        .filter(variant => variant.id !== this?.variant?.id)
+        .forEach((variant: Variant) => {
+          store.dispatch(
+            createPublication({
+              ...this.publication,
+              variantId: variant.id,
+              id: generateId(),
+            }),
+          );
+        });
+
+      return;
+    }
+
+    if (this.publication.id === '' && !isVariantMandatory()) {
       this.publication.id = this.initId;
       store.dispatch(createPublication(this.publication));
-      console.log(this.publication.id);
+      return;
     }
 
     store.dispatch(updatePublication(this.publication.id, this.publication));
@@ -265,6 +337,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
     const target = e.target as HTMLInputElement;
     this.variant = this.variants.find(el => el.id === target.value) as Variant;
     this.publication.variantId = this.variant.id;
+    if (this.publicationId === '') this._tempId = generateId();
     this.updateOrCreatePublication();
   }
 
@@ -323,28 +396,35 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       .replace(' ', 'T');
   }
 
-  chooseVersionAndVariantTemplate() {
+  chooseVariantTemplate() {
     return html`<div class="select-wrappper">
-        <span class="input-label">Choose variant</span>
-        <umb-select
-          @change=${this.setVariant}
-          .options=${this.variants}
-          class="select-flex"
-          .value=${this.variant ? this.variant.id : ''}
-        >
-        </umb-select>
-      </div>
-      <div class="select-wrappper">
-        <span class="input-label">Choose version</span>
-        <umb-select
-          ?disabled=${!this.variant}
-          @change=${this.setVersion}
-          .options=${this.versions}
-          class="select-flex"
-          .value=${this.version ? this.version.id : ''}
-        >
-        </umb-select>
-      </div>`;
+      <span class="input-label">Choose variant</span>
+      <umb-select
+        @change=${this.setVariant}
+        .options=${this.sortedVariants}
+        class="select-flex"
+        .value=${this.variant ? this.variant.id : ''}
+      >
+      </umb-select>
+    </div>`;
+  }
+
+  choseVersionTemplate() {
+    return html`<div class="select-wrappper">
+      <span class="input-label">Choose version</span>
+      <umb-select
+        ?disabled=${!this.variant}
+        @change=${this.setVersion}
+        .options=${this.versions}
+        class="select-flex"
+        .value=${this.version ? this.version.id : ''}
+      >
+      </umb-select>
+    </div>`;
+  }
+
+  chooseVariantAndVersionTemplate() {
+    return html`${this.chooseVariantTemplate()}${this.choseVersionTemplate()}`;
   }
 
   showVersionAndVariantTemplate() {
@@ -355,11 +435,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
           ? html`<uui-tag look="warning">Mandatory</uui-tag>`
           : ''}
       </div>
-      <div class="select-wrappper">
-        <span id="version" class="input-label"
-          >${this.version ? this.version.name : ''}</span
-        >
-      </div>`;
+      ${this.choseVersionTemplate()}`;
   }
 
   render() {
@@ -376,7 +452,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       </div>
       ${this.publicationId
         ? this.showVersionAndVariantTemplate()
-        : this.chooseVersionAndVariantTemplate()}
+        : this.chooseVariantAndVersionTemplate()}
       <div class="date-input-wrapper">
         <span class="input-label">Publish on</span>
         <div class="input-flex">
