@@ -10,6 +10,7 @@ export const CREATE_PUBLICATION = 'CREATE_PUBLICATION';
 export const UPDATE_PUBLICATION = 'UPDATE_PUBLICATION';
 export const REMOVE_PUBLICATION = 'REMOVE_PUBLICATION';
 export const SHOW_TODAY = 'SHOW_TODAY';
+export const RESET_STATE = 'RESET_STATE';
 
 export const zoomInHours = () => ({
   type: ZOOM_IN_HOURS,
@@ -58,4 +59,8 @@ export const updatePublication = (
 export const removePublication = (publicationId: string) => ({
   type: REMOVE_PUBLICATION,
   publicationId,
+});
+
+export const resetState = () => ({
+  type: RESET_STATE,
 });

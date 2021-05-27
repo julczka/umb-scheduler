@@ -1,4 +1,7 @@
 import { css, html, LitElement } from 'lit';
+import { connect } from 'pwa-helpers';
+import { resetState } from '../../redux/actions';
+import { store } from '../../redux/store';
 
 export class UmbSchedulerFooterElement extends LitElement {
   static styles = [
@@ -25,9 +28,23 @@ export class UmbSchedulerFooterElement extends LitElement {
     );
   }
 
+  private _close() {
+    this.dispatchEvent(
+      new CustomEvent('close', { bubbles: true, composed: true }),
+    );
+    store.dispatch(resetState());
+  }
+
   render() {
-    return html`<uui-button>Close</uui-button>
-      <uui-button look="positive" @click=${this._schedule}
+    return html`<uui-button
+        @click=${this._close}
+        title="Close scheduler without saving changes"
+        >Close</uui-button
+      >
+      <uui-button
+        look="positive"
+        title="Schedule your publications"
+        @click=${this._schedule}
         >Schedule</uui-button
       >`;
   }

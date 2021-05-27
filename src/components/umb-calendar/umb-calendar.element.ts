@@ -401,7 +401,11 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         : ''}
       <div id="tickContainer" @wheel=${this.handleWheelEvent}>
         ${this.ticksTemplate()}
-        <div id="variants" @click=${this.openPopUp}>
+        <div
+          id="variants"
+          @click=${this.openPopUp}
+          title="Click to add a publication"
+        >
           ${this.varinatsTemplate()}
         </div>
       </div>

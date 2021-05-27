@@ -19,6 +19,7 @@ import {
   UPDATE_PUBLICATION,
   REMOVE_PUBLICATION,
   SHOW_TODAY,
+  RESET_STATE,
 } from './actions.js';
 import { Page, pageInitialState } from '../Page';
 import {
@@ -46,23 +47,16 @@ export interface AppState {
 const existingPublicationsData = window.localStorage.getItem('publications');
 const existingVariantsData = window.localStorage.getItem('variants');
 
-if (existingPublicationsData !== null) {
-  const savedPublications = JSON.parse(existingPublicationsData).map(
-    (publication: any) => {
+const savedPublications: Publication[] = existingPublicationsData
+  ? JSON.parse(existingPublicationsData).map((publication: any) => {
       const start = new Date(publication.start);
       const end = publication.end ? new Date(publication.end) : null;
       const newPublication: Publication = { ...publication, start, end };
       return newPublication;
-    },
-  );
-  console.log(savedPublications);
+    })
+  : [];
 
-  pageInitialState.publications = savedPublications as Publication[];
-}
-
-// if (existingVariantsData === null) {
-//   pageInitialState.variants = [Variant1, Variant2];
-// }
+pageInitialState.publications = savedPublications;
 
 pageInitialState.variants =
   existingVariantsData === null
@@ -202,6 +196,17 @@ export const reducer = (state = INITIAL_STATE, action: AnyAction) => {
           publications: state.page.publications.filter(
             publication => publication.id !== action.publicationId,
           ),
+        },
+      };
+    }
+
+    case RESET_STATE: {
+      console.log(action.type);
+      return {
+        ...state,
+        page: {
+          ...state.page,
+          publications: savedPublications,
         },
       };
     }

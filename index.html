@@ -30,6 +30,7 @@ const process = {
       margin: 0;
       height: 100vh;
       background-image: url('./images/backoffice-background-min.png');
+      overflow: hidden;
     }
 
     #entry-point {
@@ -46,7 +47,7 @@ const process = {
       right: 0;
       bottom: 0;
       background: black;
-      opacity: .4;
+      opacity: 0;
       transition: opacity 250ms linear;
       pointer-events: none;
 
@@ -57,19 +58,32 @@ const process = {
     }
 
   </style>
-  <uui-button id="entry-point" look="primary">Schedule</uui-button>
+  <uui-button title="Click to bring the scheduler" id="entry-point" look="primary">Schedule</uui-button>
   <div class="overlay"></div>
   <umb-scheduler id="scheduler"></umb-scheduler>
-  <script>
-  {  const overlay = document.querySelector('.overlay');
-    document.querySelector('#entry-point').onclick = function() {
-      overlay.classList.add('darken')
-      
-    };
-    }
-  </script>
   <script type="module" src="./ui-lib/00ad8f16.js"></script>
   <script type="module" src="./out-tsc/src/index.js"></script>
+  <script>
+    const overlay = document.querySelector('.overlay');
+    const scheduler = document.querySelector('#scheduler');
+    document.querySelector('#entry-point').onclick = function() {
+      overlay.classList.add('darken');
+      scheduler.toggleOpen();
+      
+    };
+
+    scheduler.addEventListener('close', () => {
+      overlay.classList.remove('darken');
+    })
+
+    scheduler.addEventListener('schedule', () => {
+      overlay.classList.remove('darken');
+    })
+
+    
+
+    
+  </script>
 </body>
 
 </html>

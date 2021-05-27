@@ -1,5 +1,6 @@
-import { property } from 'lit/decorators.js';
+/* eslint-disable no-undef */
 import { LitElement, html, css } from 'lit';
+import { property } from 'lit/decorators.js';
 import { connect } from 'pwa-helpers';
 import { AppState } from '../../redux/reducer';
 import { store } from '../../redux/store';
@@ -52,13 +53,47 @@ export class UmbScheduler extends connect(store)(LitElement) {
     );
     window.localStorage.setItem('variants', JSON.stringify(this.variants));
     console.log('scheduled!');
+    this.toggleOpen();
+  }
+
+  private _animation!: Animation;
+
+  @property({ type: Boolean, reflect: true, attribute: 'open' })
+  isOpen = false;
+
+  firstUpdated() {
+    this._animation = this.animate(this._keyframes, this._options);
+    this._animation.pause();
+  }
+
+  private _keyframes = [
+    { transform: 'translateX(110%)' },
+    { transform: 'translateX(0%)' },
+  ];
+
+  private _options: KeyframeAnimationOptions = {
+    duration: 250,
+    fill: 'both',
+    easing: 'ease',
+  };
+
+  public toggleOpen() {
+    this.isOpen = !this.isOpen;
+    this._animation.play();
+    this._animation.finished.then(() => {
+      this._animation.pause();
+      this._animation.playbackRate = this.isOpen ? -1 : 1;
+    });
   }
 
   render() {
     return html`
       <umb-sch-header></umb-sch-header>
       <umb-calendar></umb-calendar>
-      <umb-sch-footer @schedule=${this.schedulePublications}></umb-sch-footer>
+      <umb-sch-footer
+        @schedule=${this.schedulePublications}
+        @close=${this.toggleOpen}
+      ></umb-sch-footer>
     `;
   }
 }

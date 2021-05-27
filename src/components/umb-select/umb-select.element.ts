@@ -1,3 +1,4 @@
+/* eslint-disable lit-a11y/no-invalid-change-handler */
 /* eslint-disable import/extensions */
 import { css, html, LitElement } from 'lit';
 import { property, query } from 'lit/decorators.js';
@@ -51,6 +52,9 @@ export class UmbSelectElement extends LitElement {
   @property()
   value: any = '';
 
+  @property({ type: Boolean })
+  disabled: boolean = false;
+
   @query('uui-caret')
   caret!: any;
 
@@ -74,6 +78,7 @@ export class UmbSelectElement extends LitElement {
         @change=${this.setValue}
         @click=${this._toggleCaret}
         .value=${this.value}
+        ?disabled=${this.disabled}
       >
         <option value="" disabled selected>Select your option</option>
         ${this.options.map(

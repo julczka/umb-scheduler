@@ -337,6 +337,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       <div class="select-wrappper">
         <span class="input-label">Choose version</span>
         <umb-select
+          ?disabled=${!this.variant}
           @change=${this.setVersion}
           .options=${this.versions}
           class="select-flex"
@@ -380,6 +381,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         <span class="input-label">Publish on</span>
         <div class="input-flex">
           <uui-textfield
+            ?disabled=${!this.version}
             type="datetime-local"
             .value=${this.publishDate
               ? UmbPublicationPopupElement._serializeDateforInput(
@@ -405,6 +407,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         <span class="input-label">Unpublish on</span>
         <div class="input-flex">
           <uui-textfield
+            ?disabled=${!this.version}
             type="datetime-local"
             .value=${this.unpublishDate
               ? UmbPublicationPopupElement._serializeDateforInput(
