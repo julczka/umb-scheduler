@@ -9,6 +9,7 @@ export const SHIFT_SCALE_HOURS = 'SHIFT_SCALE_HOURS';
 export const CREATE_PUBLICATION = 'CREATE_PUBLICATION';
 export const UPDATE_PUBLICATION = 'UPDATE_PUBLICATION';
 export const REMOVE_PUBLICATION = 'REMOVE_PUBLICATION';
+export const SHOW_TODAY = 'SHOW_TODAY';
 
 export const zoomInHours = () => ({
   type: ZOOM_IN_HOURS,
@@ -34,6 +35,10 @@ export const shiftScaleDays = (days: number) => ({
 export const shiftScaleHours = (hours: number) => ({
   type: SHIFT_SCALE_HOURS,
   hours,
+});
+
+export const showToday = () => ({
+  type: SHOW_TODAY,
 });
 
 export const createPublication = (publication: Publication) => ({

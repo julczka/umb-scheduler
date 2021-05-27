@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable lit-a11y/click-events-have-key-events */
 /* eslint-disable import/extensions */
 /* eslint-disable no-console */
@@ -14,6 +15,7 @@ import { store } from '../../redux/store.js';
 import {
   shiftScaleDays,
   shiftScaleHours,
+  showToday,
   zoomInDays,
   zoomInHours,
   zoomOutDays,
@@ -307,6 +309,10 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     this.shiftScale(-1);
   }
 
+  protected showToday() {
+    store.dispatch(showToday());
+  }
+
   // eslint-disable-next-line class-methods-use-this
   public openPopUp(e: MouseEvent) {
     if (this.hasPopup) return;
@@ -384,6 +390,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         @zoom-out=${this.zoomOut}
         @move-back=${this.prev}
         @move-forward=${this.next}
+        @go-to-today=${this.showToday}
       ></umb-cal-navigation>
       ${this.hasPopup
         ? html`<umb-publication-popup

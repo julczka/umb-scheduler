@@ -18,6 +18,7 @@ import {
   CREATE_PUBLICATION,
   UPDATE_PUBLICATION,
   REMOVE_PUBLICATION,
+  SHOW_TODAY,
 } from './actions.js';
 import { Page, pageInitialState } from '../Page';
 import {
@@ -34,8 +35,8 @@ import {
 } from '../Variant';
 import type { Publication, Variant } from '../types/contentTypes';
 
-const currentMonthStartDate = addDays(new Date(), -14);
-const currentMonthEndDate = addDays(new Date(), 14);
+const currentMonthStartDate = addDays(new Date(), -7);
+const currentMonthEndDate = addDays(new Date(), 21);
 
 export interface AppState {
   scheduler: SchedulerState;
@@ -151,6 +152,17 @@ export const reducer = (state = INITIAL_STATE, action: AnyAction) => {
           ...state.scheduler,
           startDate: addHours(state.scheduler.startDate, action.hours),
           endDate: addHours(state.scheduler.endDate, action.hours),
+        },
+      };
+    }
+
+    case SHOW_TODAY: {
+      return {
+        ...state,
+        scheduler: {
+          ...state.scheduler,
+          startDate: currentMonthStartDate,
+          endDate: currentMonthEndDate,
         },
       };
     }
