@@ -23,6 +23,12 @@ export interface Miliseconds {
 
 export type ScaleRange = keyof Miliseconds;
 
+export interface MandatoryRange {
+  start: Date | null;
+  end: Date | null;
+  id: string;
+}
+
 export interface SchedulerState {
   startDate: Date;
   endDate: Date;
@@ -31,4 +37,5 @@ export interface SchedulerState {
   scale: ScaleTime<number, number, never>;
   inverseScale: ScaleLinear<number, number, never>;
   scaleRange: ScaleRange;
+  mandatoryRanges: MandatoryRange[];
 }

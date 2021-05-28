@@ -4,6 +4,7 @@ import { property } from 'lit/decorators.js';
 import { connect } from 'pwa-helpers';
 import { AppState } from '../../redux/reducer';
 import { store } from '../../redux/store';
+import { MandatoryRange } from '../../types/appTypes';
 import { Publication, Variant } from '../../types/contentTypes';
 
 export class UmbScheduler extends connect(store)(LitElement) {
@@ -31,7 +32,10 @@ export class UmbScheduler extends connect(store)(LitElement) {
   stateChanged(appState: AppState) {
     this.variants = appState.page.variants;
     this.publications = appState.page.publications;
+    this.mandatoryRanges = appState.scheduler.mandatoryRanges;
   }
+
+  protected mandatoryRanges: MandatoryRange[] = [];
 
   protected variants: Variant[] = [];
 
@@ -44,6 +48,10 @@ export class UmbScheduler extends connect(store)(LitElement) {
       JSON.stringify(this.publications),
     );
     window.localStorage.setItem('variants', JSON.stringify(this.variants));
+    window.localStorage.setItem(
+      'mandatoryRanges',
+      JSON.stringify(this.mandatoryRanges),
+    );
   }
 
   protected schedulePublications() {
@@ -52,6 +60,10 @@ export class UmbScheduler extends connect(store)(LitElement) {
       JSON.stringify(this.publications),
     );
     window.localStorage.setItem('variants', JSON.stringify(this.variants));
+    window.localStorage.setItem(
+      'mandatoryRanges',
+      JSON.stringify(this.mandatoryRanges),
+    );
     console.log('scheduled!');
     this.toggleOpen();
   }

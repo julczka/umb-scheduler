@@ -1,3 +1,4 @@
+/* eslint-disable no-continue */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable lit-a11y/no-invalid-change-handler */
 import { css, html, LitElement } from 'lit';
@@ -246,6 +247,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
 
     const input = e.target as HTMLInputElement;
     this.publication.start = new Date(input.value);
+
     this.updateOrCreatePublication();
   }
 
@@ -257,7 +259,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       this.unpublishDate === null
     ) {
       this.requestUpdate();
-      console.log('nope');
+      // console.log('nope');
       return;
     }
 
@@ -265,12 +267,13 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       this.unpublishDate = null;
       this.publication.end = null;
       this.updateOrCreatePublication();
-      console.log('updateme');
+      // console.log('updateme');
       return;
     }
 
     const input = e.target as HTMLInputElement;
     this.publication.end = new Date(input.value);
+
     this.updateOrCreatePublication();
   }
 
@@ -287,7 +290,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
     };
 
     if (this.publication.id === '' && isVariantMandatory()) {
-      console.log('mandaory variantg chosen');
+      // console.log('mandaory variantg chosen');
 
       if (this.variant !== null && this.variant.id) {
         store.dispatch(
@@ -299,6 +302,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         );
         this.publicationId = this._tempId;
         this._tempId = '';
+        // this.figureOutRanges(this.publication.start, this.publication.end);
       }
 
       if (this.addAllMandatory) {
@@ -313,6 +317,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
               }),
             );
           });
+        // this.figureOutRanges(this.publication.start, this.publication.end);
       }
 
       return;
@@ -325,6 +330,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
     }
 
     store.dispatch(updatePublication(this.publication.id, this.publication));
+    // this.figureOutRanges(this.publication.start, this.publication.end);
   }
 
   private setVariant(e: Event) {
@@ -396,21 +402,11 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
   private _setAllMandatory(e: Event) {
     const target = e.target as any;
     this.addAllMandatory = target?.checked;
-    console.log(this.addAllMandatory);
+    // console.log(this.addAllMandatory);
   }
 
   chooseVariantTemplate() {
-    return html`<div class="select-wrappper">
-        <span class="input-label">Choose variant</span>
-        <umb-select
-          @change=${this.setVariant}
-          .options=${this.sortedVariants}
-          class="select-flex"
-          .value=${this.variant ? this.variant.id : ''}
-        >
-        </umb-select>
-      </div>
-      ${!this.publicationId
+    return html`${!this.publicationId
         ? html`<div class="select-wrappper">
             <span class="input-label">Add all mandatory variants?</span>
             <input
@@ -419,7 +415,17 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
               ?checked=${this.addAllMandatory}
             />
           </div>`
-        : ''}`;
+        : ''}
+      <div class="select-wrappper">
+        <span class="input-label">Choose variant</span>
+        <umb-select
+          @change=${this.setVariant}
+          .options=${this.sortedVariants}
+          class="select-flex"
+          .value=${this.variant ? this.variant.id : ''}
+        >
+        </umb-select>
+      </div>`;
   }
 
   choseVersionTemplate() {

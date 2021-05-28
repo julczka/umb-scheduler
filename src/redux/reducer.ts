@@ -7,6 +7,7 @@ import {
   createReverseScale,
   createScale,
   deltaDatesRange,
+  generateId,
 } from '../utils/utils.js';
 import {
   ZOOM_OUT_HOURS,
@@ -20,6 +21,10 @@ import {
   REMOVE_PUBLICATION,
   SHOW_TODAY,
   RESET_STATE,
+  CREATE_MANDATORY_RANGE,
+  UPDATE_MANDATORY_RANGE,
+  CLEAR_RANGES_AFTER_DATE,
+  REMOVE_MANDATORY_RANGE,
 } from './actions.js';
 import { Page, pageInitialState } from '../Page';
 import {
@@ -35,6 +40,7 @@ import {
   Variant9,
 } from '../Variant';
 import type { Publication, Variant } from '../types/contentTypes';
+import { MandatoryRange } from '../types/appTypes';
 
 const currentMonthStartDate = addDays(new Date(), -7);
 const currentMonthEndDate = addDays(new Date(), 21);
@@ -46,6 +52,9 @@ export interface AppState {
 
 const existingPublicationsData = window.localStorage.getItem('publications');
 const existingVariantsData = window.localStorage.getItem('variants');
+const existingMandatoryRangesData = window.localStorage.getItem(
+  'mandatoryRanges',
+);
 
 const savedPublications: Publication[] = existingPublicationsData
   ? JSON.parse(existingPublicationsData).map((publication: any) => {
@@ -74,11 +83,22 @@ pageInitialState.variants =
       ]
     : JSON.parse(existingVariantsData);
 
+const initialMandatoryRanges: MandatoryRange[] = existingMandatoryRangesData
+  ? JSON.parse(existingMandatoryRangesData).map((range: any) => {
+      const start = new Date(range.start);
+      const end = range.end ? new Date(range.end) : null;
+      const newRange: MandatoryRange = { ...range, start, end };
+      return newRange;
+    })
+  : [];
+
 const INITIAL_STATE = {
-  scheduler: new SchedulerState(currentMonthStartDate, currentMonthEndDate, [
-    0,
-    100,
-  ]),
+  scheduler: new SchedulerState(
+    currentMonthStartDate,
+    currentMonthEndDate,
+    [0, 100],
+    initialMandatoryRanges,
+  ),
   page: pageInitialState,
 };
 
@@ -161,8 +181,62 @@ export const reducer = (state = INITIAL_STATE, action: AnyAction) => {
       };
     }
 
+    case CREATE_MANDATORY_RANGE: {
+      return {
+        ...state,
+        scheduler: {
+          ...state.scheduler,
+          mandatoryRanges: [
+            ...state.scheduler.mandatoryRanges,
+            action.mandatoryRange,
+          ],
+        },
+      };
+    }
+
+    case UPDATE_MANDATORY_RANGE: {
+      // console.log(action.type);
+      return {
+        ...state,
+        scheduler: {
+          ...state.scheduler,
+          mandatoryRanges: state.scheduler.mandatoryRanges.map(range =>
+            range.id === action.mandatoryRangeId
+              ? action.mandatoryRange
+              : range,
+          ),
+        },
+      };
+    }
+
+    case REMOVE_MANDATORY_RANGE: {
+      // console.log(action.type);
+      return {
+        ...state,
+        scheduler: {
+          ...state.scheduler,
+          mandatoryRanges: state.scheduler.mandatoryRanges.filter(
+            range => range.id !== action.mandatoryRangeId,
+          ),
+        },
+      };
+    }
+
+    case CLEAR_RANGES_AFTER_DATE: {
+      // console.log(action.type);
+      return {
+        ...state,
+        scheduler: {
+          ...state.scheduler,
+          mandatoryRanges: state.scheduler.mandatoryRanges.filter(
+            range => range.end < action.start,
+          ),
+        },
+      };
+    }
+
     case CREATE_PUBLICATION: {
-      console.log(action.type);
+      // console.log(action.type);
       return {
         ...state,
         page: {
@@ -173,7 +247,7 @@ export const reducer = (state = INITIAL_STATE, action: AnyAction) => {
     }
 
     case UPDATE_PUBLICATION: {
-      console.log(action.type);
+      // console.log(action.type);
       return {
         ...state,
         page: {
@@ -188,7 +262,7 @@ export const reducer = (state = INITIAL_STATE, action: AnyAction) => {
     }
 
     case REMOVE_PUBLICATION: {
-      console.log(action.type);
+      // console.log(action.type);
       return {
         ...state,
         page: {
@@ -201,7 +275,7 @@ export const reducer = (state = INITIAL_STATE, action: AnyAction) => {
     }
 
     case RESET_STATE: {
-      console.log(action.type);
+      // console.log(action.type);
       return {
         ...state,
         page: {
@@ -247,6 +321,19 @@ const filteredVariants = (variants: Variant[], publications: Publication[]) =>
       .some(el => el === variant.id),
   );
 
+export const mandatoryVariantsId = (state: AppState) =>
+  state.page.variants
+    .filter((variant: Variant) => variant.mandatory)
+    .map((variant: Variant) => variant.id);
+
+export const mandatoryPublications = (
+  variantsIds: string[],
+  publications: Publication[],
+) =>
+  publications.filter(publication =>
+    variantsIds.includes(publication.variantId),
+  );
+
 export const getVariantsSelector = createSelector([getVariants], variants => [
   ...variants,
 ]);
@@ -279,8 +366,168 @@ export const scaleRangeSelector = createSelector(
   (startDate, endDate) => deltaDatesRange(startDate, endDate),
 );
 
+export const mandatoryPublicationsSelector = createSelector(
+  mandatoryVariantsId,
+  getPublications,
+  (variantIds, publications) => mandatoryPublications(variantIds, publications),
+);
+
 export const variantsWithPublicationsSelector = createSelector(
   getVariants,
   getPublications,
   (variants, publications) => filteredVariants(variants, publications),
+);
+
+// this monstrous funcion is a Validation attempt. It is suppose to find all the date ranges where at least one mandatory publication is present. Then all the others should be present too. This is really complex issue, I tried to solve it but i ran out of time. If your're reading this, dear teacher, know that there's a method to this madness, it is not fully executed yet. Maybe it will be at the exam. XOXO julia
+export const computeMandatoryRanges = (
+  mandatoryPublicationsArray: Publication[],
+) => {
+  let ranges: MandatoryRange[] = [];
+
+  const sortedRanges = (rangesArray: MandatoryRange[]) =>
+    rangesArray.sort(
+      (a: MandatoryRange, b: MandatoryRange) =>
+        a.start.valueOf() - b.start.valueOf(),
+    );
+
+  mandatoryPublicationsArray.forEach((publication: Publication) => {
+    const isPublicationInfinite = !publication.end;
+    console.log(isPublicationInfinite, publication);
+    let currentRange: MandatoryRange;
+
+    if (ranges.length === 0) {
+      ranges = [
+        { start: publication.start, end: publication.end, id: generateId() },
+      ];
+      return;
+    }
+
+    if (isPublicationInfinite) {
+      for (const range of sortedRanges(ranges)) {
+        const isRangeInfinite = !range.end;
+        console.log('infinite', range, isRangeInfinite);
+
+        if (isRangeInfinite) {
+          if (publication.start > range.start) {
+            return;
+          }
+
+          const startsToCompare = [
+            publication.start.valueOf(),
+            range.start.valueOf(),
+          ];
+          const newStartDate = new Date(Math.min.apply(null, startsToCompare));
+          currentRange = { start: newStartDate, end: null, id: generateId() };
+          ranges = [
+            ...ranges.filter(
+              (r: MandatoryRange) => r.start < newStartDate && r.end !== null,
+            ),
+            currentRange,
+          ];
+          return;
+        }
+
+        if (range.end !== null && publication.start < range.end) {
+          currentRange = {
+            start: publication.start,
+            end: null,
+            id: generateId(),
+          };
+          ranges = [...ranges.filter(r => r !== range), currentRange];
+          return;
+        }
+      }
+    } else
+      for (const range of sortedRanges(ranges)) {
+        const isRangeInfinite = !range.end;
+        console.log('finite publication loop', range, isRangeInfinite);
+
+        if (isRangeInfinite) {
+          if (
+            publication.start < range.start &&
+            publication.end < range.start
+          ) {
+            ranges = [
+              ...ranges,
+              {
+                start: publication.start,
+                end: publication.end,
+                id: generateId(),
+              },
+            ];
+            return;
+          }
+
+          if (publication.start < range.start) {
+            currentRange = {
+              start: publication.start,
+              end: null,
+              id: generateId(),
+            };
+
+            ranges = [
+              ...ranges.filter(
+                (r: MandatoryRange) =>
+                  r.start < publication.start && r.end !== null,
+              ),
+              currentRange,
+            ];
+            return;
+          }
+
+          if (publication.start > range.start) {
+            return;
+          }
+        }
+
+        if (range.end && publication.start < range.end) {
+          console.log(445);
+          currentRange = range;
+          break;
+        }
+      }
+
+    if (!currentRange) {
+      console.log(452);
+      ranges = [
+        ...ranges,
+        { start: publication.start, end: publication.end, id: generateId() },
+      ];
+      return;
+    }
+
+    if (publication.end < currentRange.start) {
+      console.log(460);
+      ranges = [
+        ...ranges,
+        { start: publication.start, end: publication.end, id: generateId() },
+      ];
+      return;
+    }
+
+    if (publication.end > currentRange.start) {
+      console.log(469);
+      if (
+        publication.end < currentRange.end &&
+        publication.start > currentRange.start
+      ) {
+        return;
+      }
+
+      if (publication.start < currentRange.start) {
+        currentRange = { ...currentRange, start: publication.start };
+      }
+
+      if (publication.end > currentRange.end) {
+        currentRange = { ...currentRange, end: publication.end };
+      }
+    }
+  });
+  return sortedRanges(ranges);
+};
+
+export const mandatoryRangesSelector = createSelector(
+  mandatoryPublicationsSelector,
+  mandatoryPublicationsSelectorArray =>
+    computeMandatoryRanges(mandatoryPublicationsSelectorArray),
 );

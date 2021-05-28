@@ -2,7 +2,7 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable lit-a11y/click-events-have-key-events */
 /* eslint-disable import/extensions */
-/* eslint-disable no-console */
+
 import { property, state } from 'lit/decorators.js';
 import { html, css, LitElement } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
@@ -24,6 +24,7 @@ import {
 } from '../../redux/actions.js';
 import {
   AppState,
+  mandatoryRangesSelector,
   reversedScaleSelector,
   scaleRangeSelector,
   scaleSelector,
@@ -123,6 +124,8 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     this.variantsWithPublications = variantsWithPublicationsSelector(
       schedulerState,
     );
+
+    console.log('my mandatory ranges', mandatoryRangesSelector(schedulerState));
   }
 
   @state()
@@ -168,7 +171,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     if (this.startDate && this.endDate) {
       if (this.endDate < this.startDate) return;
       if (checkIfTheSameDay(this.startDate, this.endDate)) {
-        console.log('same day!');
+        // console.log('same day!');
         if (checkIfEqualDates(this.startDate, this.endDate)) return;
         store.dispatch(zoomInHours());
       }
@@ -322,10 +325,10 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     if (e.target instanceof UmbPublicationElement) {
       this.currentPublication = e.target.id;
       this.currentDate = e.target.startDate;
-      console.log('clicked on bar', e.target);
+      // console.log('clicked on bar', e.target);
       return;
     }
-    console.log('clicked outside of bar', e.target);
+    // console.log('clicked outside of bar', e.target);
     if (this.scale) {
       // this.currentDate = e.target.date ? e.target.date : null;
       // e.target instanceof UmbTickElement
@@ -333,7 +336,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         (e.offsetX * 100) / this.getBoundingClientRect().width,
       );
       this.currentDate = date > new Date() ? date : new Date();
-      console.log(this.currentDate);
+      // console.log(this.currentDate);
     }
 
     this.currentPublication = '';
@@ -368,14 +371,14 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  altClickTEST(e: MouseEvent) {
-    if (this.scale)
-      console.log(
-        this.scale.invert(
-          (e.offsetX * 100) / this.getBoundingClientRect().width,
-        ),
-      );
-  }
+  // altClickTEST(e: MouseEvent) {
+  //   if (this.scale)
+  //     console.log(
+  //       this.scale.invert(
+  //         (e.offsetX * 100) / this.getBoundingClientRect().width,
+  //       ),
+  //     );
+  // }
 
   private sortByName(a: Variant, b: Variant) {
     const nameA = a.name ? a.name.toUpperCase() : '';

@@ -1,3 +1,4 @@
+import { MandatoryRange } from '../types/appTypes';
 import { Publication } from '../types/contentTypes';
 
 export const ZOOM_IN_HOURS = 'ZOOM_IN_HOURS';
@@ -11,6 +12,10 @@ export const UPDATE_PUBLICATION = 'UPDATE_PUBLICATION';
 export const REMOVE_PUBLICATION = 'REMOVE_PUBLICATION';
 export const SHOW_TODAY = 'SHOW_TODAY';
 export const RESET_STATE = 'RESET_STATE';
+export const CREATE_MANDATORY_RANGE = 'CREATE_MANDATORY_RANGE';
+export const UPDATE_MANDATORY_RANGE = 'UPDATE_MANDATORY_RANGE';
+export const CLEAR_RANGES_AFTER_DATE = 'CLEAR_RANGES_AFTER_DATE';
+export const REMOVE_MANDATORY_RANGE = 'REMOVE_MANDATORY_RANGE';
 
 export const zoomInHours = () => ({
   type: ZOOM_IN_HOURS,
@@ -63,4 +68,28 @@ export const removePublication = (publicationId: string) => ({
 
 export const resetState = () => ({
   type: RESET_STATE,
+});
+
+export const createMandatoryRange = (mandatoryRange: MandatoryRange) => ({
+  type: CREATE_MANDATORY_RANGE,
+  mandatoryRange,
+});
+
+export const removeMandatoryRange = (mandatoryRangeId: string) => ({
+  type: REMOVE_MANDATORY_RANGE,
+  mandatoryRangeId,
+});
+
+export const updateMandatoryRange = (
+  mandatoryRangeId: string,
+  mandatoryRange: MandatoryRange,
+) => ({
+  type: UPDATE_MANDATORY_RANGE,
+  mandatoryRangeId,
+  mandatoryRange,
+});
+
+export const clearRangesAfterDate = (start: Date) => ({
+  type: CLEAR_RANGES_AFTER_DATE,
+  start,
 });
