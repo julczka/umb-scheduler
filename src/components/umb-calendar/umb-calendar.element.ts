@@ -325,18 +325,14 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     if (e.target instanceof UmbPublicationElement) {
       this.currentPublication = e.target.id;
       this.currentDate = e.target.startDate;
-      // console.log('clicked on bar', e.target);
       return;
     }
-    // console.log('clicked outside of bar', e.target);
+
     if (this.scale) {
-      // this.currentDate = e.target.date ? e.target.date : null;
-      // e.target instanceof UmbTickElement
       const date = this.scale.invert(
         (e.offsetX * 100) / this.getBoundingClientRect().width,
       );
       this.currentDate = date > new Date() ? date : new Date();
-      // console.log(this.currentDate);
     }
 
     this.currentPublication = '';
@@ -369,16 +365,6 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         ></umb-tick>`,
     )}`;
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  // altClickTEST(e: MouseEvent) {
-  //   if (this.scale)
-  //     console.log(
-  //       this.scale.invert(
-  //         (e.offsetX * 100) / this.getBoundingClientRect().width,
-  //       ),
-  //     );
-  // }
 
   private sortByName(a: Variant, b: Variant) {
     const nameA = a.name ? a.name.toUpperCase() : '';
@@ -443,6 +429,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
       ></umb-cal-navigation>
       ${this.hasPopup
         ? html`<umb-publication-popup
+            id="popup"
             .variants=${this.variants}
             .publicationId=${this.currentPublication}
             .date=${this.currentDate}
