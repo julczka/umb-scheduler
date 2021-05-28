@@ -481,13 +481,21 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
     const target = e.target as HTMLElement;
     console.log(target.id);
     if (target.id === 'paste-start-date') {
-      this.publishDate = store.getState().scheduler.clipboardDate;
-      this.publication.start = store.getState().scheduler.clipboardDate;
+      this.publishDate = store.getState().scheduler.clipboardDate
+        ? store.getState().scheduler.clipboardDate
+        : this.publishDate;
+      this.publication.start = store.getState().scheduler.clipboardDate
+        ? store.getState().scheduler.clipboardDate
+        : this.publication.start;
     }
 
     if (target.id === 'paste-end-date') {
-      this.unpublishDate = store.getState().scheduler.clipboardDate;
-      this.publication.end = store.getState().scheduler.clipboardDate;
+      this.unpublishDate = store.getState().scheduler.clipboardDate
+        ? store.getState().scheduler.clipboardDate
+        : this.unpublishDate;
+      this.publication.end = store.getState().scheduler.clipboardDate
+        ? store.getState().scheduler.clipboardDate
+        : this.publication.end;
     }
 
     // this.requestUpdate();
