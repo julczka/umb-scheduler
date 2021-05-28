@@ -1,3 +1,4 @@
+/* eslint-disable lit-a11y/click-events-have-key-events */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable class-methods-use-this */
 import { property, state } from 'lit/decorators.js';
@@ -7,17 +8,10 @@ import { connect } from 'pwa-helpers';
 import { styleMap } from 'lit/directives/style-map.js';
 import { Publication, Variant, Version } from '../../types/contentTypes';
 import { store } from '../../redux/store';
-import { AppState } from '../../redux/reducer';
+import { AppState, mandatoryRangesSelector } from '../../redux/reducer';
 import { UmbSchedulerIcons } from '../../UmbSchedulerIcons';
 import { MandatoryRange } from '../../types/appTypes';
-import { generateId } from '../../utils/utils';
-import {
-  createMandatoryRange,
-  removeMandatoryRange,
-  updateMandatoryRange,
-} from '../../redux/actions';
-
-// TODO validate: Option and Variant must be chosen before dates!
+import { copyDate } from '../../redux/actions';
 
 export class UmbPublicationElement extends connect(store)(LitElement) {
   static styles = [
@@ -96,6 +90,12 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
         align-items: flex-start;
       }
 
+      #start-button-elements,
+      #end-button-elements {
+        display: flex;
+        align-items: flex-end;
+      }
+
       #end-date {
         justify-content: flex-end;
         margin-right: 1em;
@@ -108,12 +108,7 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
   ];
 
   stateChanged(appState: AppState) {
-    this.mandatoryRanges = appState.scheduler.mandatoryRanges.sort(
-      (a, b) => b.start.valueOf() - a.start.valueOf(),
-    );
-    if (this.mandatoryRanges.length === 1)
-      this.mandatoryRange = this.mandatoryRanges[0];
-
+    this.mandatoryRanges = mandatoryRangesSelector(appState);
     const pub = appState.page.publications.find(
       p => p.id === this.id,
     ) as Publication;
@@ -127,9 +122,6 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
         .find(v => v.id === pub.variantId)
         ?.versions.find(v => v.id === pub.versionId) as Version;
     }
-
-    // this.figureOutRanges(pub.start, pub.end);
-    // this.requestUpdate();
   }
 
   @property()
@@ -148,18 +140,20 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
   startDate: Date | null = null;
 
   @state()
-  endDate: Date | null = null;
+  protected mandatoryRanges: MandatoryRange[] = [];
 
   @state()
-  variant: Variant | null = null;
-
-  private mandatoryRanges: MandatoryRange[] = [];
-
   private mandatoryRange: MandatoryRange = {
     id: '',
     start: null,
     end: null,
   };
+
+  @state()
+  endDate: Date | null = null;
+
+  @state()
+  variant: Variant | null = null;
 
   private _version: Version | null = null;
 
@@ -227,12 +221,6 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-
-    if (this.mandatoryRanges.length === 1) {
-      console.log('Disconnected', this.mandatoryRanges.length);
-      store.dispatch(removeMandatoryRange(this.mandatoryRange.id));
-      // this.mandatoryRange = { id: '', start: null, end: null };
-    }
   }
 
   firstUpdated() {
@@ -252,172 +240,18 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
       else this.hidden = false;
     }
 
-    // if (
-    //   changedProperties.has('startDate') ||
-    //   changedProperties.has('endDate') ||
-    //   changedProperties.has('mandatoryRanges')
-    // ) {
-    //   this.figureOutRanges(this.startDate, this.endDate);
-    // }
-
     if (changedProperties.has('variant') && this.variant) {
       this.mandatory = this.variant?.mandatory;
     }
   }
 
-  // figureOutRanges(start: Date, end: Date | null) {
-  //   console.log('figureOutRanges', start, end);
+  updated() {
+    this.validateThyself();
+  }
 
-  //   // if there is no mandatory range create one
-  //   if (this.mandatoryRanges.length === 0) {
-  //     console.log('no T, create: 270');
-  //     const id = generateId();
-  //     store.dispatch(createMandatoryRange({ start, end, id }));
-  //     this.mandatoryRange = { start, end, id };
-  //     return;
-  //   }
-
-  //   // if (this.mandatoryRanges.length === 1 && end === null) {
-  //   //   console.log('278');
-  //   //   this.mandatoryRange = { ...this.mandatoryRange, start, end };
-  //   //   store.dispatch(
-  //   //     updateMandatoryRange(this.mandatoryRange.id, this.mandatoryRange),
-  //   //   );
-  //   //   return;
-  //   // }
-
-  //   // if there is aonly one and pub becomes shorter shorten the range
-  //   // if (this.mandatoryRanges.length === 1 && this.mandatoryRange.end === null) {
-  //   //   console.log('279');
-  //   //   this.mandatoryRange = { ...this.mandatoryRange, start, end };
-  //   //   store.dispatch(
-  //   //     updateMandatoryRange(this.mandatoryRange.id, this.mandatoryRange),
-  //   //   );
-  //   //   return;
-  //   // }
-
-  //   // if (this.mandatoryRanges.length === 1) {
-  //   //   this.mandatoryRange = { ...this.mandatoryRange, start, end };
-  //   //   store.dispatch(
-  //   //     updateMandatoryRange(this.mandatoryRange.id, this.mandatoryRange),
-  //   //   );
-  //   //   return;
-  //   // }
-
-  //   for (const [index, range] of this.mandatoryRanges.entries()) {
-  //     console.log('enter loop');
-  //     const isRangeInfinite = range.end === null;
-
-  //     if (isRangeInfinite && start > range.start) {
-  //       if (range.id === this.mandatoryRange.id) {
-  //         if (start > range.start && this.mandatoryRange.end === null) {
-  //           console.log('loop 316');
-  //           return;
-  //         }
-
-  //         console.log('loop 314');
-  //         this.mandatoryRange = { ...this.mandatoryRange, start };
-  //         store.dispatch(updateMandatoryRange(range.id, this.mandatoryRange));
-  //         return;
-  //       }
-
-  //       console.log('loop 300');
-  //       this.mandatoryRange = range;
-  //       return;
-  //     }
-
-  //     if (isRangeInfinite && start < range.start) {
-  //       console.log('loop 306');
-  //       this.mandatoryRange = { ...range, start };
-  //       store.dispatch(updateMandatoryRange(range.id, this.mandatoryRange));
-  //       return;
-  //     }
-
-  //     if (isRangeInfinite && start.valueOf() === range.start.valueOf()) {
-  //       if (end !== null && range.id === this.mandatoryRange.id) {
-  //         if (
-  //           this.mandatoryRange.end === null &&
-  //           start > this.mandatoryRange.start
-  //         ) {
-  //           console.log('loop 335');
-  //           return;
-  //         }
-
-  //         // console.log('loop 334');
-  //         // this.mandatoryRange = { ...this.mandatoryRange, end };
-  //         // store.dispatch(updateMandatoryRange(range.id, this.mandatoryRange));
-  //         // return;
-  //       }
-
-  //       console.log('loop 313');
-  //       this.mandatoryRange = range;
-  //       return;
-  //     }
-
-  //     if (!isRangeInfinite) {
-  //       console.log('loop 319');
-  //       // const outOfRange = start > range.end || end < range.start;
-  //       const startsInRange = start < range.end && start > range.start;
-  //       const endsInRange = end < range.end && end > range.start;
-  //       const isInRange = startsInRange && endsInRange;
-
-  //       if (
-  //         start.valueOf() === range.start.valueOf() &&
-  //         end.valueOf() === range.end.valueOf()
-  //       ) {
-  //         console.log('loop 329');
-  //         this.mandatoryRange = range;
-  //         return;
-  //       }
-
-  //       if (isInRange) {
-  //         console.log('loop 335');
-  //         this.mandatoryRange = range;
-  //         return;
-  //       }
-
-  //       if (startsInRange) {
-  //         console.log('loop 341');
-  //         this.mandatoryRange = { ...range, end };
-  //         store.dispatch(updateMandatoryRange(range.id, this.mandatoryRange));
-  //         return;
-  //       }
-
-  //       if (endsInRange) {
-  //         console.log('loop 348');
-  //         this.mandatoryRange = { ...range, start };
-  //         store.dispatch(updateMandatoryRange(range.id, this.mandatoryRange));
-  //         return;
-  //       }
-
-  //       console.log(index, 'in the loop');
-  //     }
-  //   }
-
-  //   console.log('out');
-
-  //   // *OK
-
-  //   // if infinite publication overwrite all ranges after its start date
-  //   // if (end === null) {
-  //   //   // return mandatory range with the earliest startDate and null. Overwrite all mandatory ranges?
-  //   //   const startDatesOfInfiniteRanges = this.mandatoryRanges
-  //   //     .filter(r => r.end === null)
-  //   //     .map(r => r.start?.valueOf()) as number[];
-  //   //   const earliest = new Date(
-  //   //     Math.min.apply(null, startDatesOfInfiniteRanges),
-  //   //   );
-  //   //   this.mandatoryRange = { start: earliest, end: null, id: generateId() };
-  //   //   store.dispatch(clearRangesAfterDate(start));
-  //   //   store.dispatch(createMandatoryRange(this.mandatoryRange));
-  //   //   console.log('end === null', start, end);
-  //   //   return;
-  //   // }
-
-  //   // console.log('nowe T, bo start wiekszy od wszystkich finalow');
-  //   // this.mandatoryRange = { start, end, id: generateId() };
-  //   // store.dispatch(createMandatoryRange(this.mandatoryRange));
-  // }
+  validateThyself() {
+    console.log('here some day will be validation!');
+  }
 
   @state()
   protected scale: ScaleLinear<number, number, never> | null = null;
@@ -430,6 +264,19 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
 
   protected dynamicStyles() {
     return { width: `${this.width}%`, left: `${this.transform}%` };
+  }
+
+  public copyDate(e: MouseEvent) {
+    e.stopPropagation();
+    const target = e.target as HTMLElement;
+    console.log(target.id);
+    if (
+      target.id === 'start-button-elements' ||
+      target.id === 'start-date-button'
+    )
+      store.dispatch(copyDate(this.startDate));
+    if (target.id === 'end-button-elements' || target.id === 'end-date-button')
+      store.dispatch(copyDate(this.endDate));
   }
 
   render() {
@@ -449,18 +296,39 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
       </div>
       <div id="date-container">
         <div id="start-date">
-          ${UmbSchedulerIcons.calendarIconTemplate()}
-          ${this.startDate?.toLocaleDateString()}
-          ${UmbSchedulerIcons.clockIconTemplate()}
-          ${this.startDate?.toLocaleTimeString()}
+          <uui-button
+            compact
+            look="primary"
+            id="start-date-button"
+            @click=${this.copyDate}
+            title="Click to copy date"
+          >
+            <div id="start-button-elements">
+              ${UmbSchedulerIcons.calendarIconTemplate()}
+              ${this.startDate?.toLocaleDateString()}
+              ${UmbSchedulerIcons.clockIconTemplate()}
+              ${this.startDate?.toLocaleTimeString()}
+            </div>
+          </uui-button>
         </div>
         <div id="end-date">
-          ${this.endDate
-            ? html`${UmbSchedulerIcons.calendarIconTemplate()}
-              ${this.endDate?.toLocaleDateString()}
-              ${UmbSchedulerIcons.clockIconTemplate()}
-              ${this.endDate?.toLocaleTimeString()}`
-            : UmbSchedulerIcons.infinityIconTemplate()}
+          <uui-button
+            compact
+            look="primary"
+            id="end-date-button"
+            ?disabled=${!this.endDate}
+            @click=${this.copyDate}
+            title=${!this.endDate ? '' : 'Click to copy date'}
+          >
+            <div id="end-button-elements">
+              ${this.endDate
+                ? html`${UmbSchedulerIcons.calendarIconTemplate()}
+                  ${this.endDate?.toLocaleDateString()}
+                  ${UmbSchedulerIcons.clockIconTemplate()}
+                  ${this.endDate?.toLocaleTimeString()}`
+                : UmbSchedulerIcons.infinityIconTemplate()}
+            </div>
+          </uui-button>
         </div>
       </div>
     </div>`;

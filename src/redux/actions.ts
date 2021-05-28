@@ -16,6 +16,7 @@ export const CREATE_MANDATORY_RANGE = 'CREATE_MANDATORY_RANGE';
 export const UPDATE_MANDATORY_RANGE = 'UPDATE_MANDATORY_RANGE';
 export const CLEAR_RANGES_AFTER_DATE = 'CLEAR_RANGES_AFTER_DATE';
 export const REMOVE_MANDATORY_RANGE = 'REMOVE_MANDATORY_RANGE';
+export const COPY_DATE = 'COPY_DATE';
 
 export const zoomInHours = () => ({
   type: ZOOM_IN_HOURS,
@@ -93,3 +94,5 @@ export const clearRangesAfterDate = (start: Date) => ({
   type: CLEAR_RANGES_AFTER_DATE,
   start,
 });
+
+export const copyDate = (date: Date) => ({ type: COPY_DATE, date });

@@ -12,12 +12,14 @@ import {
 import { AppState, getVariantsSelector } from '../../redux/reducer.js';
 import { store } from '../../redux/store.js';
 import { Publication, Variant, Version } from '../../types/contentTypes';
+import { UmbSchedulerIcons } from '../../UmbSchedulerIcons.js';
 import { generateId } from '../../utils/utils.js';
 
 // TODO validate: Option and Variant must be chosen before dates!
 
 export class UmbPublicationPopupElement extends connect(store)(LitElement) {
   static styles = [
+    UmbSchedulerIcons.styles,
     css`
       :host {
         position: fixed;
@@ -84,6 +86,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         flex: 2;
         vertical-align: middle;
         display: flex;
+        margin-left: 1em;
       }
 
       .select-flex {
@@ -99,6 +102,15 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         position: absolute;
         top: 0;
         right: 0;
+      }
+
+      #paste-start-date,
+      #paste-start-date {
+        color: var(--uui-interface-chosen);
+      }
+
+      .icon {
+        pointer-events: none;
       }
     `,
   ];
@@ -457,6 +469,30 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       ${this.choseVersionTemplate()}`;
   }
 
+  pasteButtonTemplate(id: string) {
+    return html`<uui-button title="Paste date" id=${id} @click=${this.pasteDate}
+      >${UmbSchedulerIcons.pasteIconTemplate()}</uui-button
+    >`;
+  }
+
+  public pasteDate(e: MouseEvent) {
+    e.stopPropagation();
+    const target = e.target as HTMLElement;
+    console.log(target.id);
+    if (target.id === 'paste-start-date') {
+      this.publishDate = store.getState().scheduler.clipboardDate;
+      this.publication.start = store.getState().scheduler.clipboardDate;
+    }
+
+    if (target.id === 'paste-end-date') {
+      this.unpublishDate = store.getState().scheduler.clipboardDate;
+      this.publication.end = store.getState().scheduler.clipboardDate;
+    }
+
+    // this.requestUpdate();
+    this.updateOrCreatePublication();
+  }
+
   render() {
     return html` <div id="popup-wrapper">
       <div id="page-title">
@@ -493,7 +529,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
                 )
               : ''}
           ></uui-textfield
-          ><uui-button
+          >${this.pasteButtonTemplate('paste-start-date')}<uui-button
             title="Remove publication"
             look="danger"
             @click=${this.changeStartDate}
@@ -519,7 +555,11 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
                 )
               : ''}
           ></uui-textfield
-          ><uui-button look="danger" @click=${this.changeEndDate}>x</uui-button>
+          >${this.pasteButtonTemplate('paste-end-date')}<uui-button
+            look="danger"
+            @click=${this.changeEndDate}
+            >x</uui-button
+          >
         </div>
       </div>
       <uui-button id="close-button" @click=${this.validateOnClose}

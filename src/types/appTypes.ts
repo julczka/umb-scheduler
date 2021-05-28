@@ -38,4 +38,5 @@ export interface SchedulerState {
   inverseScale: ScaleLinear<number, number, never>;
   scaleRange: ScaleRange;
   mandatoryRanges: MandatoryRange[];
+  clipboardDate: Date | null;
 }
