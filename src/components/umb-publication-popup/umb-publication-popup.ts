@@ -417,27 +417,28 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
     // console.log(this.addAllMandatory);
   }
 
+  // ${!this.publicationId
+  //   ? html`<div class="select-wrappper">
+  //       <span class="input-label">Add all mandatory variants?</span>
+  //       <input
+  //         type="checkbox"
+  //         @change=${this._setAllMandatory}
+  //         ?checked=${this.addAllMandatory}
+  //       />
+  //     </div>`
+  //   : ''}
+
   chooseVariantTemplate() {
-    return html`${!this.publicationId
-        ? html`<div class="select-wrappper">
-            <span class="input-label">Add all mandatory variants?</span>
-            <input
-              type="checkbox"
-              @change=${this._setAllMandatory}
-              ?checked=${this.addAllMandatory}
-            />
-          </div>`
-        : ''}
-      <div class="select-wrappper">
-        <span class="input-label">Choose variant</span>
-        <umb-select
-          @change=${this.setVariant}
-          .options=${this.sortedVariants}
-          class="select-flex"
-          .value=${this.variant ? this.variant.id : ''}
-        >
-        </umb-select>
-      </div>`;
+    return html` <div class="select-wrappper">
+      <span class="input-label">Choose variant</span>
+      <umb-select
+        @change=${this.setVariant}
+        .options=${this.sortedVariants}
+        class="select-flex"
+        .value=${this.variant ? this.variant.id : ''}
+      >
+      </umb-select>
+    </div>`;
   }
 
   choseVersionTemplate() {
