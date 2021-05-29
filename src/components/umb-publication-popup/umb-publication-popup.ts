@@ -37,7 +37,12 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
 
       :host([error]) #popup-wrapper {
         outline: 1px solid var(--uui-color-maroon-flush);
-        box-shadow: 0px 0px 5px 4px var(--uui-color-maroon-flush);
+        box-shadow: 0px 0px 3px 2px var(--uui-color-maroon-flush);
+      }
+
+      :host([error]) #version-input {
+        outline: 1px solid var(--uui-color-maroon-flush);
+        box-shadow: 0px 0px 3px 2px var(--uui-color-maroon-flush);
       }
 
       #icon {
@@ -449,6 +454,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         @change=${this.setVersion}
         .options=${this.versions}
         class="select-flex"
+        id="version-input"
         .value=${this.version ? this.version.id : ''}
       >
       </umb-select>
