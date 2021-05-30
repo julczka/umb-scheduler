@@ -375,7 +375,7 @@ export const variantsWithPublicationsSelector = createSelector(
 );
 
 // this monstrous funcion is a Validation attempt. It is suppose to find all the date ranges where at least one mandatory publication is present. Then all the others should be present too. This is really complex issue, I tried to solve it but i ran out of time. If your're reading this, dear teacher, know that there's a method to this madness, it is not fully executed yet. Maybe it will be at the exam. XOXO julia
-// THIS IS SPARTA!
+
 export const computeMandatoryRanges = (
   mandatoryPublicationsArray: Publication[],
 ) => {
