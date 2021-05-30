@@ -4,7 +4,6 @@ import { SchedulerState } from '../SchedulerState.js';
 import {
   addDays,
   addHours,
-  createReverseScale,
   createScale,
   deltaDatesRange,
   generateId,
@@ -319,11 +318,6 @@ export const getVersionbyId = (
     .find(variant => variant.id === variantId)
     ?.versions.find(version => version.id === versionId);
 
-const getStartDateValue = (state: AppState) =>
-  state.scheduler.startDate.valueOf();
-
-const getEndDateValue = (state: AppState) => state.scheduler.endDate.valueOf();
-
 export const getVariants = (state: AppState) => state.page.variants;
 export const getPublications = (state: AppState) => state.page.publications;
 
@@ -357,20 +351,9 @@ export const timeScaleDomain = createSelector(
   (startDate, endDate) => [startDate, endDate],
 );
 
-export const reverseScaleRange = createSelector(
-  getStartDateValue,
-  getEndDateValue,
-  (startDateValue, endDateValue) => [startDateValue, endDateValue],
-);
-
 export const scaleSelector = createSelector(
   [getRange, timeScaleDomain],
   (range, domain) => createScale(domain, range),
-);
-
-export const reversedScaleSelector = createSelector(
-  [getRange, reverseScaleRange],
-  (range, domain) => createReverseScale(range, domain),
 );
 
 export const scaleRangeSelector = createSelector(
@@ -406,7 +389,7 @@ export const computeMandatoryRanges = (
 
   mandatoryPublicationsArray.forEach((publication: Publication) => {
     const isPublicationInfinite = !publication.end;
-    console.log(isPublicationInfinite, publication);
+    // console.log(isPublicationInfinite, publication);
     let currentRange: MandatoryRange;
 
     if (ranges.length === 0) {
@@ -419,7 +402,7 @@ export const computeMandatoryRanges = (
     if (isPublicationInfinite) {
       for (const range of sortedRanges(ranges)) {
         const isRangeInfinite = !range.end;
-        console.log('infinite', range, isRangeInfinite);
+        // console.log('infinite', range, isRangeInfinite);
 
         if (isRangeInfinite) {
           if (publication.start > range.start) {
@@ -454,7 +437,7 @@ export const computeMandatoryRanges = (
     } else
       for (const range of sortedRanges(ranges)) {
         const isRangeInfinite = !range.end;
-        console.log('finite publication loop', range, isRangeInfinite);
+        // console.log('finite publication loop', range, isRangeInfinite);
 
         if (isRangeInfinite) {
           if (
@@ -495,14 +478,14 @@ export const computeMandatoryRanges = (
         }
 
         if (range.end && publication.start < range.end) {
-          console.log(445);
+          //   console.log(445);
           currentRange = range;
           break;
         }
       }
 
     if (!currentRange) {
-      console.log(452);
+      // console.log(452);
       ranges = [
         ...ranges,
         { start: publication.start, end: publication.end, id: generateId() },
@@ -511,7 +494,7 @@ export const computeMandatoryRanges = (
     }
 
     if (publication.end < currentRange.start) {
-      console.log(460);
+      // console.log(460);
       ranges = [
         ...ranges,
         { start: publication.start, end: publication.end, id: generateId() },
@@ -520,7 +503,7 @@ export const computeMandatoryRanges = (
     }
 
     if (publication.end > currentRange.start) {
-      console.log(469);
+      // console.log(469);
       if (
         publication.end < currentRange.end &&
         publication.start > currentRange.start

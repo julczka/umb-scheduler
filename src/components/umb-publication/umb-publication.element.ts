@@ -1,8 +1,9 @@
+/* eslint-disable import/extensions */
 /* eslint-disable lit-a11y/click-events-have-key-events */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable class-methods-use-this */
 import { property, state } from 'lit/decorators.js';
-import { ScaleLinear } from 'd3-scale';
+import { ScaleTime } from 'd3-scale';
 import { html, css, LitElement } from 'lit';
 import { connect } from 'pwa-helpers';
 import { styleMap } from 'lit/directives/style-map.js';
@@ -178,11 +179,18 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
     return this._version;
   }
 
-  static invertDate(
-    scale: ScaleLinear<number, number, never>,
-    date: number,
+  // static invertDate(
+  //   scale: ScaleLinear<number, number, never>,
+  //   date: number,
+  // ): number {
+  //   return scale.invert(date) as any;
+  // }
+
+  static invertDateProperly(
+    scale: ScaleTime<number, number, never>,
+    date: Date,
   ): number {
-    return scale.invert(date) as any;
+    return scale(date);
   }
 
   private calculateWidth(): number {
@@ -192,8 +200,8 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
       this.endDate !== null
     ) {
       const width =
-        UmbPublicationElement.invertDate(this.scale, this.endDate.valueOf()) -
-        UmbPublicationElement.invertDate(this.scale, this.startDate.valueOf());
+        UmbPublicationElement.invertDateProperly(this.scale, this.endDate) -
+        UmbPublicationElement.invertDateProperly(this.scale, this.startDate);
       return width;
     }
 
@@ -204,7 +212,7 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
     ) {
       const width =
         100 -
-        UmbPublicationElement.invertDate(this.scale, this.startDate.valueOf());
+        UmbPublicationElement.invertDateProperly(this.scale, this.startDate);
       return width;
     }
 
@@ -213,9 +221,9 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
 
   private calculateTransform() {
     if (this.scale !== null && this.startDate !== null) {
-      const transform = UmbPublicationElement.invertDate(
+      const transform = UmbPublicationElement.invertDateProperly(
         this.scale,
-        this.startDate.valueOf(),
+        this.startDate,
       );
       return transform;
     }
@@ -263,7 +271,7 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
   }
 
   @state()
-  protected scale: ScaleLinear<number, number, never> | null = null;
+  protected scale: ScaleTime<number, number, never> | null = null;
 
   @state()
   protected width: number = 0;
@@ -278,7 +286,6 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
   public copyDate(e: MouseEvent) {
     e.stopPropagation();
     const target = e.target as HTMLElement;
-    console.log(target.id);
     if (
       target.id === 'start-button-elements' ||
       target.id === 'start-date-button'

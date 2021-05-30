@@ -65,7 +65,6 @@ export class UmbSelectElement extends LitElement {
     this.dispatchEvent(
       new CustomEvent('change', { bubbles: true, composed: true }),
     );
-    console.log(this.value, target.value);
   }
 
   private _toggleCaret() {
