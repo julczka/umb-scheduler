@@ -1,3 +1,4 @@
+/* eslint-disable import/extensions */
 /* eslint-disable no-continue */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable lit-a11y/no-invalid-change-handler */
@@ -487,7 +488,6 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
   public pasteDate(e: MouseEvent) {
     e.stopPropagation();
     const target = e.target as HTMLElement;
-    console.log(target.id);
     if (target.id === 'paste-start-date') {
       this.publishDate = store.getState().scheduler.clipboardDate
         ? store.getState().scheduler.clipboardDate
@@ -529,7 +529,6 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         <span class="input-label">Publish on</span>
         <div class="input-flex">
           <uui-textfield
-            ?disabled=${!this.version}
             type="datetime-local"
             .value=${this.publishDate
               ? UmbPublicationPopupElement._serializeDateforInput(
@@ -558,7 +557,6 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         <span class="input-label">Unpublish on</span>
         <div class="input-flex">
           <uui-textfield
-            ?disabled=${!this.version}
             type="datetime-local"
             .value=${this.unpublishDate
               ? UmbPublicationPopupElement._serializeDateforInput(

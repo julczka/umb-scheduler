@@ -1,14 +1,4 @@
-// scale
-// inverse scale
-// current publication
-// startDate
-// endDate
-// scaleRange
-// ticks
-// domain
-// range
-
-import { ScaleLinear, ScaleTime } from 'd3-scale';
+import type { ScaleLinear, ScaleTime } from 'd3-scale';
 
 export interface Miliseconds {
   HOUR: number;

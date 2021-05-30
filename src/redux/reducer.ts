@@ -319,10 +319,10 @@ export const getVersionbyId = (
     .find(variant => variant.id === variantId)
     ?.versions.find(version => version.id === versionId);
 
-const getStartDateValue = (state: AppState) =>
-  state.scheduler.startDate.valueOf();
+// const getStartDateValue = (state: AppState) =>
+//   state.scheduler.startDate.valueOf();
 
-const getEndDateValue = (state: AppState) => state.scheduler.endDate.valueOf();
+// const getEndDateValue = (state: AppState) => state.scheduler.endDate.valueOf();
 
 export const getVariants = (state: AppState) => state.page.variants;
 export const getPublications = (state: AppState) => state.page.publications;
@@ -357,21 +357,21 @@ export const timeScaleDomain = createSelector(
   (startDate, endDate) => [startDate, endDate],
 );
 
-export const reverseScaleRange = createSelector(
-  getStartDateValue,
-  getEndDateValue,
-  (startDateValue, endDateValue) => [startDateValue, endDateValue],
-);
+// export const reverseScaleRange = createSelector(
+//   getStartDateValue,
+//   getEndDateValue,
+//   (startDateValue, endDateValue) => [startDateValue, endDateValue],
+// );
 
 export const scaleSelector = createSelector(
   [getRange, timeScaleDomain],
   (range, domain) => createScale(domain, range),
 );
 
-export const reversedScaleSelector = createSelector(
-  [getRange, reverseScaleRange],
-  (range, domain) => createReverseScale(range, domain),
-);
+// export const reversedScaleSelector = createSelector(
+//   [getRange, reverseScaleRange],
+//   (range, domain) => createReverseScale(range, domain),
+// );
 
 export const scaleRangeSelector = createSelector(
   getStartDate,

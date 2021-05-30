@@ -24,14 +24,13 @@ import {
 } from '../../redux/actions.js';
 import {
   AppState,
-  mandatoryRangesSelector,
-  reversedScaleSelector,
   scaleRangeSelector,
   scaleSelector,
   variantsWithPublicationsSelector,
 } from '../../redux/reducer.js';
 import { Publication, Variant } from '../../types/contentTypes.js';
 import { UmbPublicationElement } from '../umb-publication/umb-publication.element.js';
+import { UmbPublicationPopupElement } from '../umb-publication-popup/umb-publication-popup.js';
 
 type Vector = 1 | -1;
 export class UmbCalendarElement extends connect(store)(LitElement) {
@@ -115,19 +114,24 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     return scale.invert(date) as any;
   }
 
+  static invertDateProperly(
+    scale: ScaleTime<number, number, never>,
+    date: Date,
+  ): number {
+    return scale(date);
+  }
+
   stateChanged(schedulerState: AppState) {
     this.startDate = schedulerState.scheduler.startDate;
     this.endDate = schedulerState.scheduler.endDate;
     this.scale = scaleSelector(schedulerState);
-    this.scaleInverted = reversedScaleSelector(schedulerState);
+    // this.scaleInverted = reversedScaleSelector(schedulerState);
     this.scaleRange = scaleRangeSelector(schedulerState);
     this.publications = schedulerState.page.publications;
     this.variants = schedulerState.page.variants;
     this.variantsWithPublications = variantsWithPublicationsSelector(
       schedulerState,
     );
-
-    console.log('my mandatory ranges', mandatoryRangesSelector(schedulerState));
   }
 
   @state()
@@ -151,8 +155,8 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
   @state()
   protected scale: ScaleTime<number, number, never> | null = null;
 
-  @state()
-  protected scaleInverted: ScaleLinear<number, number, never> | null = null;
+  // @state()
+  // protected scaleInverted: ScaleLinear<number, number, never> | null = null;
 
   @state()
   protected ticks: Date[] = [];
@@ -198,6 +202,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
 
   constructor() {
     super();
+    this.addEventListener('click', this.openPopUp);
     this.addEventListener('close-popup', this.closePopUp);
   }
 
@@ -322,6 +327,9 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
 
   // eslint-disable-next-line class-methods-use-this
   public openPopUp(e: MouseEvent) {
+    if (e.composedPath().some(el => el instanceof UmbPublicationPopupElement)) {
+      return;
+    }
     if (this.hasPopup) return;
     if (!this.hasPopup) this.hasPopup = true;
     if (e.target instanceof UmbPublicationElement) {
@@ -356,7 +364,6 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     return html` ${this.ticks.map(
       (tick, index) =>
         html`<umb-tick
-          @click=${this.openPopUp}
           .date=${tick}
           ?show-month=${tick.getDate() === 1
             ? true
@@ -398,7 +405,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
             publication => publication.id,
             publication => html`<umb-publication
               .id=${publication.id}
-              .scale=${this.scaleInverted}
+              .scale=${this.scale}
             ></umb-publication>`,
           )}
         </div>`,
@@ -411,7 +418,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
             publication => publication.id,
             publication => html`<umb-publication
               .id=${publication.id}
-              .scale=${this.scaleInverted}
+              .scale=${this.scale}
             ></umb-publication>`,
           )}
         </div>`,
@@ -450,13 +457,3 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
     `;
   }
 }
-
-// ${repeat(
-//   this.publications,
-//   publication => publication.id,
-//   publication => html`<umb-publication
-//     @click=${this.openPopUp}
-//     .id=${publication.id}
-//     .scale=${this.scaleInverted}
-//   ></umb-publication>`,
-// )}
