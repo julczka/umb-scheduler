@@ -26,7 +26,8 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
         top: 50%;
         z-index: 100;
         bottom: 50%;
-        font-size: 1rem;
+        transform: translateY(-50%);
+        font-size: inherit;
       }
 
       #popup-wrapper {
@@ -54,7 +55,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       }
 
       #page-title {
-        font-size: 2rem;
+        font-size: 200%;
         font-weight: bold;
         vertical-align: middle;
         margin-bottom: 1em;
@@ -84,7 +85,7 @@ export class UmbPublicationPopupElement extends connect(store)(LitElement) {
       }
 
       #variant {
-        font-size: 1.5rem;
+        font-size: 150%;
         font-weight: bold;
       }
 
