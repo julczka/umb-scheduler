@@ -13,7 +13,7 @@ export class UmbScheduler extends connect(store)(LitElement) {
       min-height: 100vh;
       width: 90vw;
       box-sizing: border-box;
-
+      font-size: inherit;
       position: absolute;
       top: 0;
       right: 0;

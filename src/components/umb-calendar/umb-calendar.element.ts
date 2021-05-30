@@ -44,6 +44,7 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         flex: 1;
         align-items: stretch;
         background-color: #f6f4f4;
+        font-size: inherit;
       }
 
       #tickContainer {
@@ -62,8 +63,9 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
         padding: 1em 0em 2em 0em;
         left: 0;
         right: 0;
-        top: 15%;
-        height: 80%;
+        top: 130px;
+        max-height: 80%;
+        /* border: 1px solid red; */
         scrollbar-width: thin;
         scrollbar-color: var(--uui-interface-contrast-disabled)
           var(--uui-interface-background-alt);

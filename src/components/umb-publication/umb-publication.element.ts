@@ -24,6 +24,7 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
         position: absolute;
         pointer-events: none;
         color: var(--uui-interface-chosen-contrast);
+        font-size: inherit;
       }
 
       :host([hidden]) {
@@ -70,7 +71,7 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
       #variant-name,
       #version-name {
         margin-right: 1em;
-        font-size: var(--uui-size-medium);
+        font-size: 150%;
       }
 
       #variant-name {
@@ -103,6 +104,15 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
 
       uui-tag {
         margin: 0;
+      }
+
+      @media screen and (max-height: 950px) {
+        #content-bar {
+          flex-direction: row;
+        }
+        #name-container {
+          flex: none;
+        }
       }
     `,
   ];
