@@ -80,7 +80,6 @@ export class UmbPublicationElement extends connect(store)(LitElement) {
       }
 
       #version-name {
-        font-weight: 200;
         justify-content: space-between;
       }
 
