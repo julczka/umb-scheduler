@@ -1,0 +1,10 @@
+/** Interface shadows*/
+:root {
+  --uui-shadow-depth-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  --uui-shadow-depth-2: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  --uui-shadow-depth-3: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  --uui-shadow-depth-4: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  --uui-shadow-depth-5: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+}
+
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy9zdHlsZS9jdXN0b20tcHJvcGVydGllcy9zaGFkb3cuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLHNCQUFzQjtBQUN0QjtFQUNFLDRFQUE0RTtFQUM1RSw0RUFBNEU7RUFDNUUsOEVBQThFO0VBQzlFLGdGQUFnRjtFQUNoRixnRkFBZ0Y7QUFDbEYiLCJmaWxlIjoic2hhZG93LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIi8qKiBJbnRlcmZhY2Ugc2hhZG93cyovXHJcbjpyb290IHtcclxuICAtLXV1aS1zaGFkb3ctZGVwdGgtMTogMCAxcHggM3B4IHJnYmEoMCwwLDAsMC4xMiksIDAgMXB4IDJweCByZ2JhKDAsMCwwLDAuMjQpO1xyXG4gIC0tdXVpLXNoYWRvdy1kZXB0aC0yOiAwIDNweCA2cHggcmdiYSgwLDAsMCwwLjE2KSwgMCAzcHggNnB4IHJnYmEoMCwwLDAsMC4yMyk7XHJcbiAgLS11dWktc2hhZG93LWRlcHRoLTM6IDAgMTBweCAyMHB4IHJnYmEoMCwwLDAsMC4xOSksIDAgNnB4IDZweCByZ2JhKDAsMCwwLDAuMjMpO1xyXG4gIC0tdXVpLXNoYWRvdy1kZXB0aC00OiAwIDE0cHggMjhweCByZ2JhKDAsMCwwLDAuMjUpLCAwIDEwcHggMTBweCByZ2JhKDAsMCwwLDAuMjIpO1xyXG4gIC0tdXVpLXNoYWRvdy1kZXB0aC01OiAwIDE5cHggMzhweCByZ2JhKDAsMCwwLDAuMzApLCAwIDE1cHggMTJweCByZ2JhKDAsMCwwLDAuMjIpO1xyXG59XHJcbiJdfQ== */

@@ -1,0 +1,15 @@
+/*
+
+Temporary solution to include root css from a component, don't know at this stage wether that will be needed.
+
+@import "../../components/basics/uui-button/custom-properties.css";
+
+*/
+
+@property --uui-card-before-opacity {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy9zdHlsZS9jdXN0b20tcHJvcGVydGllcy9jb21wb25lbnRzLmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7O0NBTUM7O0FBRUQ7RUFDRSxrQkFBa0I7RUFDbEIsY0FBYztFQUNkLGdCQUFnQjtBQUNsQiIsImZpbGUiOiJjb21wb25lbnRzLmNzcyIsInNvdXJjZXNDb250ZW50IjpbIi8qXHJcblxyXG5UZW1wb3Jhcnkgc29sdXRpb24gdG8gaW5jbHVkZSByb290IGNzcyBmcm9tIGEgY29tcG9uZW50LCBkb24ndCBrbm93IGF0IHRoaXMgc3RhZ2Ugd2V0aGVyIHRoYXQgd2lsbCBiZSBuZWVkZWQuXHJcblxyXG5AaW1wb3J0IFwiLi4vLi4vY29tcG9uZW50cy9iYXNpY3MvdXVpLWJ1dHRvbi9jdXN0b20tcHJvcGVydGllcy5jc3NcIjtcclxuXHJcbiovXHJcblxyXG5AcHJvcGVydHkgLS11dWktY2FyZC1iZWZvcmUtb3BhY2l0eSB7XHJcbiAgc3ludGF4OiAnPG51bWJlcj4nO1xyXG4gIGluaGVyaXRzOiB0cnVlO1xyXG4gIGluaXRpYWwtdmFsdWU6IDA7XHJcbn1cclxuIl19 */

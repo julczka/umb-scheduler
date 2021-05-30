@@ -6,23 +6,90 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="Description" content="Put your description here.">
   <base href="/">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles/index.css">
 
-  <style>
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: sans-serif;
-      background-color: #ededed;
-    }
-  </style>
+  
   <title>umb-scheduler</title>
+  <script>
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const process = {
+  env: {
+    NODE_ENV :'production'
+  }
+};
+
+  </script>
 </head>
 
 <body>
-  <umb-scheduler></umb-scheduler>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background-image: url('./images/backoffice-background-min.png');
+      overflow: hidden;
+    }
 
+    @media only screen and (max-width: 1200px) {
+  body {
+   font-size: 11px;
+  }
+}
+
+    #entry-point {
+      position: fixed;  
+      top: 50%;
+      left: 50%;
+      
+    
+    } 
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: black;
+      opacity: 0;
+      transition: opacity 250ms linear;
+      pointer-events: none;
+
+    }
+
+    .darken {
+      opacity: 0.7;
+    }
+
+  </style>
+  <uui-button title="Click to bring the scheduler" id="entry-point" look="primary">Schedule</uui-button>
+  <div class="overlay"></div>
+  <umb-scheduler id="scheduler"></umb-scheduler>
+  <script type="module" src="./ui-lib/00ad8f16.js"></script>
   <script type="module" src="./out-tsc/src/index.js"></script>
+  <script>
+    const overlay = document.querySelector('.overlay');
+    const scheduler = document.querySelector('#scheduler');
+    document.querySelector('#entry-point').onclick = function() {
+      overlay.classList.add('darken');
+      scheduler.toggleOpen();
+      
+    };
+
+    scheduler.addEventListener('close', () => {
+      overlay.classList.remove('darken');
+    })
+
+    scheduler.addEventListener('schedule', () => {
+      overlay.classList.remove('darken');
+    })
+
+    
+
+    
+  </script>
 </body>
 
 </html>

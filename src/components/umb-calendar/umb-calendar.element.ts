@@ -1,72 +1,152 @@
-/* eslint-disable no-console */
+/* eslint-disable no-nested-ternary */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable lit-a11y/click-events-have-key-events */
+/* eslint-disable import/extensions */
+
 import { property, state } from 'lit/decorators.js';
 import { html, css, LitElement } from 'lit';
-import {
-  NumberValue,
-  ScaleLinear,
-  scaleLinear,
-  ScaleTime,
-  scaleTime,
-} from 'd3-scale';
 import { repeat } from 'lit/directives/repeat.js';
+import { ScaleLinear, ScaleTime } from 'd3-scale';
+import { connect } from 'pwa-helpers';
 import {
-  addDays,
-  addHours,
   checkIfEqualDates,
   checkIfTheSameDay,
-  deltaDatesRange,
+  isToday,
 } from '../../utils/utils.js';
+import { store } from '../../redux/store.js';
+import {
+  shiftScaleDays,
+  shiftScaleHours,
+  showToday,
+  zoomInDays,
+  zoomInHours,
+  zoomOutDays,
+} from '../../redux/actions.js';
+import {
+  AppState,
+  mandatoryRangesSelector,
+  reversedScaleSelector,
+  scaleRangeSelector,
+  scaleSelector,
+  variantsWithPublicationsSelector,
+} from '../../redux/reducer.js';
+import { Publication, Variant } from '../../types/contentTypes.js';
+import { UmbPublicationElement } from '../umb-publication/umb-publication.element.js';
 
 type Vector = 1 | -1;
-export class UmbCalendarElement extends LitElement {
+export class UmbCalendarElement extends connect(store)(LitElement) {
   static styles = [
     css`
+      :host {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex: 1;
+        align-items: stretch;
+        background-color: #f6f4f4;
+        font-size: inherit;
+      }
+
       #tickContainer {
+        box-sizing: border-box;
+        padding: 1em 0em 2em 0em;
         width: 90vw;
         display: flex;
         position: relative;
+        align-items: stretch;
+        flex: 8;
+        box-sizing: border-box;
       }
 
-      .tick {
-        flex: 1;
-        font-size: 9px;
-        height: 30vh;
-        border: 1px solid red;
+      #variants {
+        position: absolute;
+        padding: 1em 0em 2em 0em;
+        left: 0;
+        right: 0;
+        top: 130px;
+        max-height: 80%;
+        /* border: 1px solid red; */
+        scrollbar-width: thin;
+        scrollbar-color: var(--uui-interface-contrast-disabled)
+          var(--uui-interface-background-alt);
+        overflow-y: auto;
+        overflow-x: visible;
+        box-sizing: border-box;
+        /* pointer-events: none; */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+
+      #variants::-webkit-scrollbar {
+        width: 5px;
+      }
+
+      #variants::-webkit-scrollbar-track {
+        background: var(--uui-interface-background-alt);
+        border-radius: 12px;
+      }
+      #variants::-webkit-scrollbar-thumb {
+        background-color: var(--uui-interface-contrast-disabled);
+        border-radius: 12px;
+      }
+
+      .variant-container {
+        box-sizing: border-box;
+        position: relative;
+        min-height: 10vh;
+        overflow-x: visible;
+      }
+
+      umb-tick:first-of-type {
+        --umb-tick-month-visibility: visible;
       }
     `,
   ];
 
-  protected static createScale(
-    domain: Iterable<Date | NumberValue>,
-    range: Iterable<number>
-  ) {
-    return scaleTime().domain(domain).nice().rangeRound(range).clamp(true);
+  private currentPublication: string = '';
+
+  private currentDate: Date | null = null;
+
+  static invertDate(
+    scale: ScaleLinear<number, number, never>,
+    date: number,
+  ): number {
+    return scale.invert(date) as any;
   }
 
-  protected static createReverseScale(
-    domain: Iterable<number>,
-    range: Iterable<number>
-  ) {
-    return scaleLinear().domain(domain).rangeRound(range).clamp(true);
+  stateChanged(schedulerState: AppState) {
+    this.startDate = schedulerState.scheduler.startDate;
+    this.endDate = schedulerState.scheduler.endDate;
+    this.scale = scaleSelector(schedulerState);
+    this.scaleInverted = reversedScaleSelector(schedulerState);
+    this.scaleRange = scaleRangeSelector(schedulerState);
+    this.publications = schedulerState.page.publications;
+    this.variants = schedulerState.page.variants;
+    this.variantsWithPublications = variantsWithPublicationsSelector(
+      schedulerState,
+    );
+
+    console.log('my mandatory ranges', mandatoryRangesSelector(schedulerState));
   }
 
-  @property({ type: Object, attribute: false })
-  startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  @state()
+  protected startDate: Date | null = null;
 
-  @property({ type: Object, attribute: false })
-  endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+  @state()
+  protected variants: Variant[] = [];
+
+  @state()
+  protected variantsWithPublications: Variant[] = [];
+
+  @state()
+  protected publications: Publication[] = [];
+
+  @state()
+  protected endDate: Date | null = null;
 
   @property({ type: Number })
   tickWidth = 70;
-
-  @state()
-  protected domain: Iterable<Date | NumberValue> = [
-    this.startDate,
-    this.endDate,
-  ];
-
-  @state()
-  protected range: Iterable<number> = [0, 100];
 
   @state()
   protected scale: ScaleTime<number, number, never> | null = null;
@@ -80,35 +160,31 @@ export class UmbCalendarElement extends LitElement {
   @state()
   protected scaleRange = '';
 
-  protected defineScales() {
-    this.scale = UmbCalendarElement.createScale(this.domain, this.range);
-    this.scaleInverted = UmbCalendarElement.createReverseScale(this.range, [
-      this.startDate.valueOf(),
-      this.endDate.valueOf(),
-    ]);
-    this.scaleRange = deltaDatesRange(this.startDate, this.endDate);
-    console.log(this.scaleRange);
-  }
+  private ctrPressed = false;
+
+  @state()
+  hasPopup: boolean = false;
 
   protected calculateTicks(number: number) {
     if (this.scale !== null) this.ticks = this.scale.ticks(number);
   }
 
   public zoomIn() {
-    if (this.endDate < this.startDate) return;
-    if (checkIfTheSameDay(this.startDate, this.endDate)) {
-      console.log('same day!');
-      if (checkIfEqualDates(this.startDate, this.endDate)) return;
-      this.startDate = addHours(this.startDate, 1);
-      this.endDate = addHours(this.endDate, -1);
+    if (this.startDate && this.endDate) {
+      if (this.endDate < this.startDate) return;
+      if (checkIfTheSameDay(this.startDate, this.endDate)) {
+        // console.log('same day!');
+        if (checkIfEqualDates(this.startDate, this.endDate)) return;
+        store.dispatch(zoomInHours());
+      }
+      store.dispatch(zoomInDays());
     }
-    this.startDate = addDays(this.startDate, 1);
-    this.endDate = addDays(this.endDate, -1);
   }
 
   public zoomOut() {
-    this.startDate = addDays(this.startDate, -1);
-    this.endDate = addDays(this.endDate, 1);
+    if (this.startDate && this.endDate) {
+      store.dispatch(zoomOutDays());
+    }
   }
 
   willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
@@ -116,17 +192,30 @@ export class UmbCalendarElement extends LitElement {
       changedProperties.has('startDate') ||
       changedProperties.has('endDate')
     ) {
-      this.domain = [this.startDate, this.endDate];
-      this.defineScales();
       this.calculateTicks(this.getBoundingClientRect().width / this.tickWidth);
     }
   }
 
+  constructor() {
+    super();
+    this.addEventListener('close-popup', this.closePopUp);
+  }
+
   connectedCallback() {
     super.connectedCallback();
-    this.defineScales();
+
     window.addEventListener('resize', () => {
       this.calculateTicks(this.getBoundingClientRect().width / this.tickWidth);
+    });
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'z') {
+        this.ctrPressed = true;
+      }
+    });
+    document.addEventListener('keyup', (e: KeyboardEvent) => {
+      if (e.key === 'z') {
+        this.ctrPressed = false;
+      }
     });
   }
 
@@ -135,6 +224,16 @@ export class UmbCalendarElement extends LitElement {
     window.removeEventListener('resize', () => {
       this.calculateTicks(this.getBoundingClientRect().width / this.tickWidth);
     });
+    document.removeEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'z') {
+        this.ctrPressed = true;
+      }
+    });
+    document.removeEventListener('keyup', (e: KeyboardEvent) => {
+      if (e.key === 'z') {
+        this.ctrPressed = false;
+      }
+    });
   }
 
   firstUpdated() {
@@ -142,16 +241,16 @@ export class UmbCalendarElement extends LitElement {
   }
 
   protected handleWheelEvent(e: WheelEvent) {
-    e.preventDefault();
-    console.log(e);
-    if (e.deltaX === 0) {
-      if (e.deltaY > 0) {
+    if (e.deltaX === 0 && this.ctrPressed) {
+      e.preventDefault();
+      if (e.deltaY < 0) {
         this.zoomIn();
         return;
       }
       this.zoomOut();
     }
     if (e.deltaY === 0) {
+      e.preventDefault();
       if (e.deltaX > 0) {
         this.next();
         return;
@@ -160,60 +259,50 @@ export class UmbCalendarElement extends LitElement {
     }
   }
 
-  protected shiftScaleHours(hours: number): void {
-    this.startDate = addHours(this.startDate, hours);
-    this.endDate = addHours(this.endDate, hours);
-  }
-
-  protected shiftScaleDays(days: number): void {
-    this.startDate = addDays(this.startDate, days);
-    this.endDate = addDays(this.endDate, days);
-  }
-
   protected shiftScale(vector: Vector) {
     switch (this.scaleRange) {
       case 'HOUR': {
-        this.shiftScaleHours(vector * 1);
+        store.dispatch(shiftScaleHours(vector * 1));
         break;
       }
 
       case 'DAY': {
-        this.shiftScaleHours(vector * 12);
+        store.dispatch(shiftScaleHours(vector * 6));
         break;
       }
 
       case 'WEEK': {
-        this.shiftScaleDays(vector * 1);
+        store.dispatch(shiftScaleDays(vector * 1));
         break;
       }
 
       case 'TWO_WEEKS': {
-        this.shiftScaleDays(vector * 3);
+        store.dispatch(shiftScaleDays(vector * 2));
         break;
       }
 
       case 'MONTH': {
-        this.shiftScaleDays(vector * 7);
+        store.dispatch(shiftScaleDays(vector * 4));
         break;
       }
 
       case 'QUATER': {
-        this.shiftScaleDays(vector * 14);
+        store.dispatch(shiftScaleDays(vector * 7));
         break;
       }
 
       case 'HALF_YEAR': {
-        this.shiftScaleDays(vector * 30);
+        store.dispatch(shiftScaleDays(vector * 14));
         break;
       }
 
       case 'YEAR': {
-        this.shiftScaleDays(vector * 90);
+        store.dispatch(shiftScaleDays(vector * 30));
         break;
       }
 
       default: {
-        this.shiftScaleDays(vector * 7);
+        store.dispatch(shiftScaleDays(vector * 7));
         break;
       }
     }
@@ -227,26 +316,147 @@ export class UmbCalendarElement extends LitElement {
     this.shiftScale(-1);
   }
 
-  render() {
-    return html` <button @click=${this.zoomIn}>ZOOM IN</button>
-      <button @click=${this.zoomOut}>ZOOM OUT</button>
-      <button @click=${this.prev}>PREV</button>
-      <button @click=${this.next}>NEXT</button>
-      <br />
-      ${this.startDate.toLocaleString()}
-      <br />
-      ${this.endDate.toLocaleString()}
+  protected showToday() {
+    store.dispatch(showToday());
+  }
 
+  // eslint-disable-next-line class-methods-use-this
+  public openPopUp(e: MouseEvent) {
+    if (this.hasPopup) return;
+    if (!this.hasPopup) this.hasPopup = true;
+    if (e.target instanceof UmbPublicationElement) {
+      this.currentPublication = e.target.id;
+      this.currentDate = e.target.startDate;
+      return;
+    }
+
+    if (this.scale) {
+      const date = this.scale.invert(
+        (e.offsetX * 100) / this.getBoundingClientRect().width,
+      );
+      this.currentDate = date > new Date() ? date : new Date();
+    }
+
+    this.currentPublication = '';
+
+    this.requestUpdate();
+  }
+
+  public closePopUp() {
+    this.hasPopup = false;
+    this.currentPublication = '';
+    this.currentDate = null;
+  }
+
+  static isErliestOfMonth(ticks: Date[], tick: Date, index: number) {
+    return ticks[index - 1].getMonth() < tick.getMonth();
+  }
+
+  protected ticksTemplate() {
+    return html` ${this.ticks.map(
+      (tick, index) =>
+        html`<umb-tick
+          @click=${this.openPopUp}
+          .date=${tick}
+          ?show-month=${tick.getDate() === 1
+            ? true
+            : this.ticks.indexOf(tick) !== 0
+            ? this.ticks[index - 1].getMonth() < tick.getMonth()
+            : false}
+          ?today=${isToday(tick)}
+        ></umb-tick>`,
+    )}`;
+  }
+
+  private sortByName(a: Variant, b: Variant) {
+    const nameA = a.name ? a.name.toUpperCase() : '';
+    const nameB = b.name ? b.name.toUpperCase() : '';
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+    return 0;
+  }
+
+  protected varinatsTemplate() {
+    const mandatoryVariants = this.variantsWithPublications
+      .filter(variant => variant.mandatory)
+      .sort(this.sortByName);
+    const otherVariants = this.variantsWithPublications
+      .filter(variant => !variant.mandatory)
+      .sort(this.sortByName);
+
+    return html`
+      ${mandatoryVariants.map(
+        variant => html`<div class="variant-container" id=${variant.id}>
+          ${repeat(
+            this.publications.filter(
+              publication => publication.variantId === variant.id,
+            ),
+            publication => publication.id,
+            publication => html`<umb-publication
+              .id=${publication.id}
+              .scale=${this.scaleInverted}
+            ></umb-publication>`,
+          )}
+        </div>`,
+      )}${otherVariants.map(
+        variant => html`<div class="variant-container" id=${variant.id}>
+          ${repeat(
+            this.publications.filter(
+              publication => publication.variantId === variant.id,
+            ),
+            publication => publication.id,
+            publication => html`<umb-publication
+              .id=${publication.id}
+              .scale=${this.scaleInverted}
+            ></umb-publication>`,
+          )}
+        </div>`,
+      )}
+    `;
+  }
+
+  render() {
+    return html`
+      <umb-cal-navigation
+        @zoom-in=${this.zoomIn}
+        @zoom-out=${this.zoomOut}
+        @move-back=${this.prev}
+        @move-forward=${this.next}
+        @go-to-today=${this.showToday}
+        @wheel=${this.handleWheelEvent}
+      ></umb-cal-navigation>
+      ${this.hasPopup
+        ? html`<umb-publication-popup
+            id="popup"
+            .variants=${this.variants}
+            .publicationId=${this.currentPublication}
+            .date=${this.currentDate}
+          ></umb-publication-popup>`
+        : ''}
       <div id="tickContainer" @wheel=${this.handleWheelEvent}>
-        ${repeat(
-          this.ticks,
-          tick => tick.valueOf(),
-          tick => html`<div class="tick">${tick.toLocaleString()}</div>`
-        )}
-        <umb-variant-block
-          id="content-bar"
-          .scale=${this.scaleInverted}
-        ></umb-variant-block>
-      </div>`;
+        ${this.ticksTemplate()}
+        <div
+          id="variants"
+          @click=${this.openPopUp}
+          title="Click to add a publication"
+        >
+          ${this.varinatsTemplate()}
+        </div>
+      </div>
+    `;
   }
 }
+
+// ${repeat(
+//   this.publications,
+//   publication => publication.id,
+//   publication => html`<umb-publication
+//     @click=${this.openPopUp}
+//     .id=${publication.id}
+//     .scale=${this.scaleInverted}
+//   ></umb-publication>`,
+// )}
