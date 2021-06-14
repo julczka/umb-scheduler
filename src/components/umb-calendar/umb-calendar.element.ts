@@ -31,6 +31,7 @@ import {
 import { Publication, Variant } from '../../types/contentTypes.js';
 import { UmbPublicationElement } from '../umb-publication/umb-publication.element.js';
 import { UmbPublicationPopupElement } from '../umb-publication-popup/umb-publication-popup.js';
+import { UmbCalendarNavigationElement } from '../umb-cal-navigation/umb-cal-navigation.element.js';
 
 type Vector = 1 | -1;
 export class UmbCalendarElement extends connect(store)(LitElement) {
@@ -328,6 +329,12 @@ export class UmbCalendarElement extends connect(store)(LitElement) {
   // eslint-disable-next-line class-methods-use-this
   public openPopUp(e: MouseEvent) {
     if (e.composedPath().some(el => el instanceof UmbPublicationPopupElement)) {
+      return;
+    }
+
+    if (
+      e.composedPath().some(el => el instanceof UmbCalendarNavigationElement)
+    ) {
       return;
     }
     if (this.hasPopup) return;
